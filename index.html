@@ -1049,8 +1049,8 @@ footer {
   .content { padding: 32px 24px; }
 
   /* Header */
-  header { padding: 48px 24px 40px; min-height: 380px; }
-  h1 { white-space: normal; }
+  header { padding: 40px 24px; min-height: auto; }
+  h1 { white-space: normal; font-size: clamp(1.8rem, 4vw, 3.5rem); }
 
   /* Controls — keep single row, hide filters, show hamburger */
   .controls {
@@ -1082,35 +1082,95 @@ footer {
 /* ── MOBILE (≤600px) ── */
 @media (max-width: 600px) {
   /* Header */
-  header { padding: 32px 20px; min-height: 300px; }
-  h1 { font-size: 1.9rem; }
-  .header-desc { font-size: 13px; }
+  header { padding: 28px 20px; min-height: auto; }
+  h1 {
+    font-size: clamp(1.6rem, 8vw, 2.4rem);
+    white-space: normal;
+    word-break: break-word;
+    hyphens: auto;
+    line-height: 1.05;
+  }
+  .header-desc { font-size: 13px; max-width: 100%; }
+  .header-meta {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .meta-pill { font-size: 10px; }
 
   /* Controls */
-  .controls { padding: 10px 16px; }
-  .search-wrap { flex: 0 0 160px; }
-  #search { font-size: 12px; }
+  .controls { padding: 10px 12px; gap: 8px; }
+  .controls-logo svg { height: 16px !important; }
+  .search-wrap { flex: 1; min-width: 0; }
+  #search { font-size: 12px; padding: 7px 8px 7px 28px; }
+  .search-icon { font-size: 12px; left: 8px; }
+  .hamburger { width: 34px; height: 34px; flex-shrink: 0; }
 
   /* Content */
   .content { padding: 20px 16px; }
-  .skill-card { padding: 18px; }
+  .skill-card { padding: 16px; }
+
+  /* How to use */
+  .how-to-use { padding: 14px 16px; }
+  .how-to-use-body { font-size: 12px; }
+
+  /* Getting Started */
+  .gs-intro { font-size: 13px; }
+  .gs-sources { grid-template-columns: 1fr; }
+  .gs-install { padding: 16px; }
+  .gs-step { grid-template-columns: 20px 1fr; gap: 10px; }
+  .gs-step-num { font-size: 10px; width: 20px; height: 20px; }
+  .gs-step-label { font-size: 13px; }
+  .gs-step-desc { font-size: 12px; }
+  .gs-code {
+    font-size: 11px;
+    overflow-x: auto;
+    white-space: pre;
+    -webkit-overflow-scrolling: touch;
+    display: block;
+    max-width: 100%;
+  }
+  .gs-tab { font-size: 10px; padding: 5px 8px; }
+  .gs-tab-content { padding: 12px; }
+  pre { overflow-x: auto; max-width: 100%; -webkit-overflow-scrolling: touch; }
+  code { font-size: 11px; }
 
   /* Grids */
   .skills-grid { grid-template-columns: 1fr; }
   #glossary .skills-grid { grid-template-columns: 1fr; }
-  .gl-row { grid-template-columns: 1fr; gap: 0; }
-  .gl-term { border-right: none; border-bottom: 1px solid var(--border); padding: 10px 16px 6px; }
-  .gl-def { padding: 6px 16px 10px; }
+  .connector-grid { grid-template-columns: 1fr; }
+  .context-grid { grid-template-columns: 1fr; }
+  .tips-grid { grid-template-columns: 1fr; }
+  .explainer-grid { grid-template-columns: 1fr; }
+  .pipeline-grid { grid-template-columns: 1fr; }
 
-  /* Install guide */
-  .gs-install { padding: 16px; }
-  .gs-step { grid-template-columns: 24px 1fr; gap: 10px; }
-  .gs-code { font-size: 11px; }
-  .gs-tab { font-size: 10px; padding: 5px 8px; }
+  /* Glossary definition list */
+  .gl-row { grid-template-columns: 1fr; gap: 0; }
+  .gl-term { border-right: none; border-bottom: 1px solid var(--border); padding: 10px 14px 5px; }
+  .gl-def { padding: 5px 14px 10px; }
+
+  /* Category headers */
+  .category-header { flex-wrap: wrap; gap: 8px; }
+  .category-title { font-size: 13px; }
+
+  /* Section intros */
+  .section-intro-text { font-size: 13px; }
+
+  /* Pipelines */
+  .pipeline-card { padding: 16px; }
+  .pipeline-steps { flex-direction: column; gap: 8px; }
+  .pipeline-step { flex-direction: row; gap: 8px; }
 
   /* Footer */
-  footer { padding: 20px 16px; }
+  footer { padding: 20px 16px; flex-direction: column; align-items: flex-start; gap: 10px; }
   .footer-text { font-size: 10px; }
+}
+
+/* ── VERY SMALL MOBILE (≤380px) ── */
+@media (max-width: 380px) {
+  h1 { font-size: 1.5rem; }
+  .controls { padding: 8px 10px; }
+  .search-wrap { flex: 1; }
 }
 
 /* ── HERO ── */

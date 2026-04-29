@@ -1,0 +1,3427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HYKU Synthesising Code &amp; Craft</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Special+Gothic+Expanded+One&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0b0b0f;
+  --surface: #111117;
+  --surface2: #18181f;
+  --border: #222230;
+  --accent: #6f6af8;
+  --accent2: #f8a96f;
+  --accent3: #6ff8c0;
+  --text: #e8e8f0;
+  --text-muted: #6b6b80;
+  --text-dim: #3a3a50;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+
+/* ── GOOGLE MATERIAL SYMBOLS ── */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 20;
+  vertical-align: middle;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+
+
+
+
+
+
+
+
+
+/* ── H1 ── */
+h1 {
+  font-family: 'Special Gothic Expanded One', sans-serif;
+  font-size: clamp(2.2rem, 5vw, 4.2rem);
+  font-weight: 400;
+  line-height: 1.0;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+h1 span { color: var(--accent); }
+.h1-static { color: var(--text); }
+
+
+/* ── CONTROLS ── */
+.controls {
+  padding: 12px 20px 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: rgba(11,11,15,0.96);
+  backdrop-filter: blur(12px);
+}
+.controls-logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.search-wrap {
+  position: relative;
+  flex: 0 0 240px;
+  margin-right: 4px;
+}
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim);
+  font-size: 13px;
+  pointer-events: none;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+#search {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px 8px 30px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+#search::placeholder { color: var(--text-dim); }
+#search:focus { border-color: var(--accent); }
+.filter-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+  justify-content: center;
+  scrollbar-width: none;
+}
+.filter-group::-webkit-scrollbar { display: none; }
+.filter-group::-webkit-scrollbar { display: none; }
+.filter-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.filter-btn:hover { border-color: var(--accent); color: var(--text); }
+.filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.results-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* ── LAYOUT ── */
+main {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  min-height: calc(100vh - 200px);
+  align-items: start;
+}
+
+/* ── SIDEBAR ── */
+nav {
+  border-right: 1px solid var(--border);
+  padding: 32px 0;
+  position: sticky;
+  top: var(--controls-h, 61px);
+  height: calc(100vh - var(--controls-h, 61px));
+  overflow-y: auto;
+  background: var(--bg);
+}
+nav::-webkit-scrollbar { width: 3px; }
+nav::-webkit-scrollbar-track { background: transparent; }
+nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+.nav-section { padding: 0 0 24px; }
+.nav-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 0 24px 8px;
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 24px;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all 0.15s;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+}
+.nav-link:hover { color: var(--text); background: var(--surface); }
+.nav-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(111,106,248,0.06); }
+.nav-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+  flex-shrink: 0;
+}
+.nav-link.active .nav-dot { background: var(--accent); }
+.nav-count {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+/* ── CONTENT ── */
+.content { padding: 40px 40px 40px 40px; }
+
+/* ── CATEGORY SECTION ── */
+.category-section { margin-bottom: 72px; }
+.category-section.hidden { display: none; }
+.category-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.category-title {
+  font-family: 'Special Gothic Expanded One', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.category-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--surface2);
+  color: var(--text-dim);
+}
+
+/* ── SKILL CARDS ── */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.skill-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+  cursor: default;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.skill-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.skill-card:hover { border-color: rgba(111,106,248,0.3); background: var(--surface2); transform: translateY(-1px); }
+.skill-card:hover::before { opacity: 1; }
+.skill-card.hidden { display: none; }
+.skill-cmd {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.skill-trigger {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.skill-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+.skill-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  flex: 1;
+  align-content: flex-start;
+}
+.skill-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(111,106,248,0.08);
+  color: var(--accent);
+  border: 1px solid rgba(111,106,248,0.15);
+}
+.skill-tag.warn { background: rgba(248,169,111,0.08); color: var(--accent2); border-color: rgba(248,169,111,0.15); }
+.skill-tag.go { background: rgba(111,248,192,0.08); color: var(--accent3); border-color: rgba(111,248,192,0.15); }
+
+/* ── COPY BUTTON ── */
+.copy-btn {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text-muted);
+  cursor: pointer;
+  opacity: 1;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+  text-align: center;
+}
+.copy-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+.copy-btn.copied { background: rgba(111,248,192,0.12); border-color: var(--accent3); color: var(--accent3); }
+
+/* ── CODE COPY ── */
+.code-copy-wrap { position: relative; margin-top: 8px; }
+.code-copy-wrap .gs-code,
+.code-copy-wrap .connector-code { margin-top: 0; padding-right: 72px; }
+.code-copy-btn {
+  position: absolute;
+  top: 8px; right: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.code-copy-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+.code-copy-btn.copied { background: rgba(111,248,192,0.12); border-color: var(--accent3); color: var(--accent3); }
+
+/* ── PIPELINES ── */
+.pipelines {
+  margin-top: 80px;
+  padding-top: 48px;
+  border-top: 1px solid var(--border);
+}
+.pipelines-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+.pipelines-toggle h2 {
+  font-family: 'Special Gothic Expanded One', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.pipelines-toggle:hover h2 { color: var(--text); }
+.toggle-icon {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.pipelines-body { display: none; margin-top: 32px; }
+.pipelines-body.open { display: block; }
+.pipeline-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+.pipeline-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+}
+.pipeline-name {
+  font-family: 'Special Gothic Expanded One', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+}
+.pipeline-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+.pipeline-steps { display: flex; flex-direction: column; }
+.pipeline-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.pipeline-step:last-child { border-bottom: none; }
+.step-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  min-width: 20px;
+  padding-top: 2px;
+}
+.step-cmd {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--accent);
+  min-width: 140px;
+}
+.step-note { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+/* ── EMPTY STATE ── */
+.empty-state { display: none; padding: 80px 48px; text-align: center; }
+.empty-state.visible { display: block; }
+.empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.3; }
+.empty-text { font-size: 14px; color: var(--text-dim); }
+
+/* ── GETTING STARTED ── */
+.getting-started {
+  margin-bottom: 72px;
+  padding-bottom: 56px;
+  border-bottom: 1px solid var(--border);
+}
+.gs-header { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.gs-title {
+  font-family: 'Special Gothic Expanded One', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent3);
+}
+.gs-intro { font-size: 14px; color: var(--text-muted); line-height: 1.75; max-width: 680px; margin-bottom: 40px; }
+.gs-intro strong { color: var(--text); font-weight: 600; }
+.gs-sources {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+.gs-source-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.gs-source-card:hover { border-color: rgba(111,248,192,0.25); transform: translateY(-1px); }
+.gs-source-header { display: flex; flex-direction: column; gap: 0; }
+.gs-source-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+.gs-source-name { font-size: 14px; font-weight: 600; color: var(--text); }
+
+.gs-source-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+.gs-source-skills { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.gs-source-skill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(111,248,192,0.07);
+  color: var(--accent3);
+  border: 1px solid rgba(111,248,192,0.12);
+}
+.gs-source-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  text-decoration: none;
+  margin-top: 4px;
+  transition: color 0.15s;
+}
+.gs-source-link:hover { color: var(--accent3); }
+.gs-install {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 32px;
+}
+.gs-install-title {
+  font-family: 'Special Gothic Expanded One', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+.gs-steps { display: flex; flex-direction: column; }
+.gs-step {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: start;
+}
+.gs-step:last-child { border-bottom: none; }
+.gs-step-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); padding-top: 2px; }
+.gs-step-label { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.gs-step-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 10px; }
+.gs-step-desc a { color: var(--accent); text-decoration: none; }
+.gs-step-desc a:hover { color: var(--accent3); }
+.gs-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  color: var(--accent3);
+  overflow-x: auto;
+  white-space: pre;
+  display: block;
+}
+.gs-tab-group {
+  display: flex;
+  margin-top: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.gs-tab {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 7px 14px;
+  background: var(--bg);
+  border: none;
+  border-right: 1px solid var(--border);
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.gs-tab:last-child { border-right: none; }
+.gs-tab.active { background: var(--surface2); color: var(--accent3); }
+.gs-tab:hover:not(.active) { color: var(--text-muted); }
+.gs-code-block { display: none; }
+.gs-code-block.active { display: block; }
+
+
+/* ── NAV COLLAPSIBLE ── */
+.nav-label-collapsible {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  padding-right: 16px;
+}
+.nav-label-collapsible:hover .nav-collapse-icon { opacity: 0.8 !important; }
+.nav-collapsible-body {
+  overflow: hidden;
+  max-height: 500px;
+  transition: max-height 0.28s ease, opacity 0.22s ease;
+  opacity: 1;
+}
+.nav-collapsible-body.collapsed {
+  max-height: 0;
+  opacity: 0;
+}
+.nav-collapse-icon {
+  transition: transform 0.22s ease;
+  flex-shrink: 0;
+}
+.nav-collapsible-body.collapsed ~ .nav-collapse-icon,
+.collapsed-label .nav-collapse-icon {
+  transform: rotate(-90deg);
+}
+
+
+/* ── GLOSSARY DEFINITION LIST ── */
+.gl-list {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.gl-row {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.12s;
+}
+.gl-row:last-child { border-bottom: none; }
+.gl-row:hover { background: var(--surface2); }
+.gl-row.hidden { display: none; }
+.gl-term {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  padding: 13px 20px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  letter-spacing: -0.01em;
+  line-height: 1.5;
+}
+.gl-def {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 13px 20px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+
+/* ── HOW TO USE ── */
+.how-to-use {
+  background: rgba(111,106,248,0.06);
+  border: 1px solid rgba(111,106,248,0.18);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+}
+.how-to-use-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+.how-to-use-body {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+.how-to-use-body code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  background: rgba(111,106,248,0.1);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+
+/* ── SECTION INTRO ── */
+.section-intro {
+  margin-bottom: 32px;
+}
+.section-intro-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.75;
+  max-width: 640px;
+  border-left: 2px solid var(--border);
+  padding-left: 16px;
+}
+
+
+/* ── SCROLL OFFSET ── */
+.category-section,
+.getting-started,
+.extra-section,
+#pipelines,
+#connectors,
+#context-files,
+#what-are-skills,
+#tips,
+#glossary,
+[id^="glossary-"] {
+  scroll-margin-top: 120px;
+}
+
+
+.pipelines-heading {
+  font-family: 'Special Gothic Expanded One', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+
+.controls-top-row {
+  display: contents; /* behaves as if not there on desktop */
+}
+
+
+/* ── HAMBURGER + MOBILE DRAWER ── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+}
+.hamburger span {
+  display: block;
+  width: 16px;
+  height: 1.5px;
+  background: var(--text-muted);
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+.hamburger:hover span { background: var(--text); }
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(4.5px, 4.5px); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(4.5px, -4.5px); }
+
+.mobile-nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 300;
+  backdrop-filter: blur(2px);
+}
+.mobile-nav-overlay.open { display: block; }
+
+.mobile-nav-drawer {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 280px;
+  background: var(--bg);
+  border-right: 1px solid var(--border);
+  z-index: 400;
+  transform: translateX(-100%);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.mobile-nav-drawer.open { transform: translateX(0); }
+
+.mobile-nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.mobile-nav-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.mobile-nav-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+.mobile-nav-close:hover { color: var(--text); }
+.mobile-nav-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 0;
+}
+
+
+/* ── BACK TO TOP ── */
+.back-to-top {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, background 0.15s, border-color 0.15s;
+  z-index: 150;
+}
+.back-to-top.visible { opacity: 1; pointer-events: auto; }
+.back-to-top:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* ── EXTRA SECTIONS ── */
+.extra-section {
+  margin-top: 72px;
+  padding-top: 48px;
+  border-top: 1px solid var(--border);
+}
+.extra-header { margin-bottom: 32px; }
+.extra-title {
+  font-family: 'Special Gothic Expanded One', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+.extra-desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; max-width: 620px; }
+
+/* ── CONNECTORS ── */
+.connector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.connector-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+}
+.connector-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent2), transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.connector-card:hover::before { opacity: 1; }
+.connector-card:hover { border-color: rgba(248,169,111,0.2); transform: translateY(-1px); }
+.connector-featured {
+  grid-column: 1 / -1;
+  border-color: rgba(248,169,111,0.2);
+  background: linear-gradient(135deg, var(--surface) 0%, rgba(248,169,111,0.03) 100%);
+}
+.connector-top { display: flex; align-items: center; gap: 10px; }
+.connector-name { font-size: 15px; font-weight: 700; color: var(--text); }
+.connector-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(248,169,111,0.1);
+  color: var(--accent2);
+  border: 1px solid rgba(248,169,111,0.2);
+}
+.connector-badge-neutral { background: rgba(111,106,248,0.08); color: var(--accent); border-color: rgba(111,106,248,0.15); }
+.connector-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+.connector-caps { display: flex; flex-direction: column; gap: 4px; }
+.connector-cap {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding-left: 12px;
+  position: relative;
+}
+.connector-cap::before {
+  content: '–';
+  position: absolute;
+  left: 0;
+  color: var(--text-dim);
+}
+.connector-req { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); padding: 6px 10px; background: var(--surface2); border-radius: 6px; }
+.connector-note { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent3); opacity: 0.7; }
+.connector-install { display: flex; flex-direction: column; gap: 4px; }
+.connector-install-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); }
+.connector-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--accent3);
+  overflow-x: auto;
+  white-space: pre;
+  display: block;
+}
+
+/* ── CONTEXT FILES ── */
+.context-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.context-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+}
+.context-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.context-card:hover {
+  border-color: rgba(111,106,248,0.3);
+  background: var(--surface2);
+  transform: translateY(-1px);
+}
+.context-card:hover::before { opacity: 1; }
+.context-file { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 500; color: var(--accent); }
+.context-purpose { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.context-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+.context-example { margin-top: 4px; }
+.context-example-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); margin-bottom: 6px; }
+.context-location { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+.context-location a { color: var(--accent); text-decoration: none; }
+
+/* ── WHAT ARE SKILLS ── */
+.explainer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.explainer-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.explainer-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); }
+.explainer-label { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.explainer-body { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+
+/* ── TIPS ── */
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.tip-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+  cursor: default;
+}
+.tip-card:hover { background: var(--surface2); transform: translateY(-1px); }
+.tip-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+.tip-card:hover::before { opacity: 1; }
+.tip-warn::before { background: linear-gradient(90deg, var(--accent2), transparent); }
+.tip-go::before   { background: linear-gradient(90deg, var(--accent3), transparent); }
+.tip-warn:hover { border-color: rgba(248,169,111,0.3); }
+.tip-go:hover   { border-color: rgba(111,248,192,0.3); }
+.tip-icon { font-size: 14px; color: var(--text-dim); }
+.tip-warn .tip-icon { color: var(--accent2); }
+.tip-go   .tip-icon { color: var(--accent3); }
+.tip-label { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.tip-body  { font-size: 13px; color: var(--text-muted); line-height: 1.65; flex: 1; }
+.tip-body code { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); background: var(--surface2); padding: 1px 5px; border-radius: 3px; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.footer-text { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); }
+
+/* ── RESPONSIVE ── */
+
+
+/* ── TABLET (≤900px) ── */
+@media (max-width: 900px) {
+  /* Layout */
+  main { grid-template-columns: minmax(0, 1fr); }
+  nav { display: none; }
+  .content { padding: 32px 24px; }
+
+  /* Header */
+  header { padding: 48px 24px 40px; min-height: 380px; }
+  h1 { white-space: normal; }
+
+  /* Controls — keep single row, hide filters, show hamburger */
+  .controls {
+    padding: 10px 16px;
+    gap: 10px;
+    height: auto;
+  }
+  .filter-group { display: none; }
+  .hamburger { display: flex; }
+  .search-wrap { flex: 1; max-width: 240px; margin-left: auto; }
+
+  /* Grids */
+  .skills-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+  .connector-grid, .context-grid, .explainer-grid, .tips-grid { grid-template-columns: 1fr; }
+  .connector-featured { grid-column: 1; }
+  .gs-sources { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .pipeline-grid { grid-template-columns: 1fr; }
+  #glossary .skills-grid { grid-template-columns: repeat(2, 1fr); }
+  .gl-row { grid-template-columns: 160px 1fr; }
+
+  /* Footer */
+  footer { padding: 24px; flex-direction: column; align-items: flex-start; gap: 12px; }
+
+  /* Misc */
+  .gs-install { padding: 20px; }
+  .gs-step { grid-template-columns: 24px 1fr; }
+}
+
+/* ── MOBILE (≤600px) ── */
+@media (max-width: 600px) {
+  /* Header */
+  header { padding: 32px 20px; min-height: 300px; }
+  h1 { font-size: 1.9rem; }
+  .header-desc { font-size: 13px; }
+
+  /* Controls */
+  .controls { padding: 10px 16px; }
+  .search-wrap { flex: 0 0 160px; }
+  #search { font-size: 12px; }
+
+  /* Content */
+  .content { padding: 20px 16px; }
+  .skill-card { padding: 18px; }
+
+  /* Grids */
+  .skills-grid { grid-template-columns: 1fr; }
+  #glossary .skills-grid { grid-template-columns: 1fr; }
+  .gl-row { grid-template-columns: 1fr; gap: 0; }
+  .gl-term { border-right: none; border-bottom: 1px solid var(--border); padding: 10px 16px 6px; }
+  .gl-def { padding: 6px 16px 10px; }
+
+  /* Install guide */
+  .gs-install { padding: 16px; }
+  .gs-step { grid-template-columns: 24px 1fr; gap: 10px; }
+  .gs-code { font-size: 11px; }
+  .gs-tab { font-size: 10px; padding: 5px 8px; }
+
+  /* Footer */
+  footer { padding: 20px 16px; }
+  .footer-text { font-size: 10px; }
+}
+
+/* ── HERO ── */
+.meta-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  background: rgba(17,17,23,0.75);
+  backdrop-filter: blur(6px);
+}
+.meta-pill strong { color: var(--text); }
+
+#hero-header {
+  position: relative;
+  width: 100%;
+  height: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+#hero-header canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.vig {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse 60% 50% at 50% 50%,
+    rgba(11,11,15,.65) 0%, rgba(11,11,15,.05) 65%, transparent 100%);
+}
+.header-content {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 48px;
+  width: 100%;
+}
+.header-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 22px;
+}
+h1 {
+  font-family: 'Special Gothic Expanded One', sans-serif;
+  font-size: clamp(2.6rem, 5.5vw, 5rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  margin-bottom: 22px;
+}
+h1 span { color: var(--accent); }
+.h1-static { color: var(--text); }
+.header-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 460px;
+  line-height: 1.75;
+  margin-bottom: 28px;
+  text-align: center;
+}
+.header-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+</style>
+
+  <!-- Google Material Symbols weight 100, outlined -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" />
+</head>
+<body>
+<header id="hero-header">
+  <canvas id="c"></canvas>
+  <div class="vig"></div>
+  <div class="header-content">
+    <div class="header-eyebrow">HYKU Reference Guide V1.0</div>
+    <h1><span class="h1-static">Synthesising Code &amp; Craft</span></h1>
+    <p class="header-desc">A comprehensive reference for every skill available when designing and building interfaces with Claude from first concept to production ship.</p>
+    <div class="header-meta">
+      <div class="meta-pill"><strong>47</strong> Skills documented</div>
+      <div class="meta-pill"><strong>10</strong> skill groups</div>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="controls-top-row">
+  <div class="controls-logo">
+    <a href="#" style="display:flex;align-items:center;text-decoration:none">
+      <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" height="22" width="auto" viewBox="0 0 497.8 100">
+  <defs><style>.st0{fill:#fff}.st1{fill:#7e08fa}</style></defs>
+  <polygon class="st0" points="273.8 0 248.5 38.2 223.2 0 195.5 0 234.7 59 208.4 98.6 236.1 98.6 301.5 0 273.8 0"/>
+  <path class="st1" d="M0,98.6L65.4,0h27.6S27.6,98.6,27.6,98.6H0Z"/>
+  <path class="st0" d="M99.8,98.6V0h24.2v37.9h40.6V0h24.2v98.6h-24.2v-38.6h-40.6v38.6h-24.2Z"/>
+  <path class="st0" d="M452.9,100c-9.1,0-17-1.8-23.7-5.4-6.7-3.6-11.9-8.8-15.6-15.4-3.7-6.7-5.5-14.5-5.5-23.5V0h24.2v55.6c0,4.4.8,8.3,2.5,11.6,1.7,3.3,4.1,5.9,7.2,7.7,3.2,1.8,6.8,2.7,10.9,2.7s7.9-.9,10.9-2.7c3-1.8,5.4-4.3,7.1-7.7,1.7-3.3,2.5-7.2,2.5-11.6V0h24.2v55.6c0,8.9-1.9,16.7-5.6,23.4-3.7,6.7-8.9,11.8-15.6,15.5-6.7,3.7-14.6,5.5-23.7,5.5Z"/>
+  <polygon class="st0" points="414.1 98.6 375 39.6 401.2 0 373.6 0 332.4 62.1 332.4 0 308.2 0 308.2 98.6 332.4 98.6 335.8 98.6 361.2 60.4 386.5 98.6 414.1 98.6"/>
+</svg>
+    </a>
+  </div>
+  </div>
+  <div class="filter-group" id="filter-group">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="glossary">Glossary</button>
+    <button class="filter-btn" data-filter="ui-quality">UI Quality</button>
+    <button class="filter-btn" data-filter="design">Design</button>
+    <button class="filter-btn" data-filter="motion">Motion</button>
+    <button class="filter-btn" data-filter="a11y">A11y</button>
+    <button class="filter-btn" data-filter="layout">Layout</button>
+    <button class="filter-btn" data-filter="systems">Systems</button>
+    <button class="filter-btn" data-filter="intelligence">Intelligence</button>
+    <button class="filter-btn" data-filter="ux">UX</button>
+    <button class="filter-btn" data-filter="brand">Brand</button>
+    <button class="filter-btn" data-filter="platform">Platform</button>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="search" placeholder="Search…" autocomplete="off">
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Open navigation">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+
+<!-- Mobile nav drawer -->
+<div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+<div class="mobile-nav-drawer" id="mobile-nav-drawer">
+  <div class="mobile-nav-header">
+    <span class="mobile-nav-title">Navigation</span>
+    <button class="mobile-nav-close" id="mobile-nav-close" aria-label="Close">✕</button>
+  </div>
+  <div class="mobile-nav-content" id="mobile-nav-content">
+    <!-- Populated by JS from desktop nav -->
+  </div>
+</div>
+
+<main>
+  <nav id="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-label"><span class="material-symbols-outlined" style="font-size:18px;margin-right:6px;opacity:0.7;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">rocket_launch</span>Start here</div>
+      <a class="nav-link" data-target="getting-started"><span class="nav-dot" style="background:var(--accent3)"></span>Getting Started</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label nav-label-collapsible" data-section="categories-nav">
+        <span class="material-symbols-outlined" style="font-size:18px;margin-right:6px;opacity:0.7;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">category</span>
+        Skills
+        <span class="nav-collapse-icon material-symbols-outlined" style="margin-left:auto;font-size:14px;opacity:0.4;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">expand_more</span>
+      </div>
+      <div class="nav-collapsible-body" id="categories-nav">
+        <a class="nav-link active" data-target="ui-quality"><span class="nav-dot"></span>UI Quality &amp; Polish<span class="nav-count">6</span></a>
+        <a class="nav-link" data-target="design"><span class="nav-dot"></span>Design Enhancement<span class="nav-count">6</span></a>
+        <a class="nav-link" data-target="motion"><span class="nav-dot"></span>Motion &amp; Interaction<span class="nav-count">4</span></a>
+        <a class="nav-link" data-target="a11y"><span class="nav-dot"></span>Accessibility<span class="nav-count">4</span></a>
+        <a class="nav-link" data-target="layout"><span class="nav-dot"></span>Layout &amp; Performance<span class="nav-count">2</span></a>
+        <a class="nav-link" data-target="systems"><span class="nav-dot"></span>Design Systems<span class="nav-count">3</span></a>
+        <a class="nav-link" data-target="intelligence"><span class="nav-dot"></span>Design Intelligence<span class="nav-count">6</span></a>
+        <a class="nav-link" data-target="ux"><span class="nav-dot"></span>UX &amp; Onboarding<span class="nav-count">2</span></a>
+        <a class="nav-link" data-target="brand"><span class="nav-dot"></span>Brand &amp; Marketing<span class="nav-count">5</span></a>
+        <a class="nav-link" data-target="platform"><span class="nav-dot"></span>Platform-Specific<span class="nav-count">1</span></a>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label"><span class="material-symbols-outlined" style="font-size:18px;margin-right:6px;opacity:0.7;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">account_tree</span>Pipelines</div>
+      <a class="nav-link" data-target="pipelines"><span class="nav-dot"></span>Checklists &amp; Pipelines</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label nav-label-collapsible" data-section="glossary-nav">
+        <span class="material-symbols-outlined" style="font-size:18px;margin-right:6px;opacity:0.7;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">auto_stories</span>
+        Glossary
+        <span class="nav-collapse-icon material-symbols-outlined" style="margin-left:auto;font-size:14px;opacity:0.4;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">expand_more</span>
+      </div>
+      <div class="nav-collapsible-body" id="glossary-nav">
+        <a class="nav-link" data-target="glossary-strategy"><span class="nav-dot"></span>Strategy<span class="nav-count">22</span></a>
+        <a class="nav-link" data-target="glossary-components"><span class="nav-dot"></span>Components<span class="nav-count">32</span></a>
+        <a class="nav-link" data-target="glossary-states"><span class="nav-dot"></span>States<span class="nav-count">11</span></a>
+        <a class="nav-link" data-target="glossary-visual"><span class="nav-dot"></span>Visual<span class="nav-count">20</span></a>
+        <a class="nav-link" data-target="glossary-motion"><span class="nav-dot"></span>Motion<span class="nav-count">14</span></a>
+        <a class="nav-link" data-target="glossary-systems"><span class="nav-dot"></span>Systems<span class="nav-count">19</span></a>
+        <a class="nav-link" data-target="glossary-research"><span class="nav-dot"></span>Research<span class="nav-count">15</span></a>
+        <a class="nav-link" data-target="glossary-a11y"><span class="nav-dot"></span>A11y<span class="nav-count">11</span></a>
+        <a class="nav-link" data-target="glossary-business"><span class="nav-dot"></span>Business<span class="nav-count">18</span></a>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label"><span class="material-symbols-outlined" style="font-size:18px;margin-right:6px;opacity:0.7;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">more_horiz</span>More</div>
+      <a class="nav-link" data-target="connectors"><span class="nav-dot" style="background:var(--accent2)"></span>Connectors</a>
+      <a class="nav-link" data-target="context-files"><span class="nav-dot"></span>Context Files</a>
+      <a class="nav-link" data-target="what-are-skills"><span class="nav-dot"></span>How Skills Work</a>
+      <a class="nav-link" data-target="tips"><span class="nav-dot"></span>Tips &amp; Gotchas</a>
+    </div>
+  </nav>
+
+  <div class="content">
+
+    <!-- GETTING STARTED -->
+    <section class="getting-started" id="getting-started">
+      <div class="gs-header">
+        <div class="gs-title">Getting Started</div>
+      </div>
+
+      <div class="how-to-use">
+        <div class="how-to-use-label">
+          <span class="material-symbols-outlined" style="font-size:15px;margin-right:6px;vertical-align:middle;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">info</span>
+          How to use this guide
+        </div>
+        <p class="how-to-use-body">Skills are Claude Code plugins they live in your <code>~/.claude/skills/</code> folder and activate automatically when you start a session. Browse the categories to understand what each skill does and when to reach for it. Use the search bar to find skills by name, use-case, or keyword. Once a skill is installed, invoke it by describing your task naturally or by referencing the command name directly in Claude Code.</p>
+      </div>
+
+      <p class="gs-intro">
+        These skills are <strong>open-source Claude Code plugins</strong> structured instruction sets that load into Claude and unlock specialised design capabilities. They come from a handful of well-maintained GitHub repos. Download the ones you need, drop them into your <code style="font-family:'JetBrains Mono',monospace;font-size:12px;colour:var(--accent);background:var(--surface);padding:2px 6px;border-radius:4px">~/.claude/skills/</code> folder, and they're available in every Claude Code session.
+      </p>
+
+      <!-- SOURCE CARDS -->
+      <div class="gs-sources">
+
+        <div class="gs-source-card">
+          <div class="gs-source-header">
+            <div class="gs-source-eyebrow">pbakaus</div>
+            <div class="gs-source-name">Impeccable</div>
+          </div>
+          <div class="gs-source-desc">The core design quality toolkit 18 steering commands for auditing, polishing, animating, and hardening Claude-generated UIs. Built on top of Anthropic's frontend-design skill.</div>
+          <div class="gs-source-skills">
+            <span class="gs-source-skill">/audit</span>
+            <span class="gs-source-skill">/polish</span>
+            <span class="gs-source-skill">/normalize</span>
+            <span class="gs-source-skill">/harden</span>
+            <span class="gs-source-skill">/animate</span>
+            <span class="gs-source-skill">+13 more</span>
+          </div>
+          <a class="gs-source-link" href="https://github.com/pbakaus/impeccable" target="_blank"><span class="material-symbols-outlined" style="font-size:14px;margin-right:5px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">arrow_outward</span>Grab this skill</a>
+        </div>
+
+        <div class="gs-source-card">
+          <div class="gs-source-header">
+            <div class="gs-source-eyebrow">Anthropic (official)</div>
+            <div class="gs-source-name">frontend-design</div>
+          </div>
+          <div class="gs-source-desc">Anthropic's own skill that gives Claude a clear design direction before writing any code. Prevents the generic AI aesthetic Inter fonts, purple gradients, predictable layouts.</div>
+          <div class="gs-source-skills">
+            <span class="gs-source-skill">/frontend-design</span>
+          </div>
+          <a class="gs-source-link" href="https://github.com/anthropics/claude-code/tree/main/plugins/frontend-design" target="_blank"><span class="material-symbols-outlined" style="font-size:14px;margin-right:5px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">arrow_outward</span>Grab this skill</a>
+        </div>
+
+        <div class="gs-source-card">
+          <div class="gs-source-header">
+            <div class="gs-source-eyebrow">nextlevelbuilder</div>
+            <div class="gs-source-name">UI/UX Pro Max</div>
+          </div>
+          <div class="gs-source-desc">A searchable database of 50+ styles, 161 colour palettes, 57 font pairings, and 99 UX guidelines plus the full CKM suite of brand, design-system, slides, and banner skills.</div>
+          <div class="gs-source-skills">
+            <span class="gs-source-skill">/ui-ux-pro-max</span>
+            <span class="gs-source-skill">/ckm-brand</span>
+            <span class="gs-source-skill">/ckm-design-system</span>
+            <span class="gs-source-skill">+more</span>
+          </div>
+          <a class="gs-source-link" href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill" target="_blank"><span class="material-symbols-outlined" style="font-size:14px;margin-right:5px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">arrow_outward</span>Grab this skill</a>
+        </div>
+
+        <div class="gs-source-card">
+          <div class="gs-source-header">
+            <div class="gs-source-eyebrow">Anthropic (official)</div>
+            <div class="gs-source-name">Anthropic Skills Repo</div>
+          </div>
+          <div class="gs-source-desc">The official Anthropic skills repository. Home to frontend-design and other first-party skills. The canonical source for Anthropic-maintained Claude skills.</div>
+          <div class="gs-source-skills">
+            <span class="gs-source-skill">/frontend-design</span>
+            <span class="gs-source-skill">+ more</span>
+          </div>
+          <a class="gs-source-link" href="https://github.com/anthropics/skills" target="_blank"><span class="material-symbols-outlined" style="font-size:14px;margin-right:5px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">arrow_outward</span>Grab this skill</a>
+        </div>
+
+        <div class="gs-source-card">
+          <div class="gs-source-header">
+            <div class="gs-source-eyebrow">Emil Kowalski</div>
+            <div class="gs-source-name">emilkowalski/skill</div>
+          </div>
+          <div class="gs-source-desc">A skill file based on the articles on Emil Kowalski's personal site. Covers animations, design, code, performance and the invisible details that separate good interfaces from great ones. Recommended for case-by-case use rather than always-on.</div>
+          <div class="gs-source-skills">
+            <span class="gs-source-skill">/emil-design-eng</span>
+          </div>
+          <a class="gs-source-link" href="https://github.com/emilkowalski/skill" target="_blank"><span class="material-symbols-outlined" style="font-size:14px;margin-right:5px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">arrow_outward</span>Grab this skill</a>
+        </div>
+
+      </div>
+
+      <!-- INSTALL STEPS -->
+      <div class="gs-install">
+        <div class="gs-install-title">Installation Guide</div>
+        <div class="gs-steps">
+
+          <div class="gs-step">
+            <div class="gs-step-num">01</div>
+            <div class="gs-step-body">
+              <div class="gs-step-label">Make sure Claude Code is installed</div>
+              <div class="gs-step-desc">Skills require <a href="https://claude.ai/code" target="_blank">Claude Code</a> Anthropic's terminal-based coding agent. Install it globally via npm if you haven't already.</div>
+              <code class="gs-code">npm install -g @anthropic-ai/claude-code</code>
+            </div>
+          </div>
+
+          <div class="gs-step">
+            <div class="gs-step-num">02</div>
+            <div class="gs-step-body">
+              <div class="gs-step-label">Create your skills folder</div>
+              <div class="gs-step-desc">Skills live in <code style="font-family:'JetBrains Mono',monospace;font-size:12px;colour:var(--accent)">~/.claude/skills/</code> for global access across all projects, or <code style="font-family:'JetBrains Mono',monospace;font-size:12px;colour:var(--accent)">.claude/skills/</code> inside a project for project-scoped skills.</div>
+              <code class="gs-code">mkdir -p ~/.claude/skills</code>
+            </div>
+          </div>
+
+          <div class="gs-step">
+            <div class="gs-step-num">03</div>
+            <div class="gs-step-body">
+              <div class="gs-step-label">Download and install skills</div>
+              <div class="gs-step-desc">Choose your preferred method. The plugin command is the fastest; manual install gives you more control.</div>
+              <div class="gs-tab-group" id="install-tabs">
+                <button class="gs-tab active" data-tab="plugin">Claude Code plugin</button>
+                <button class="gs-tab" data-tab="manual">Manual (git clone)</button>
+                <button class="gs-tab" data-tab="npm">npm CLI</button>
+              </div>
+              <code class="gs-code gs-code-block active" id="tab-plugin"># Install Impeccable (UI quality commands)
+/plugin marketplace add pbakaus/impeccable
+
+# Install Anthropic's frontend-design
+/plugin marketplace add anthropics/claude-code
+
+# Install UI/UX Pro Max
+/plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill
+
+# Install Emil Kowalski's design engineering skill
+npx skills add emilkowalski/skill</code>
+              <code class="gs-code gs-code-block" id="tab-manual"># Clone Impeccable and copy skill to your folder
+git clone https://github.com/pbakaus/impeccable
+cp -r impeccable/dist/claude/.claude/skills/impeccable ~/.claude/skills/
+
+# Clone frontend-design from Anthropic
+git clone https://github.com/anthropics/claude-code
+cp -r claude-code/plugins/frontend-design/skills/frontend-design ~/.claude/skills/
+
+# Clone UI/UX Pro Max
+git clone https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
+cp -r ui-ux-pro-max-skill/.claude/skills/ui-ux-pro-max ~/.claude/skills/
+
+# Clone Emil Kowalski's skill
+git clone https://github.com/emilkowalski/skill
+cp -r skill ~/.claude/skills/emil-design-eng</code>
+              <code class="gs-code gs-code-block" id="tab-npm"># Install the UI/UX Pro Max CLI globally
+npm install -g uipro-cli
+
+# Then run from your project directory
+cd /path/to/your/project
+uipro init --ai claude</code>
+            </div>
+          </div>
+
+          <div class="gs-step">
+            <div class="gs-step-num">04</div>
+            <div class="gs-step-body">
+              <div class="gs-step-label">Verify installation</div>
+              <div class="gs-step-desc">Open Claude Code in your terminal and check that skills are available. Then try invoking one.</div>
+              <code class="gs-code"># Start Claude Code
+claude
+
+# List installed skills
+/skills list
+
+# Try a skill ask Claude to build something
+"Build me a landing page for a SaaS product, dark and editorial tone"</code>
+            </div>
+          </div>
+
+          <div class="gs-step">
+            <div class="gs-step-num">05</div>
+            <div class="gs-step-body">
+              <div class="gs-step-label">Skills activate automatically</div>
+              <div class="gs-step-desc">You don't need to invoke skills by command name. Just describe what you want Claude reads the installed SKILL.md files and activates the right one based on context. You can also invoke them explicitly using the <code style="font-family:'JetBrains Mono',monospace;font-size:12px;colour:var(--accent)">/command</code> syntax shown in this guide.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- UI QUALITY -->
+    <section class="category-section" id="ui-quality" data-category="ui-quality">
+      <div class="category-header">
+        <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">auto_fix_high</span>UI Quality &amp; Polish</div>
+        <div class="category-badge">6 skills</div>
+      </div>
+        <p class="section-intro-text" style="margin-bottom:20px;padding-left:0;border-left:none;font-size:13px">Quality skills work best when applied at the right stage, not all at once. Use /baseline-ui at the start, /audit mid-project, /harden before launch, and /polish last.</p>
+      <div class="skills-grid">
+        <div class="skill-card" data-cmd="/baseline-ui" data-category="ui-quality" data-tags="setup quality slop-prevention">
+          <div class="skill-cmd">/baseline-ui</div>
+          <div class="skill-trigger">Prevent AI-generated slop before it starts</div>
+          <div class="skill-desc">Run at project start to enforce quality standards upfront. Establishes a baseline that prevents generic AI aesthetic from creeping into the build.</div>
+          <div class="skill-tags"><span class="skill-tag go">Run first</span><span class="skill-tag">Setup</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/normalize" data-category="ui-quality" data-tags="design system drift alignment">
+          <div class="skill-cmd">/normalize</div>
+          <div class="skill-trigger">Realign after design drift accumulates</div>
+          <div class="skill-desc">When components diverge from your design system over time, normalize realigns them. Use mid-project when things start to feel inconsistent.</div>
+          <div class="skill-tags"><span class="skill-tag">Mid-project</span><span class="skill-tag">Design system</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/distill" data-category="ui-quality" data-tags="overbuilt cluttered simplify">
+          <div class="skill-cmd">/distill</div>
+          <div class="skill-trigger">Strip back when UI is overbuilt or cluttered</div>
+          <div class="skill-desc">Removes elements that don't earn their place. Use when the interface feels busy, bloated, or trying too hard. Forces honest editing.</div>
+          <div class="skill-tags"><span class="skill-tag warn">Destructive</span><span class="skill-tag">Simplification</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/audit" data-category="ui-quality" data-tags="QA accessibility performance responsive scoring">
+          <div class="skill-cmd">/audit</div>
+          <div class="skill-trigger">Mid-project QA pass across all dimensions</div>
+          <div class="skill-desc">Returns a scored report (P0–P3) across accessibility, performance, theming, and responsive behaviour. Essential before handoff or launch prep.</div>
+          <div class="skill-tags"><span class="skill-tag">P0–P3 scoring</span><span class="skill-tag">A11y</span><span class="skill-tag">Performance</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/harden" data-category="ui-quality" data-tags="error handling edge cases overflow launch">
+          <div class="skill-cmd">/harden</div>
+          <div class="skill-trigger">Add error handling and edge case coverage before launch</div>
+          <div class="skill-desc">Patches overflow, empty states, error boundaries, and edge cases. Turns a demo-quality UI into a production-safe one.</div>
+          <div class="skill-tags"><span class="skill-tag warn">Pre-launch</span><span class="skill-tag">Edge cases</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/polish" data-category="ui-quality" data-tags="final shipping alignment spacing micro-details">
+          <div class="skill-cmd">/polish</div>
+          <div class="skill-trigger">The final 10% pass before shipping</div>
+          <div class="skill-desc">Tightens alignment, spacing, and micro-details that separate good from exceptional. Run last after all functional work is complete.</div>
+          <div class="skill-tags"><span class="skill-tag go">Run last</span><span class="skill-tag">Spacing</span><span class="skill-tag">Details</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESIGN ENHANCEMENT -->
+    <section class="category-section" id="design" data-category="design">
+      <div class="category-header">
+        <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">palette</span>Design Enhancement</div>
+        <div class="category-badge">6 skills</div>
+      </div>
+        <p class="section-intro-text" style="margin-bottom:20px;padding-left:0;border-left:none;font-size:13px">Use these once your structure is solid and you need to shift the visual character. Each skill moves the design in a specific direction, so pick the one that matches what is wrong.</p>
+      <div class="skills-grid">
+        <div class="skill-card" data-cmd="/bolder" data-category="design" data-tags="contrast weight presence generic">
+          <div class="skill-cmd">/bolder</div>
+          <div class="skill-trigger">UI feels safe, generic, or forgettable</div>
+          <div class="skill-desc">Increases contrast, visual weight, and presence. Use when the design is technically correct but has no point of view or impact.</div>
+          <div class="skill-tags"><span class="skill-tag">Contrast</span><span class="skill-tag">Visual weight</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/quieter" data-category="design" data-tags="overwhelming aggressive tone down">
+          <div class="skill-cmd">/quieter</div>
+          <div class="skill-trigger">UI feels aggressive or overwhelming</div>
+          <div class="skill-desc">Tones down intensity without sacrificing quality. Pulls back colour, density, or animation to create breathing room.</div>
+          <div class="skill-tags"><span class="skill-tag">Restraint</span><span class="skill-tag">Balance</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/colourize" data-category="design" data-tags="colour grey monochromatic palette">
+          <div class="skill-cmd">/colourize</div>
+          <div class="skill-trigger">UI is too grey or monochromatic</div>
+          <div class="skill-desc">Applies strategic colour intent not random colour, but purposeful use that communicates hierarchy, state, and brand.</div>
+          <div class="skill-tags"><span class="skill-tag">Colour</span><span class="skill-tag">Hierarchy</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/arrange" data-category="design" data-tags="layout spacing grid hierarchy monotonous">
+          <div class="skill-cmd">/arrange</div>
+          <div class="skill-trigger">Layout feels monotonous or flat</div>
+          <div class="skill-desc">Fixes spacing, grid systems, and visual hierarchy. Addresses layouts that are structurally correct but visually dull.</div>
+          <div class="skill-tags"><span class="skill-tag">Grid</span><span class="skill-tag">Hierarchy</span><span class="skill-tag">Spacing</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/typeset" data-category="design" data-tags="typography fonts sizing weight readability">
+          <div class="skill-cmd">/typeset</div>
+          <div class="skill-trigger">Font or text hierarchy issues</div>
+          <div class="skill-desc">Fixes typographic hierarchy, sizing, weight, and readability. Addresses everything from heading scales to body copy legibility.</div>
+          <div class="skill-tags"><span class="skill-tag">Typography</span><span class="skill-tag">Readability</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/delight" data-category="design" data-tags="personality memorable moments joy functional">
+          <div class="skill-cmd">/delight</div>
+          <div class="skill-trigger">Functional but joyless needs personality</div>
+          <div class="skill-desc">Injects memorable moments, unexpected interactions, and personality. Use when the UI works well but feels robotic or impersonal.</div>
+          <div class="skill-tags"><span class="skill-tag go">Personality</span><span class="skill-tag">Memorable</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MOTION -->
+    <section class="category-section" id="motion" data-category="motion">
+      <div class="category-header">
+        <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">animation</span>Motion &amp; Interaction</div>
+        <div class="category-badge">4 skills</div>
+      </div>
+        <p class="section-intro-text" style="margin-bottom:20px;padding-left:0;border-left:none;font-size:13px">Always design before you implement. Run /interaction-design first to define what should move and why, then /animate to build it. Motion without rationale becomes noise.</p>
+      <div class="skills-grid">
+        <div class="skill-card" data-cmd="/interaction-design" data-category="motion" data-tags="transitions feedback patterns design before animate">
+          <div class="skill-cmd">/interaction-design</div>
+          <div class="skill-trigger">Define transitions and feedback patterns before animating</div>
+          <div class="skill-desc">The thinking step before /animate. Designs what should move, when, and why. Run this first to avoid aimless animation.</div>
+          <div class="skill-tags"><span class="skill-tag go">Run before /animate</span><span class="skill-tag">Patterns</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/animate" data-category="motion" data-tags="motion animation purposeful after interaction">
+          <div class="skill-cmd">/animate</div>
+          <div class="skill-trigger">Add purposeful motion after patterns are defined</div>
+          <div class="skill-desc">Implements animation based on the interaction patterns defined. Purposeful, not decorative motion that communicates state and guides attention.</div>
+          <div class="skill-tags"><span class="skill-tag warn">Run after /interaction-design</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/fixing-motion-performance" data-category="motion" data-tags="janky performance GPU will-change smooth">
+          <div class="skill-cmd">/fixing-motion-performance</div>
+          <div class="skill-trigger">Animations are janky or causing performance issues</div>
+          <div class="skill-desc">Applies GPU layer promotion, will-change hints, and compositor-friendly properties. Fixes frame drops and visual stutters in existing animations.</div>
+          <div class="skill-tags"><span class="skill-tag">Performance</span><span class="skill-tag">GPU</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/overdrive" data-category="motion" data-tags="showcase shaders spring physics scroll-driven 60fps ambitious">
+          <div class="skill-cmd">/overdrive</div>
+          <div class="skill-trigger">Showcase-level UI needing extraordinary motion</div>
+          <div class="skill-desc">Shaders, spring physics, scroll-driven 60fps effects. Not for production apps for portfolio pieces, launch pages, and ambitious demos where motion IS the experience.</div>
+          <div class="skill-tags"><span class="skill-tag warn">Showcase only</span><span class="skill-tag">Shaders</span><span class="skill-tag">Spring physics</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACCESSIBILITY -->
+    <section class="category-section" id="a11y" data-category="a11y">
+      <div class="category-header">
+        <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">accessibility_new</span>Accessibility &amp; Standards</div>
+        <div class="category-badge">4 skills</div>
+      </div>
+        <p class="section-intro-text" style="margin-bottom:20px;padding-left:0;border-left:none;font-size:13px">Accessibility works best as a sequence. Fix UX copy with /clarify first, run a full audit with /wcag-audit-patterns, then patch specific issues with /fixing-accessibility.</p>
+      <div class="skills-grid">
+        <div class="skill-card" data-cmd="/clarify" data-category="a11y" data-tags="UX copy labels errors confusing messages">
+          <div class="skill-cmd">/clarify</div>
+          <div class="skill-trigger">Confusing labels or error messages</div>
+          <div class="skill-desc">Fixes UX writing before it reaches the formal audit. Rewrites ambiguous labels, placeholder text, and error messages for clarity.</div>
+          <div class="skill-tags"><span class="skill-tag go">Run before audit</span><span class="skill-tag">UX copy</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/wcag-audit-patterns" data-category="a11y" data-tags="WCAG 2.2 ARIA keyboard navigation colour contrast formal">
+          <div class="skill-cmd">/wcag-audit-patterns</div>
+          <div class="skill-trigger">Formal WCAG 2.2 accessibility audit</div>
+          <div class="skill-desc">Comprehensive audit covering ARIA roles, keyboard navigation, colour contrast ratios, focus management, and screen reader compatibility.</div>
+          <div class="skill-tags"><span class="skill-tag">WCAG 2.2</span><span class="skill-tag">ARIA</span><span class="skill-tag">Keyboard nav</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/fixing-accessibility" data-category="a11y" data-tags="patch fix known issues components">
+          <div class="skill-cmd">/fixing-accessibility</div>
+          <div class="skill-trigger">Patch known accessibility issues in existing components</div>
+          <div class="skill-desc">Targeted fixes for identified a11y problems. Use after /wcag-audit-patterns returns specific issues focussed remediation rather than full audit.</div>
+          <div class="skill-tags"><span class="skill-tag warn">Use after audit</span><span class="skill-tag">Targeted fixes</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/web-design-guidelines" data-category="a11y" data-tags="code review best practices standards">
+          <div class="skill-cmd">/web-design-guidelines</div>
+          <div class="skill-trigger">Code review against web best practice standards</div>
+          <div class="skill-desc">Reviews UI code against established web design and implementation guidelines. Broader than a11y covers semantics, performance patterns, and standards compliance.</div>
+          <div class="skill-tags"><span class="skill-tag">Code review</span><span class="skill-tag">Standards</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LAYOUT -->
+    <section class="category-section" id="layout" data-category="layout">
+      <div class="category-header">
+        <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">dashboard</span>Layout &amp; Performance</div>
+        <div class="category-badge">2 skills</div>
+      </div>
+        <p class="section-intro-text" style="margin-bottom:20px;padding-left:0;border-left:none;font-size:13px">Use /adapt when a desktop build needs to work across devices, and /optimize when performance scores or user feedback reveal slowness. Both are remediation skills, not upfront ones.</p>
+      <div class="skills-grid">
+        <div class="skill-card" data-cmd="/adapt" data-category="layout" data-tags="responsive cross-device breakpoints touch mobile">
+          <div class="skill-cmd">/adapt</div>
+          <div class="skill-trigger">Desktop-only UI needs cross-device support</div>
+          <div class="skill-desc">Adds breakpoints, fluid layouts, and appropriate touch targets. Transforms desktop-first designs into genuinely responsive experiences.</div>
+          <div class="skill-tags"><span class="skill-tag">Responsive</span><span class="skill-tag">Mobile</span><span class="skill-tag">Touch</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/optimise" data-category="layout" data-tags="slow laggy bundle size rendering image loading performance">
+          <div class="skill-cmd">/optimise</div>
+          <div class="skill-trigger">UI is slow or laggy</div>
+          <div class="skill-desc">Diagnoses and fixes bundle size, rendering bottlenecks, and image loading issues. Performance-first fixes, not cosmetic patches.</div>
+          <div class="skill-tags"><span class="skill-tag">Bundle size</span><span class="skill-tag">Rendering</span><span class="skill-tag">Images</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESIGN SYSTEMS -->
+    <section class="category-section" id="systems" data-category="systems">
+      <div class="category-header">
+        <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">hub</span>Design Systems</div>
+        <div class="category-badge">3 skills</div>
+      </div>
+        <p class="section-intro-text" style="margin-bottom:20px;padding-left:0;border-left:none;font-size:13px">Design systems skills pay off on long-lived projects. Build your token architecture first with /ckm-design-system, consolidate patterns with /extract, and manage shadcn/ui components with /shadcn.</p>
+      <div class="skills-grid">
+        <div class="skill-card" data-cmd="/ckm-design-system" data-category="systems" data-tags="tokens primitive semantic component layers system scratch">
+          <div class="skill-cmd">/ckm-design-system</div>
+          <div class="skill-trigger">Building a token system from scratch</div>
+          <div class="skill-desc">Constructs a full token architecture: primitive → semantic → component layers. The correct foundation for any serious design system.</div>
+          <div class="skill-tags"><span class="skill-tag">Tokens</span><span class="skill-tag">Primitives</span><span class="skill-tag">Architecture</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/extract" data-category="systems" data-tags="reusable components tokens consolidate patterns codebase">
+          <div class="skill-cmd">/extract</div>
+          <div class="skill-trigger">Repeated patterns in the codebase</div>
+          <div class="skill-desc">Identifies and consolidates repeated UI patterns into reusable components and design tokens. Reduces drift and improves maintainability.</div>
+          <div class="skill-tags"><span class="skill-tag">DRY</span><span class="skill-tag">Refactor</span><span class="skill-tag">Tokens</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/shadcn" data-category="systems" data-tags="shadcn ui component library add style fix">
+          <div class="skill-cmd">/shadcn</div>
+          <div class="skill-trigger">Any shadcn/ui project</div>
+          <div class="skill-desc">Handles adding, searching, fixing, and styling shadcn components. The single skill to reach for on any project using shadcn/ui.</div>
+          <div class="skill-tags"><span class="skill-tag">shadcn/ui</span><span class="skill-tag">Components</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESIGN INTELLIGENCE -->
+    <section class="category-section" id="intelligence" data-category="intelligence">
+      <div class="category-header">
+        <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">psychology</span>Full-Stack Design Intelligence</div>
+        <div class="category-badge">6 skills</div>
+      </div>
+        <p class="section-intro-text" style="margin-bottom:20px;padding-left:0;border-left:none;font-size:13px">Start every significant build with /design-lab to explore directions before committing. These skills are the heaviest hitters in the set and produce the most distinctive output.</p>
+      <div class="skills-grid">
+        <div class="skill-card" data-cmd="/design-lab" data-category="intelligence" data-tags="directions compare design interview before building">
+          <div class="skill-cmd">/design-lab</div>
+          <div class="skill-trigger">Explore directions before committing to a build</div>
+          <div class="skill-desc">Generates 5 design directions to compare, plus runs a design interview to surface constraints. Use before any UI build starts to avoid expensive pivots.</div>
+          <div class="skill-tags"><span class="skill-tag go">Run before building</span><span class="skill-tag">Exploration</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/ui-ux-pro-max" data-category="intelligence" data-tags="major decisions 50 styles 161 palettes 99 guidelines">
+          <div class="skill-cmd">/ui-ux-pro-max</div>
+          <div class="skill-trigger">Major design decisions needing comprehensive options</div>
+          <div class="skill-desc">50+ styles, 161 palettes, 99 UX guidelines at your disposal. For significant design decisions where you need to see the full possibility space.</div>
+          <div class="skill-tags"><span class="skill-tag">50+ styles</span><span class="skill-tag">161 palettes</span><span class="skill-tag">99 guidelines</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/frontend-design" data-category="intelligence" data-tags="new UI scratch production-grade avoid generic">
+          <div class="skill-cmd">/frontend-design</div>
+          <div class="skill-trigger">Building new UI from scratch</div>
+          <div class="skill-desc">Production-grade UI generation with a deliberate aesthetic POV. Avoids generic AI aesthetic outputs distinctive, well-considered interfaces.</div>
+          <div class="skill-tags"><span class="skill-tag go">Build from scratch</span><span class="skill-tag">Production</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/interface-design" data-category="intelligence" data-tags="dashboards admin panels tools data-heavy NOT marketing">
+          <div class="skill-cmd">/interface-design</div>
+          <div class="skill-trigger">Dashboards, admin panels, and complex tools</div>
+          <div class="skill-desc">Optimised for data-heavy, function-first interfaces. Not for marketing sites this is for tools, dashboards, and admin surfaces where clarity and density matter.</div>
+          <div class="skill-tags"><span class="skill-tag">Dashboards</span><span class="skill-tag">Tools</span><span class="skill-tag warn">Not for marketing</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/canvas-design" data-category="intelligence" data-tags="static visual PNG PDF posters brand assets design art">
+          <div class="skill-cmd">/canvas-design</div>
+          <div class="skill-trigger">Static visual output posters, brand assets</div>
+          <div class="skill-desc">Generates static visual output (PNG/PDF) rather than interactive UI. Use for posters, brand assets, print design, and design art.</div>
+          <div class="skill-tags"><span class="skill-tag">Static</span><span class="skill-tag">Print</span><span class="skill-tag">Brand assets</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/emil-design-eng" data-category="intelligence" data-tags="high polish invisible details product UI craftsmanship animations">
+          <div class="skill-cmd">/emil-design-eng</div>
+          <div class="skill-trigger">High-polish product UI the invisible details</div>
+          <div class="skill-desc">Based on Emil Kowalski's articles on design engineering. Covers animations, micro-interactions, optical adjustments, and the invisible quality signals that separate good interfaces from great ones. Use on a case-by-case basis.</div>
+          <div class="skill-tags"><span class="skill-tag go">Craftsmanship</span><span class="skill-tag">Animations</span><span class="skill-tag">Micro-details</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- UX -->
+    <section class="category-section" id="ux" data-category="ux">
+      <div class="category-header">
+        <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">person_check</span>UX &amp; Onboarding</div>
+        <div class="category-badge">2 skills</div>
+      </div>
+        <p class="section-intro-text" style="margin-bottom:20px;padding-left:0;border-left:none;font-size:13px">/critique evaluates what you have built. /onboard shapes what new users encounter first. One looks back, the other looks forward.</p>
+      <div class="skills-grid">
+        <div class="skill-card" data-cmd="/critique" data-category="ux" data-tags="UX evaluation scoring persona testing after design built">
+          <div class="skill-cmd">/critique</div>
+          <div class="skill-trigger">UX evaluation after a design is built</div>
+          <div class="skill-desc">Runs a scored UX evaluation with persona-based testing. Returns structured feedback on usability, clarity, flow, and friction points.</div>
+          <div class="skill-tags"><span class="skill-tag warn">Post-build</span><span class="skill-tag">Personas</span><span class="skill-tag">Scoring</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/onboard" data-category="ux" data-tags="first-run experience empty states activation flows new user">
+          <div class="skill-cmd">/onboard</div>
+          <div class="skill-trigger">Building a first-run or activation experience</div>
+          <div class="skill-desc">Designs empty states, activation flows, and new user experiences. Covers the critical first-use moment that determines whether users stick.</div>
+          <div class="skill-tags"><span class="skill-tag">Empty states</span><span class="skill-tag">Activation</span><span class="skill-tag">Onboarding</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BRAND -->
+    <section class="category-section" id="brand" data-category="brand">
+      <div class="category-header">
+        <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">campaign</span>Brand &amp; Marketing</div>
+        <div class="category-badge">5 skills</div>
+      </div>
+        <p class="section-intro-text" style="margin-bottom:20px;padding-left:0;border-left:none;font-size:13px">Start brand work with /ckm-brand to establish strategic foundations before moving to execution. The other skills in this group build on top of that groundwork.</p>
+      <div class="skills-grid">
+        <div class="skill-card" data-cmd="/ckm-brand" data-category="brand" data-tags="brand strategy voice messaging visual identity">
+          <div class="skill-cmd">/ckm-brand</div>
+          <div class="skill-trigger">Brand strategy voice, messaging, visual identity</div>
+          <div class="skill-desc">Strategic brand work: tone of voice, messaging frameworks, positioning, and visual identity direction. Foundation layer before any design execution.</div>
+          <div class="skill-tags"><span class="skill-tag">Strategy</span><span class="skill-tag">Voice</span><span class="skill-tag">Positioning</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/ckm-design" data-category="brand" data-tags="full design logo tokens corporate identity 55 styles">
+          <div class="skill-cmd">/ckm-design</div>
+          <div class="skill-trigger">Full design projects logo, tokens, corporate identity</div>
+          <div class="skill-desc">Logo generation across 55 styles, design tokens, and corporate identity systems. The full-service design skill for brand execution.</div>
+          <div class="skill-tags"><span class="skill-tag">Logo</span><span class="skill-tag">55 styles</span><span class="skill-tag">Identity</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/ckm-banner-design" data-category="brand" data-tags="marketing social ads hero banners print">
+          <div class="skill-cmd">/ckm-banner-design</div>
+          <div class="skill-trigger">Marketing assets social, ads, hero banners</div>
+          <div class="skill-desc">Social media assets, advertising banners, hero images, and print materials. Consistent brand execution across marketing touchpoints.</div>
+          <div class="skill-tags"><span class="skill-tag">Social</span><span class="skill-tag">Ads</span><span class="skill-tag">Print</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/ckm-slides" data-category="brand" data-tags="presentations HTML decks Chart.js strategic">
+          <div class="skill-cmd">/ckm-slides</div>
+          <div class="skill-trigger">Strategic presentations and slide decks</div>
+          <div class="skill-desc">Builds strategic HTML presentations with Chart.js integration. Better output than PowerPoint templates narrative-driven, visually considered decks.</div>
+          <div class="skill-tags"><span class="skill-tag">Presentations</span><span class="skill-tag">Chart.js</span><span class="skill-tag">HTML</span></div>
+        </div>
+        <div class="skill-card" data-cmd="/ckm-ui-styling" data-category="brand" data-tags="shadcn Tailwind accessible styling components">
+          <div class="skill-cmd">/ckm-ui-styling</div>
+          <div class="skill-trigger">shadcn + Tailwind component styling</div>
+          <div class="skill-desc">Accessible, brand-accurate component styling for shadcn/Tailwind projects. Where /shadcn handles structure, this handles the aesthetic layer.</div>
+          <div class="skill-tags"><span class="skill-tag">shadcn</span><span class="skill-tag">Tailwind</span><span class="skill-tag">Accessible</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLATFORM -->
+    <section class="category-section" id="platform" data-category="platform">
+      <div class="category-header">
+        <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">devices</span>Platform-Specific</div>
+        <div class="category-badge">1 skill</div>
+      </div>
+        <p class="section-intro-text" style="margin-bottom:20px;padding-left:0;border-left:none;font-size:13px">Platform-specific skills follow the conventions of their operating systems. Use /swiftui-ui-patterns for any iOS or macOS work to stay aligned with Apple Human Interface Guidelines.</p>
+      <div class="skills-grid">
+        <div class="skill-card" data-cmd="/swiftui-ui-patterns" data-category="platform" data-tags="iOS macOS SwiftUI Apple native">
+          <div class="skill-cmd">/swiftui-ui-patterns</div>
+          <div class="skill-trigger">Any iOS or macOS SwiftUI work</div>
+          <div class="skill-desc">Native Apple platform UI patterns, conventions, and best practices for SwiftUI. Keeps you aligned with HIG and platform expectations.</div>
+          <div class="skill-tags"><span class="skill-tag">iOS</span><span class="skill-tag">macOS</span><span class="skill-tag">SwiftUI</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EMPTY STATE -->
+    <div class="empty-state" id="empty-state">
+      <div class="empty-icon">⌕</div>
+      <div class="empty-text">No skills match your search.</div>
+    </div>
+
+    <!-- PIPELINES -->
+    <div class="pipelines" id="pipelines">
+      <p class="section-intro-text" style="margin-bottom:24px">Pipelines are recommended sequences for common design and build workflows. Order matters running skills out of sequence produces weaker results. Each pipeline has been arranged to avoid redundant work.</p>
+
+      <h2 class="pipelines-heading">Checklists &amp; Pipelines</h2>
+      <div class="pipelines-body open" id="pipelines-body">
+        <div class="pipeline-grid">
+          <div class="pipeline-card">
+            <div class="pipeline-name">Full UI Build Pipeline</div>
+            <div class="pipeline-desc">The recommended order for building a new interface from scratch.</div>
+            <div class="pipeline-steps">
+              <div class="pipeline-step"><span class="step-num">01</span><span class="step-cmd">/teach-impeccable</span><span class="step-note">Save design context once at project start</span></div>
+              <div class="pipeline-step"><span class="step-num">02</span><span class="step-cmd">/design-lab</span><span class="step-note">Explore 5 directions before committing</span></div>
+              <div class="pipeline-step"><span class="step-num">03</span><span class="step-cmd">/baseline-ui</span><span class="step-note">Enforce quality standards upfront</span></div>
+              <div class="pipeline-step"><span class="step-num">04</span><span class="step-cmd">/frontend-design</span><span class="step-note">Build the interface</span></div>
+              <div class="pipeline-step"><span class="step-num">05</span><span class="step-cmd">/animate</span><span class="step-note">Add purposeful motion</span></div>
+              <div class="pipeline-step"><span class="step-num">06</span><span class="step-cmd">/polish</span><span class="step-note">Final pass before ship</span></div>
+            </div>
+          </div>
+          <div class="pipeline-card">
+            <div class="pipeline-name">Pre-Ship Checklist</div>
+            <div class="pipeline-desc">Run in order before any production deployment.</div>
+            <div class="pipeline-steps">
+              <div class="pipeline-step"><span class="step-num">01</span><span class="step-cmd">/audit</span><span class="step-note">Find all issues across all dimensions</span></div>
+              <div class="pipeline-step"><span class="step-num">02</span><span class="step-cmd">/fixing-accessibility</span><span class="step-note">Patch identified a11y problems</span></div>
+              <div class="pipeline-step"><span class="step-num">03</span><span class="step-cmd">/fixing-metadata</span><span class="step-note">SEO and OG tags</span></div>
+              <div class="pipeline-step"><span class="step-num">04</span><span class="step-cmd">/fixing-motion-performance</span><span class="step-note">Smooth out animation jank</span></div>
+              <div class="pipeline-step"><span class="step-num">05</span><span class="step-cmd">/polish</span><span class="step-note">Final pass</span></div>
+            </div>
+          </div>
+          <div class="pipeline-card">
+            <div class="pipeline-name">Motion Pipeline</div>
+            <div class="pipeline-desc">Adding motion correctly design before implementation.</div>
+            <div class="pipeline-steps">
+              <div class="pipeline-step"><span class="step-num">01</span><span class="step-cmd">/interaction-design</span><span class="step-note">Define transition patterns first</span></div>
+              <div class="pipeline-step"><span class="step-num">02</span><span class="step-cmd">/animate</span><span class="step-note">Implement based on patterns</span></div>
+              <div class="pipeline-step"><span class="step-num">03</span><span class="step-cmd">/fixing-motion-performance</span><span class="step-note">Fix any performance issues</span></div>
+            </div>
+          </div>
+          <div class="pipeline-card">
+            <div class="pipeline-name">Accessibility Pipeline</div>
+            <div class="pipeline-desc">Full a11y pass from copy to code.</div>
+            <div class="pipeline-steps">
+              <div class="pipeline-step"><span class="step-num">01</span><span class="step-cmd">/clarify</span><span class="step-note">Fix UX copy and labels first</span></div>
+              <div class="pipeline-step"><span class="step-num">02</span><span class="step-cmd">/wcag-audit-patterns</span><span class="step-note">Full WCAG 2.2 audit</span></div>
+              <div class="pipeline-step"><span class="step-num">03</span><span class="step-cmd">/fixing-accessibility</span><span class="step-note">Patch identified issues</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- GLOSSARY -->
+    <div class="extra-section" id="glossary">
+      <div class="extra-header">
+        <div class="extra-title">Glossary</div>
+        <div class="extra-desc">Core design and UX/UI terms organised by discipline. Searchable alongside skills.</div>
+      </div>
+
+      <div class="category-section" id="glossary-strategy" data-category="glossary-strategy" style="margin-bottom:48px">
+        <div class="category-header">
+          <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">psychology</span>Strategy</div>
+          <div class="category-badge">22 terms</div>
+        </div>
+        <dl class="gl-list">
+        <div class="gl-row" data-cmd="Accessibility (A11y)" data-category="glossary-strategy" data-tags="glossary strategy accessibility (a11y)">
+          <dt class="gl-term">Accessibility (A11y)</dt>
+          <dd class="gl-def">Designing for people with disabilities, ensuring everyone can perceive, understand, and navigate the product.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Cognitive Load" data-category="glossary-strategy" data-tags="glossary strategy cognitive load">
+          <dt class="gl-term">Cognitive Load</dt>
+          <dd class="gl-def">The total amount of mental effort being used in working memory.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Design Sprint" data-category="glossary-strategy" data-tags="glossary strategy design sprint">
+          <dt class="gl-term">Design Sprint</dt>
+          <dd class="gl-def">A five-day structured process for solving design problems through ideation, prototyping, and user testing.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Design Thinking" data-category="glossary-strategy" data-tags="glossary strategy design thinking">
+          <dt class="gl-term">Design Thinking</dt>
+          <dd class="gl-def">A human-centred problem-solving approach with five stages: Empathise, Define, Ideate, Prototype, and Test.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Edge Case" data-category="glossary-strategy" data-tags="glossary strategy edge case">
+          <dt class="gl-term">Edge Case</dt>
+          <dd class="gl-def">A rare or extreme situation that a design must account for, such as an unusually long username.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Empathy Map" data-category="glossary-strategy" data-tags="glossary strategy empathy map">
+          <dt class="gl-term">Empathy Map</dt>
+          <dd class="gl-def">A tool used to articulate what we know about a particular type of user, creating shared understanding.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Happy Path" data-category="glossary-strategy" data-tags="glossary strategy happy path">
+          <dt class="gl-term">Happy Path</dt>
+          <dd class="gl-def">The ideal user journey where everything goes right and no errors occur.</dd>
+        </div>
+        <div class="gl-row" data-cmd="High-fidelity (Hi-fi)" data-category="glossary-strategy" data-tags="glossary strategy high-fidelity (hi-fi)">
+          <dt class="gl-term">High-fidelity (Hi-fi)</dt>
+          <dd class="gl-def">Detailed, near-final designs that closely represent the finished product, including real typography, colour, and interactions.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Information Architecture (IA)" data-category="glossary-strategy" data-tags="glossary strategy information architecture (ia)">
+          <dt class="gl-term">Information Architecture (IA)</dt>
+          <dd class="gl-def">The structural design of shared information environments; how content is organised and labelled.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Lean UX" data-category="glossary-strategy" data-tags="glossary strategy lean ux">
+          <dt class="gl-term">Lean UX</dt>
+          <dd class="gl-def">An approach that prioritises rapid iteration and validated learning over extensive documentation, reducing waste in the design process.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Low-fidelity (Lo-fi)" data-category="glossary-strategy" data-tags="glossary strategy low-fidelity (lo-fi)">
+          <dt class="gl-term">Low-fidelity (Lo-fi)</dt>
+          <dd class="gl-def">Early-stage rough designs or wireframes with minimal visual detail, used for quick iteration and structural feedback.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Mental Model" data-category="glossary-strategy" data-tags="glossary strategy mental model">
+          <dt class="gl-term">Mental Model</dt>
+          <dd class="gl-def">What the user believes about how a system works. Good UX aligns the interface with this model.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Pain Point" data-category="glossary-strategy" data-tags="glossary strategy pain point">
+          <dt class="gl-term">Pain Point</dt>
+          <dd class="gl-def">A specific problem faced by current or prospective customers in the marketplace.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Prototype" data-category="glossary-strategy" data-tags="glossary strategy prototype">
+          <dt class="gl-term">Prototype</dt>
+          <dd class="gl-def">A simulation of the final product used to test interactions and flows before development. Ranges from low-fidelity clickable mockups to high-fidelity coded versions.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Sitemap" data-category="glossary-strategy" data-tags="glossary strategy sitemap">
+          <dt class="gl-term">Sitemap</dt>
+          <dd class="gl-def">A hierarchical diagram showing all pages or screens in a product and how they relate to one another.</dd>
+        </div>
+        <div class="gl-row" data-cmd="User Experience (UX)" data-category="glossary-strategy" data-tags="glossary strategy user experience (ux)">
+          <dt class="gl-term">User Experience (UX)</dt>
+          <dd class="gl-def">The internal experience a person has as they interact with every aspect of a company's services and products.</dd>
+        </div>
+        <div class="gl-row" data-cmd="User Flow" data-category="glossary-strategy" data-tags="glossary strategy user flow">
+          <dt class="gl-term">User Flow</dt>
+          <dd class="gl-def">A diagram mapping the steps a user takes to complete a specific task within a product, from entry point to completion.</dd>
+        </div>
+        <div class="gl-row" data-cmd="User Interface (UI)" data-category="glossary-strategy" data-tags="glossary strategy user interface (ui)">
+          <dt class="gl-term">User Interface (UI)</dt>
+          <dd class="gl-def">The graphical layout of an application, consisting of the buttons users click, the text they read, and the images.</dd>
+        </div>
+        <div class="gl-row" data-cmd="User Journey Map" data-category="glossary-strategy" data-tags="glossary strategy user journey map">
+          <dt class="gl-term">User Journey Map</dt>
+          <dd class="gl-def">A visualisation of the process a person goes through to accomplish a goal.</dd>
+        </div>
+        <div class="gl-row" data-cmd="User Persona" data-category="glossary-strategy" data-tags="glossary strategy user persona">
+          <dt class="gl-term">User Persona</dt>
+          <dd class="gl-def">A fictional character created to represent a user type that might use a site or brand in a similar way.</dd>
+        </div>
+        <div class="gl-row" data-cmd="User Story" data-category="glossary-strategy" data-tags="glossary strategy user story">
+          <dt class="gl-term">User Story</dt>
+          <dd class="gl-def">A short, plain-language description of a feature from the user's perspective. Format: 'As a [user], I want to [action] so that [benefit].'</dd>
+        </div>
+        <div class="gl-row" data-cmd="Wireframe" data-category="glossary-strategy" data-tags="glossary strategy wireframe">
+          <dt class="gl-term">Wireframe</dt>
+          <dd class="gl-def">A low-fidelity skeletal layout showing the structure and placement of elements without visual design. The blueprint stage of UI design.</dd>
+        </div>
+        </dl>
+      </div>
+
+      <div class="category-section" id="glossary-components" data-category="glossary-components" style="margin-bottom:48px">
+        <div class="category-header">
+          <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">widgets</span>Components</div>
+          <div class="category-badge">32 terms</div>
+        </div>
+        <dl class="gl-list">
+        <div class="gl-row" data-cmd="Accordion" data-category="glossary-components" data-tags="glossary components accordion">
+          <dt class="gl-term">Accordion</dt>
+          <dd class="gl-def">A list of headers that expand to reveal more content when clicked.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Badge" data-category="glossary-components" data-tags="glossary components badge">
+          <dt class="gl-term">Badge</dt>
+          <dd class="gl-def">A small visual indicator, usually a number or dot, showing unread or new items.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Banner / Alert" data-category="glossary-components" data-tags="glossary components banner / alert">
+          <dt class="gl-term">Banner / Alert</dt>
+          <dd class="gl-def">A full-width message strip used to communicate important system-level information or status.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Bottom Sheet" data-category="glossary-components" data-tags="glossary components bottom sheet">
+          <dt class="gl-term">Bottom Sheet</dt>
+          <dd class="gl-def">A panel that slides up from the bottom of the screen on mobile, revealing additional content or actions.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Breadcrumbs" data-category="glossary-components" data-tags="glossary components breadcrumbs">
+          <dt class="gl-term">Breadcrumbs</dt>
+          <dd class="gl-def">Secondary navigation showing the user's current location within a hierarchy.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Button" data-category="glossary-components" data-tags="glossary components button">
+          <dt class="gl-term">Button</dt>
+          <dd class="gl-def">The most fundamental interactive element. Triggers an action. Variants include primary, secondary, ghost, destructive, and icon-only.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Card" data-category="glossary-components" data-tags="glossary components card">
+          <dt class="gl-term">Card</dt>
+          <dd class="gl-def">A flexible container grouping related content (image, title, text, action) into one unit.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Carousel" data-category="glossary-components" data-tags="glossary components carousel">
+          <dt class="gl-term">Carousel</dt>
+          <dd class="gl-def">A sliding container used to browse through multiple pieces of content horizontally.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Checkbox" data-category="glossary-components" data-tags="glossary components checkbox">
+          <dt class="gl-term">Checkbox</dt>
+          <dd class="gl-def">A square control allowing users to select one or multiple options.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Chip / Tag" data-category="glossary-components" data-tags="glossary components chip / tag">
+          <dt class="gl-term">Chip / Tag</dt>
+          <dd class="gl-def">A compact element representing an attribute, filter, or selection. Often dismissible.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Contextual Menu" data-category="glossary-components" data-tags="glossary components contextual menu">
+          <dt class="gl-term">Contextual Menu</dt>
+          <dd class="gl-def">A menu that appears on right-click or long-press, offering actions relevant to the selected item.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Data Table" data-category="glossary-components" data-tags="glossary components data table">
+          <dt class="gl-term">Data Table</dt>
+          <dd class="gl-def">A structured grid for displaying, sorting, filtering, and interacting with tabular data sets.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Date Picker" data-category="glossary-components" data-tags="glossary components date picker">
+          <dt class="gl-term">Date Picker</dt>
+          <dd class="gl-def">A UI control allowing users to select a date or date range from a calendar interface.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Drawer" data-category="glossary-components" data-tags="glossary components drawer">
+          <dt class="gl-term">Drawer</dt>
+          <dd class="gl-def">A panel that slides in from the side of the screen, typically used for navigation or supplementary content.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Dropdown" data-category="glossary-components" data-tags="glossary components dropdown">
+          <dt class="gl-term">Dropdown</dt>
+          <dd class="gl-def">A menu that reveals a list of selectable options when activated.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Form" data-category="glossary-components" data-tags="glossary components form">
+          <dt class="gl-term">Form</dt>
+          <dd class="gl-def">A container grouping input fields that collects and submits user data. Includes labels, inputs, validation, and a submit action.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Hamburger Menu" data-category="glossary-components" data-tags="glossary components hamburger menu">
+          <dt class="gl-term">Hamburger Menu</dt>
+          <dd class="gl-def">A three-line icon that toggles a hidden menu, common on mobile.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Input Field" data-category="glossary-components" data-tags="glossary components input field">
+          <dt class="gl-term">Input Field</dt>
+          <dd class="gl-def">A space where users can enter text or data.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Input Mask" data-category="glossary-components" data-tags="glossary components input mask">
+          <dt class="gl-term">Input Mask</dt>
+          <dd class="gl-def">A format that forces a user to enter data in a specific way, e.g. a phone number.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Loader / Spinner" data-category="glossary-components" data-tags="glossary components loader / spinner">
+          <dt class="gl-term">Loader / Spinner</dt>
+          <dd class="gl-def">An animation indicating that the system is busy processing.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Modal" data-category="glossary-components" data-tags="glossary components modal">
+          <dt class="gl-term">Modal</dt>
+          <dd class="gl-def">A dialog box that overlays the main UI and requires an action before closing.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Navbar" data-category="glossary-components" data-tags="glossary components navbar">
+          <dt class="gl-term">Navbar</dt>
+          <dd class="gl-def">A horizontal bar at the top of a screen containing primary links.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Pagination" data-category="glossary-components" data-tags="glossary components pagination">
+          <dt class="gl-term">Pagination</dt>
+          <dd class="gl-def">A navigation pattern splitting large content sets into discrete pages with controls to move between them.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Progress Bar" data-category="glossary-components" data-tags="glossary components progress bar">
+          <dt class="gl-term">Progress Bar</dt>
+          <dd class="gl-def">A visual indicator showing how far through a process or task the user is.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Radio Button" data-category="glossary-components" data-tags="glossary components radio button">
+          <dt class="gl-term">Radio Button</dt>
+          <dd class="gl-def">A circular control allowing users to select exactly one option from a set.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Search Bar" data-category="glossary-components" data-tags="glossary components search bar">
+          <dt class="gl-term">Search Bar</dt>
+          <dd class="gl-def">An input field specifically for querying content, often with autocomplete and filter support.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Sidebar" data-category="glossary-components" data-tags="glossary components sidebar">
+          <dt class="gl-term">Sidebar</dt>
+          <dd class="gl-def">A vertical navigation column on the left or right side of a page.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Stepper" data-category="glossary-components" data-tags="glossary components stepper">
+          <dt class="gl-term">Stepper</dt>
+          <dd class="gl-def">A control to increase or decrease a numerical value, usually with + or - buttons.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Tab Bar" data-category="glossary-components" data-tags="glossary components tab bar">
+          <dt class="gl-term">Tab Bar</dt>
+          <dd class="gl-def">A row of buttons allowing users to switch between distinct views within the same context.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Toast / Snackbar" data-category="glossary-components" data-tags="glossary components toast / snackbar">
+          <dt class="gl-term">Toast / Snackbar</dt>
+          <dd class="gl-def">A small, temporary message at the edge of the screen providing contextual feedback.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Toggle / Switch" data-category="glossary-components" data-tags="glossary components toggle / switch">
+          <dt class="gl-term">Toggle / Switch</dt>
+          <dd class="gl-def">A digital on/off switch commonly used for settings.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Tooltip" data-category="glossary-components" data-tags="glossary components tooltip">
+          <dt class="gl-term">Tooltip</dt>
+          <dd class="gl-def">A small label that appears on hover to explain a specific element.</dd>
+        </div>
+        </dl>
+      </div>
+
+      <div class="category-section" id="glossary-states" data-category="glossary-states" style="margin-bottom:48px">
+        <div class="category-header">
+          <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">toggle_on</span>States</div>
+          <div class="category-badge">11 terms</div>
+        </div>
+        <dl class="gl-list">
+        <div class="gl-row" data-cmd="Active State" data-category="glossary-states" data-tags="glossary states active state">
+          <dt class="gl-term">Active State</dt>
+          <dd class="gl-def">The visual state during the actual click or tap.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Default State" data-category="glossary-states" data-tags="glossary states default state">
+          <dt class="gl-term">Default State</dt>
+          <dd class="gl-def">The base state of a component when no interaction is happening.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Disabled State" data-category="glossary-states" data-tags="glossary states disabled state">
+          <dt class="gl-term">Disabled State</dt>
+          <dd class="gl-def">The state when a component exists but cannot be interacted with, often greyed out.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Empty State" data-category="glossary-states" data-tags="glossary states empty state">
+          <dt class="gl-term">Empty State</dt>
+          <dd class="gl-def">What a component looks like when it has no data to display.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Error State" data-category="glossary-states" data-tags="glossary states error state">
+          <dt class="gl-term">Error State</dt>
+          <dd class="gl-def">A red-themed state indicating a problem that needs to be fixed.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Focus State" data-category="glossary-states" data-tags="glossary states focus state">
+          <dt class="gl-term">Focus State</dt>
+          <dd class="gl-def">The state when an element is selected via keyboard, crucial for accessibility.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Hover State" data-category="glossary-states" data-tags="glossary states hover state">
+          <dt class="gl-term">Hover State</dt>
+          <dd class="gl-def">The state when a cursor is placed over an element. Desktop only.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Loading State" data-category="glossary-states" data-tags="glossary states loading state">
+          <dt class="gl-term">Loading State</dt>
+          <dd class="gl-def">A state where the component is waiting for data to be fetched.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Skeleton State" data-category="glossary-states" data-tags="glossary states skeleton state">
+          <dt class="gl-term">Skeleton State</dt>
+          <dd class="gl-def">A placeholder version of a component shown as grey pulses while content loads.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Success State" data-category="glossary-states" data-tags="glossary states success state">
+          <dt class="gl-term">Success State</dt>
+          <dd class="gl-def">A green-themed state indicating a task was completed correctly.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Warning State" data-category="glossary-states" data-tags="glossary states warning state">
+          <dt class="gl-term">Warning State</dt>
+          <dd class="gl-def">An orange or yellow state indicating a potential issue or caution.</dd>
+        </div>
+        </dl>
+      </div>
+
+      <div class="category-section" id="glossary-visual" data-category="glossary-visual" style="margin-bottom:48px">
+        <div class="category-header">
+          <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">palette</span>Visual</div>
+          <div class="category-badge">20 terms</div>
+        </div>
+        <dl class="gl-list">
+        <div class="gl-row" data-cmd="Aspect Ratio" data-category="glossary-visual" data-tags="glossary visual aspect ratio">
+          <dt class="gl-term">Aspect Ratio</dt>
+          <dd class="gl-def">The proportional relationship between width and height, e.g. 16:9.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Border Radius" data-category="glossary-visual" data-tags="glossary visual border radius">
+          <dt class="gl-term">Border Radius</dt>
+          <dd class="gl-def">The measurement defining how rounded the corners of a component are.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Box Shadow" data-category="glossary-visual" data-tags="glossary visual box shadow">
+          <dt class="gl-term">Box Shadow</dt>
+          <dd class="gl-def">A visual effect that gives a component elevation or depth.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Colour System" data-category="glossary-visual" data-tags="glossary visual colour system">
+          <dt class="gl-term">Colour System</dt>
+          <dd class="gl-def">A structured palette organising brand colours into primitives, semantic tokens, and component-level applications.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Font Weight" data-category="glossary-visual" data-tags="glossary visual font weight">
+          <dt class="gl-term">Font Weight</dt>
+          <dd class="gl-def">The thickness of a typeface's stroke. Common weights: 300 (light), 400 (regular), 600 (semibold), 700 (bold).</dd>
+        </div>
+        <div class="gl-row" data-cmd="Grid System" data-category="glossary-visual" data-tags="glossary visual grid system">
+          <dt class="gl-term">Grid System</dt>
+          <dd class="gl-def">Intersecting lines used to align and size components consistently.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Iconography" data-category="glossary-visual" data-tags="glossary visual iconography">
+          <dt class="gl-term">Iconography</dt>
+          <dd class="gl-def">A consistent set of symbols and glyphs used to represent actions, objects, or concepts across a product.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Illustration" data-category="glossary-visual" data-tags="glossary visual illustration">
+          <dt class="gl-term">Illustration</dt>
+          <dd class="gl-def">Custom artwork used to convey complex concepts, set tone, or add personality beyond what photography or icons can achieve.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Line Height" data-category="glossary-visual" data-tags="glossary visual line height">
+          <dt class="gl-term">Line Height</dt>
+          <dd class="gl-def">The vertical space between lines of text. Critical for readability. Also called leading.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Margin" data-category="glossary-visual" data-tags="glossary visual margin">
+          <dt class="gl-term">Margin</dt>
+          <dd class="gl-def">The space on the outside of a component, separating it from others.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Opacity" data-category="glossary-visual" data-tags="glossary visual opacity">
+          <dt class="gl-term">Opacity</dt>
+          <dd class="gl-def">The level of transparency of an element.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Padding" data-category="glossary-visual" data-tags="glossary visual padding">
+          <dt class="gl-term">Padding</dt>
+          <dd class="gl-def">The space between the content of a component and its internal border.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Stroke / Border" data-category="glossary-visual" data-tags="glossary visual stroke / border">
+          <dt class="gl-term">Stroke / Border</dt>
+          <dd class="gl-def">The outline surrounding a component.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Touch Target" data-category="glossary-visual" data-tags="glossary visual touch target">
+          <dt class="gl-term">Touch Target</dt>
+          <dd class="gl-def">The actual clickable area of an element. Minimum 44x44px for mobile.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Type Scale" data-category="glossary-visual" data-tags="glossary visual type scale">
+          <dt class="gl-term">Type Scale</dt>
+          <dd class="gl-def">A defined set of font sizes with a consistent mathematical ratio, creating visual hierarchy across text elements.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Typography" data-category="glossary-visual" data-tags="glossary visual typography">
+          <dt class="gl-term">Typography</dt>
+          <dd class="gl-def">The style, arrangement, and appearance of text.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Visual Hierarchy" data-category="glossary-visual" data-tags="glossary visual visual hierarchy">
+          <dt class="gl-term">Visual Hierarchy</dt>
+          <dd class="gl-def">The arrangement of elements to guide the eye and communicate order of importance.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Visual Weight" data-category="glossary-visual" data-tags="glossary visual visual weight">
+          <dt class="gl-term">Visual Weight</dt>
+          <dd class="gl-def">The perceived heaviness or prominence of an element based on size, colour, contrast, and position.</dd>
+        </div>
+        <div class="gl-row" data-cmd="White Space" data-category="glossary-visual" data-tags="glossary visual white space">
+          <dt class="gl-term">White Space</dt>
+          <dd class="gl-def">The empty space between elements that helps the design breathe.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Z-Index" data-category="glossary-visual" data-tags="glossary visual z-index">
+          <dt class="gl-term">Z-Index</dt>
+          <dd class="gl-def">The stack order of elements what sits on top of what.</dd>
+        </div>
+        </dl>
+      </div>
+
+      <div class="category-section" id="glossary-motion" data-category="glossary-motion" style="margin-bottom:48px">
+        <div class="category-header">
+          <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">animation</span>Motion</div>
+          <div class="category-badge">14 terms</div>
+        </div>
+        <dl class="gl-list">
+        <div class="gl-row" data-cmd="Affordance" data-category="glossary-motion" data-tags="glossary motion affordance">
+          <dt class="gl-term">Affordance</dt>
+          <dd class="gl-def">A visual hint that suggests how to use an object, e.g. a button looks clickable.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Conditional Logic" data-category="glossary-motion" data-tags="glossary motion conditional logic">
+          <dt class="gl-term">Conditional Logic</dt>
+          <dd class="gl-def">If/Then rules that govern UI behaviour based on user input.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Duration" data-category="glossary-motion" data-tags="glossary motion duration">
+          <dt class="gl-term">Duration</dt>
+          <dd class="gl-def">The length of time an animation takes to complete, measured in milliseconds.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Easing" data-category="glossary-motion" data-tags="glossary motion easing">
+          <dt class="gl-term">Easing</dt>
+          <dd class="gl-def">The mathematical way an animation accelerates or decelerates, e.g. ease-in-out.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Entrance / Exit Animation" data-category="glossary-motion" data-tags="glossary motion entrance / exit animation">
+          <dt class="gl-term">Entrance / Exit Animation</dt>
+          <dd class="gl-def">Animations that govern how elements appear (mount) and disappear (unmount) from the interface.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Friction" data-category="glossary-motion" data-tags="glossary motion friction">
+          <dt class="gl-term">Friction</dt>
+          <dd class="gl-def">Anything that prevents a user from moving smoothly through a task.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Keyframe" data-category="glossary-motion" data-tags="glossary motion keyframe">
+          <dt class="gl-term">Keyframe</dt>
+          <dd class="gl-def">A specific point in an animation sequence that defines a state. Intermediate frames are interpolated between keyframes.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Micro-interaction" data-category="glossary-motion" data-tags="glossary motion micro-interaction">
+          <dt class="gl-term">Micro-interaction</dt>
+          <dd class="gl-def">A contained interaction moment with a trigger and response e.g. a like button animating on tap. The small details that make an interface feel alive.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Progressive Disclosure" data-category="glossary-motion" data-tags="glossary motion progressive disclosure">
+          <dt class="gl-term">Progressive Disclosure</dt>
+          <dd class="gl-def">Showing only the most necessary information first to avoid overwhelming the user.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Scroll-triggered Animation" data-category="glossary-motion" data-tags="glossary motion scroll-triggered animation">
+          <dt class="gl-term">Scroll-triggered Animation</dt>
+          <dd class="gl-def">An animation that activates based on the user's scroll position.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Signifier" data-category="glossary-motion" data-tags="glossary motion signifier">
+          <dt class="gl-term">Signifier</dt>
+          <dd class="gl-def">The specific element that provides the affordance, e.g. the label or colour.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Spring Physics" data-category="glossary-motion" data-tags="glossary motion spring physics">
+          <dt class="gl-term">Spring Physics</dt>
+          <dd class="gl-def">An animation model that simulates real-world spring behaviour overshoot, bounce, and settle for natural-feeling motion.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Transition" data-category="glossary-motion" data-tags="glossary motion transition">
+          <dt class="gl-term">Transition</dt>
+          <dd class="gl-def">An animated change between two states of a UI element or between two screens.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Validation" data-category="glossary-motion" data-tags="glossary motion validation">
+          <dt class="gl-term">Validation</dt>
+          <dd class="gl-def">Checking if user input is correct. Client-side is instant; server-side is after submission.</dd>
+        </div>
+        </dl>
+      </div>
+
+      <div class="category-section" id="glossary-systems" data-category="glossary-systems" style="margin-bottom:48px">
+        <div class="category-header">
+          <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">hub</span>Systems</div>
+          <div class="category-badge">19 terms</div>
+        </div>
+        <dl class="gl-list">
+        <div class="gl-row" data-cmd="Asset" data-category="glossary-systems" data-tags="glossary systems asset">
+          <dt class="gl-term">Asset</dt>
+          <dd class="gl-def">Any file used in the UI, such as SVG icons, PNGs, or Lottie animations.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Atomic Design" data-category="glossary-systems" data-tags="glossary systems atomic design">
+          <dt class="gl-term">Atomic Design</dt>
+          <dd class="gl-def">A design system methodology organising components into five levels: atoms, molecules, organisms, templates, and pages.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Auto Layout" data-category="glossary-systems" data-tags="glossary systems auto layout">
+          <dt class="gl-term">Auto Layout</dt>
+          <dd class="gl-def">A property that allows containers to shrink or grow based on their content.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Box Model" data-category="glossary-systems" data-tags="glossary systems box model">
+          <dt class="gl-term">Box Model</dt>
+          <dd class="gl-def">How browsers compute element size: content + padding + border + margin.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Breakpoint" data-category="glossary-systems" data-tags="glossary systems breakpoint">
+          <dt class="gl-term">Breakpoint</dt>
+          <dd class="gl-def">The specific pixel width where a layout changes for different screen sizes.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Component Library" data-category="glossary-systems" data-tags="glossary systems component library">
+          <dt class="gl-term">Component Library</dt>
+          <dd class="gl-def">The repository of coded components that developers use to build.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Dark Mode" data-category="glossary-systems" data-tags="glossary systems dark mode">
+          <dt class="gl-term">Dark Mode</dt>
+          <dd class="gl-def">An alternate colour scheme using dark backgrounds and light foreground elements, reducing eye strain in low-light environments.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Design Drift" data-category="glossary-systems" data-tags="glossary systems design drift">
+          <dt class="gl-term">Design Drift</dt>
+          <dd class="gl-def">When the live product deviates from the original design files.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Design System" data-category="glossary-systems" data-tags="glossary systems design system">
+          <dt class="gl-term">Design System</dt>
+          <dd class="gl-def">The single source of truth containing all components, tokens and rules.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Design Token" data-category="glossary-systems" data-tags="glossary systems design token">
+          <dt class="gl-term">Design Token</dt>
+          <dd class="gl-def">The smallest variable in a system, e.g. color-primary = #0052FF.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Documentation" data-category="glossary-systems" data-tags="glossary systems documentation">
+          <dt class="gl-term">Documentation</dt>
+          <dd class="gl-def">Written instructions, examples, and guidelines that explain how to use a design system or component library.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Figma" data-category="glossary-systems" data-tags="glossary systems figma">
+          <dt class="gl-term">Figma</dt>
+          <dd class="gl-def">The industry-standard collaborative design tool for UI/UX design, prototyping, and design system management.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Governance" data-category="glossary-systems" data-tags="glossary systems governance">
+          <dt class="gl-term">Governance</dt>
+          <dd class="gl-def">The process and rules for managing contributions, changes, and decisions within a design system.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Handoff" data-category="glossary-systems" data-tags="glossary systems handoff">
+          <dt class="gl-term">Handoff</dt>
+          <dd class="gl-def">The process of passing finished designs and assets to the engineering team.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Primitive Token" data-category="glossary-systems" data-tags="glossary systems primitive token">
+          <dt class="gl-term">Primitive Token</dt>
+          <dd class="gl-def">The raw, unassigned values in a system, e.g. Red-500.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Semantic Token" data-category="glossary-systems" data-tags="glossary systems semantic token">
+          <dt class="gl-term">Semantic Token</dt>
+          <dd class="gl-def">Naming colours by their purpose, e.g. button-bg-hover.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Single Source of Truth" data-category="glossary-systems" data-tags="glossary systems single source of truth">
+          <dt class="gl-term">Single Source of Truth</dt>
+          <dd class="gl-def">A central repository where the definitive, up-to-date version of designs, tokens, or components is maintained.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Specs" data-category="glossary-systems" data-tags="glossary systems specs">
+          <dt class="gl-term">Specs</dt>
+          <dd class="gl-def">Detailed measurements and annotations provided to the engineering team.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Style Guide" data-category="glossary-systems" data-tags="glossary systems style guide">
+          <dt class="gl-term">Style Guide</dt>
+          <dd class="gl-def">A document defining the visual rules of a product typography, colour, spacing, and component usage guidelines.</dd>
+        </div>
+        </dl>
+      </div>
+
+      <div class="category-section" id="glossary-research" data-category="glossary-research" style="margin-bottom:48px">
+        <div class="category-header">
+          <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">lab_research</span>Research</div>
+          <div class="category-badge">15 terms</div>
+        </div>
+        <dl class="gl-list">
+        <div class="gl-row" data-cmd="A/B Testing" data-category="glossary-research" data-tags="glossary research a/b testing">
+          <dt class="gl-term">A/B Testing</dt>
+          <dd class="gl-def">Comparing two versions of a design to see which performs better.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Affinity Mapping" data-category="glossary-research" data-tags="glossary research affinity mapping">
+          <dt class="gl-term">Affinity Mapping</dt>
+          <dd class="gl-def">Organising research data into groups based on themes.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Card Sorting" data-category="glossary-research" data-tags="glossary research card sorting">
+          <dt class="gl-term">Card Sorting</dt>
+          <dd class="gl-def">A technique used to determine information architecture.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Fitts's Law" data-category="glossary-research" data-tags="glossary research fitts's law">
+          <dt class="gl-term">Fitts's Law</dt>
+          <dd class="gl-def">The time to acquire a target is a function of the distance to and size of the target.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Heatmap" data-category="glossary-research" data-tags="glossary research heatmap">
+          <dt class="gl-term">Heatmap</dt>
+          <dd class="gl-def">A visual representation showing where users click and scroll on a page.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Hick's Law" data-category="glossary-research" data-tags="glossary research hick's law">
+          <dt class="gl-term">Hick's Law</dt>
+          <dd class="gl-def">The time it takes to make a decision increases with the number of choices.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Jakob's Law" data-category="glossary-research" data-tags="glossary research jakob's law">
+          <dt class="gl-term">Jakob's Law</dt>
+          <dd class="gl-def">Users prefer your site to work like all the others they already know.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Jobs to Be Done (JTBD)" data-category="glossary-research" data-tags="glossary research jobs to be done (jtbd)">
+          <dt class="gl-term">Jobs to Be Done (JTBD)</dt>
+          <dd class="gl-def">A framework focusing on the underlying goal or 'job' a user is trying to accomplish, rather than their demographic profile.</dd>
+        </div>
+        <div class="gl-row" data-cmd="NPS (Net Promoter Score)" data-category="glossary-research" data-tags="glossary research nps (net promoter score)">
+          <dt class="gl-term">NPS (Net Promoter Score)</dt>
+          <dd class="gl-def">A metric measuring how likely users are to recommend a product, scored on a scale of 0–10.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Qualitative Research" data-category="glossary-research" data-tags="glossary research qualitative research">
+          <dt class="gl-term">Qualitative Research</dt>
+          <dd class="gl-def">Research that explores user attitudes, motivations, and behaviours through interviews, observations, and open-ended methods.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Quantitative Research" data-category="glossary-research" data-tags="glossary research quantitative research">
+          <dt class="gl-term">Quantitative Research</dt>
+          <dd class="gl-def">Research that measures user behaviour numerically through analytics, surveys, and statistical methods.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Session Recording" data-category="glossary-research" data-tags="glossary research session recording">
+          <dt class="gl-term">Session Recording</dt>
+          <dd class="gl-def">A tool that captures user sessions to replay clicks, scrolls, and interactions for analysis.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Think-Aloud Protocol" data-category="glossary-research" data-tags="glossary research think-aloud protocol">
+          <dt class="gl-term">Think-Aloud Protocol</dt>
+          <dd class="gl-def">A usability testing method where participants verbalise their thoughts as they interact with a product.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Tree Testing" data-category="glossary-research" data-tags="glossary research tree testing">
+          <dt class="gl-term">Tree Testing</dt>
+          <dd class="gl-def">Evaluating the findability of topics within a site's structure.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Usability Testing" data-category="glossary-research" data-tags="glossary research usability testing">
+          <dt class="gl-term">Usability Testing</dt>
+          <dd class="gl-def">Observing real users attempting tasks in a product to identify friction, confusion, and areas for improvement.</dd>
+        </div>
+        </dl>
+      </div>
+
+      <div class="category-section" id="glossary-a11y" data-category="glossary-a11y" style="margin-bottom:48px">
+        <div class="category-header">
+          <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">accessibility_new</span>A11y</div>
+          <div class="category-badge">11 terms</div>
+        </div>
+        <dl class="gl-list">
+        <div class="gl-row" data-cmd="Alt Text" data-category="glossary-a11y" data-tags="glossary a11y alt text">
+          <dt class="gl-term">Alt Text</dt>
+          <dd class="gl-def">Text descriptions of images for visually impaired users.</dd>
+        </div>
+        <div class="gl-row" data-cmd="ARIA Label" data-category="glossary-a11y" data-tags="glossary a11y aria label">
+          <dt class="gl-term">ARIA Label</dt>
+          <dd class="gl-def">Hidden text used by screen readers to describe non-text elements.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Colour Blindness" data-category="glossary-a11y" data-tags="glossary a11y colour blindness">
+          <dt class="gl-term">Colour Blindness</dt>
+          <dd class="gl-def">A vision condition affecting colour perception. Designs must not rely solely on colour to convey meaning.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Contrast Ratio" data-category="glossary-a11y" data-tags="glossary a11y contrast ratio">
+          <dt class="gl-term">Contrast Ratio</dt>
+          <dd class="gl-def">The difference in luminance between text and background. WCAG AA requires 4.5:1.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Focus Order" data-category="glossary-a11y" data-tags="glossary a11y focus order">
+          <dt class="gl-term">Focus Order</dt>
+          <dd class="gl-def">The logical sequence a user follows when navigating via keyboard.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Keyboard Navigation" data-category="glossary-a11y" data-tags="glossary a11y keyboard navigation">
+          <dt class="gl-term">Keyboard Navigation</dt>
+          <dd class="gl-def">The ability to operate all interactive elements using only a keyboard, essential for motor-impaired users.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Localisation (L10n)" data-category="glossary-a11y" data-tags="glossary a11y localisation (l10n)">
+          <dt class="gl-term">Localisation (L10n)</dt>
+          <dd class="gl-def">Adapting a design for different languages and cultures, e.g. right-to-left layouts.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Reduced Motion" data-category="glossary-a11y" data-tags="glossary a11y reduced motion">
+          <dt class="gl-term">Reduced Motion</dt>
+          <dd class="gl-def">A user preference (prefers-reduced-motion) that signals animations should be minimised or removed.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Screen Reader" data-category="glossary-a11y" data-tags="glossary a11y screen reader">
+          <dt class="gl-term">Screen Reader</dt>
+          <dd class="gl-def">Assistive software that reads on-screen content aloud for visually impaired users. Examples: NVDA, VoiceOver, JAWS.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Skip Link" data-category="glossary-a11y" data-tags="glossary a11y skip link">
+          <dt class="gl-term">Skip Link</dt>
+          <dd class="gl-def">A hidden link that becomes visible on keyboard focus, allowing users to skip past repetitive navigation directly to main content.</dd>
+        </div>
+        <div class="gl-row" data-cmd="WCAG AA" data-category="glossary-a11y" data-tags="glossary a11y wcag aa">
+          <dt class="gl-term">WCAG AA</dt>
+          <dd class="gl-def">The standard accessibility conformance level requiring 4.5:1 contrast for normal text and 3:1 for large text.</dd>
+        </div>
+        </dl>
+      </div>
+
+      <div class="category-section" id="glossary-business" data-category="glossary-business" style="margin-bottom:48px">
+        <div class="category-header">
+          <div class="category-title"><span class="material-symbols-outlined" style="font-size:22px;margin-right:10px;vertical-align:middle;opacity:0.8;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 24">trending_up</span>Business</div>
+          <div class="category-badge">18 terms</div>
+        </div>
+        <dl class="gl-list">
+        <div class="gl-row" data-cmd="Agentic UI" data-category="glossary-business" data-tags="glossary business agentic ui">
+          <dt class="gl-term">Agentic UI</dt>
+          <dd class="gl-def">Interfaces designed for AI agents that perform multi-step tasks autonomously.</dd>
+        </div>
+        <div class="gl-row" data-cmd="AI Guardrails" data-category="glossary-business" data-tags="glossary business ai guardrails">
+          <dt class="gl-term">AI Guardrails</dt>
+          <dd class="gl-def">Constraints and rules applied to AI systems to prevent harmful, off-topic, or undesirable outputs.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Churn Rate" data-category="glossary-business" data-tags="glossary business churn rate">
+          <dt class="gl-term">Churn Rate</dt>
+          <dd class="gl-def">The rate at which customers stop using your product.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Context Window" data-category="glossary-business" data-tags="glossary business context window">
+          <dt class="gl-term">Context Window</dt>
+          <dd class="gl-def">The maximum amount of text (tokens) an AI model can process in a single interaction. Determines how much information Claude can 'remember' within a conversation.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Conversion Rate" data-category="glossary-business" data-tags="glossary business conversion rate">
+          <dt class="gl-term">Conversion Rate</dt>
+          <dd class="gl-def">The percentage of users who complete a desired action.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Few-shot Prompting" data-category="glossary-business" data-tags="glossary business few-shot prompting">
+          <dt class="gl-term">Few-shot Prompting</dt>
+          <dd class="gl-def">Providing an AI with a small number of examples within the prompt to guide its output format or reasoning.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Hallucination" data-category="glossary-business" data-tags="glossary business hallucination">
+          <dt class="gl-term">Hallucination</dt>
+          <dd class="gl-def">When an AI model generates confident but factually incorrect or invented information.</dd>
+        </div>
+        <div class="gl-row" data-cmd="KPI" data-category="glossary-business" data-tags="glossary business kpi">
+          <dt class="gl-term">KPI</dt>
+          <dd class="gl-def">Key Performance Indicator. A quantifiable measurement used to gauge product success.</dd>
+        </div>
+        <div class="gl-row" data-cmd="LLM Transparency" data-category="glossary-business" data-tags="glossary business llm transparency">
+          <dt class="gl-term">LLM Transparency</dt>
+          <dd class="gl-def">Showing when an AI is reasoning or where its data originates.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Micro-copy" data-category="glossary-business" data-tags="glossary business micro-copy">
+          <dt class="gl-term">Micro-copy</dt>
+          <dd class="gl-def">The small bits of text such as button labels and hints that guide the user.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Multimodal Interface" data-category="glossary-business" data-tags="glossary business multimodal interface">
+          <dt class="gl-term">Multimodal Interface</dt>
+          <dd class="gl-def">An interface supporting voice, touch, gesture, and other input types simultaneously.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Prompt Engineering" data-category="glossary-business" data-tags="glossary business prompt engineering">
+          <dt class="gl-term">Prompt Engineering</dt>
+          <dd class="gl-def">The practice of crafting precise, structured inputs to get the most accurate and useful outputs from an AI model.</dd>
+        </div>
+        <div class="gl-row" data-cmd="RAG (Retrieval-Augmented Generation)" data-category="glossary-business" data-tags="glossary business rag (retrieval-augmented generation)">
+          <dt class="gl-term">RAG (Retrieval-Augmented Generation)</dt>
+          <dd class="gl-def">A technique that enhances AI responses by retrieving relevant documents from a knowledge base before generating a reply.</dd>
+        </div>
+        <div class="gl-row" data-cmd="ROI" data-category="glossary-business" data-tags="glossary business roi">
+          <dt class="gl-term">ROI</dt>
+          <dd class="gl-def">Return on Investment. The financial gain achieved from a design improvement.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Spatial Computing" data-category="glossary-business" data-tags="glossary business spatial computing">
+          <dt class="gl-term">Spatial Computing</dt>
+          <dd class="gl-def">Designing for 3D environments such as AR, VR, and MR.</dd>
+        </div>
+        <div class="gl-row" data-cmd="System Prompt" data-category="glossary-business" data-tags="glossary business system prompt">
+          <dt class="gl-term">System Prompt</dt>
+          <dd class="gl-def">Instructions given to an AI at the start of a session that define its behaviour, tone, and constraints for the entire conversation.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Vibe Coding" data-category="glossary-business" data-tags="glossary business vibe coding">
+          <dt class="gl-term">Vibe Coding</dt>
+          <dd class="gl-def">A development approach where you describe what you want in natural language and an AI generates the code, focusing on the outcome rather than the implementation.</dd>
+        </div>
+        <div class="gl-row" data-cmd="Zero-shot Prompting" data-category="glossary-business" data-tags="glossary business zero-shot prompting">
+          <dt class="gl-term">Zero-shot Prompting</dt>
+          <dd class="gl-def">Asking an AI to complete a task without providing any examples, relying entirely on the model's training.</dd>
+        </div>
+        </dl>
+      </div>
+
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- CONNECTORS                                       -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="extra-section" id="connectors">
+      <div class="extra-header">
+        <div class="extra-title" style="colour:var(--accent2)">Connectors</div>
+        <div class="extra-desc">MCP connectors extend Claude beyond the terminal linking it directly to design tools, codebases, and storage. These are the ones that meaningfully improve design and build workflows.</div>
+      </div>
+
+      <div class="connector-grid">
+
+        <div class="connector-card connector-featured">
+          <div class="connector-top">
+            <div class="connector-name">Figma</div>
+            <div class="connector-badge">Most impactful</div>
+          </div>
+          <div class="connector-desc">The highest-value connector for design/build work. Gives Claude direct access to your Figma files components, variables, layout data, and tokens so generated code reflects the actual design rather than a description of it. Also supports the reverse: send your built UI back to Figma as editable layers.</div>
+          <div class="connector-caps">
+            <div class="connector-cap">Figma → Code: pull design context into builds</div>
+            <div class="connector-cap">Code → Figma: push live UI back as editable frames</div>
+            <div class="connector-cap">Write to canvas: create/edit Figma content from Claude</div>
+            <div class="connector-cap">Code Connect: map components to your actual codebase</div>
+          </div>
+          <div class="connector-req">Requires Figma desktop app + Dev or Full seat · Free during beta</div>
+          <div class="connector-install">
+            <span class="connector-install-label">Remote (recommended):</span>
+            <code class="connector-code">claude mcp add --transport http figma https://mcp.figma.com/mcp</code>
+          </div>
+          <a class="gs-source-link" href="https://help.figma.com/hc/en-us/articles/32132100833559" target="_blank"><span class="material-symbols-outlined" style="font-size:14px;margin-right:5px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">arrow_outward</span>Figma MCP setup guide</a>
+        </div>
+
+        <div class="connector-card">
+          <div class="connector-top">
+            <div class="connector-name">GitHub</div>
+            <div class="connector-badge connector-badge-neutral">Version control</div>
+          </div>
+          <div class="connector-desc">Connects Claude to your repositories. Useful for reading existing component code before building new UI, pushing generated code directly, reviewing PRs for design quality, and keeping your skills folder in sync.</div>
+          <div class="connector-caps">
+            <div class="connector-cap">Read component code before building to avoid duplication</div>
+            <div class="connector-cap">Push generated UI code and open PRs</div>
+            <div class="connector-cap">Review PRs with design quality context</div>
+          </div>
+          <div class="connector-install">
+            <span class="connector-install-label">Install:</span>
+            <code class="connector-code">claude mcp add --transport http github https://api.githubcopilot.com/mcp/v1</code>
+          </div>
+        </div>
+
+        <div class="connector-card">
+          <div class="connector-top">
+            <div class="connector-name">Google Drive</div>
+            <div class="connector-badge connector-badge-neutral">Asset storage</div>
+          </div>
+          <div class="connector-desc">Store and retrieve brand assets, design tokens, style guides, and reference documents. Useful for keeping Claude aligned with brand context across sessions point it at a Drive folder containing your DESIGN.md or brand guide.</div>
+          <div class="connector-caps">
+            <div class="connector-cap">Store brand guides, DESIGN.md, style references</div>
+            <div class="connector-cap">Retrieve assets into the build context</div>
+            <div class="connector-cap">Save generated skills and guides back to Drive</div>
+          </div>
+          <div class="connector-note">Already connected via claude.ai settings</div>
+        </div>
+
+        <div class="connector-card">
+          <div class="connector-top">
+            <div class="connector-name">Canva</div>
+            <div class="connector-badge connector-badge-neutral">Marketing assets</div>
+          </div>
+          <div class="connector-desc">Pairs well with the brand and marketing skills. Use Claude to plan and describe assets, then execute production-ready versions in Canva. Most useful alongside <code style="font-family:'JetBrains Mono',monospace;font-size:11px;colour:var(--accent)">/ckm-banner-design</code> and <code style="font-family:'JetBrains Mono',monospace;font-size:11px;colour:var(--accent)">/ckm-slides</code>.</div>
+          <div class="connector-caps">
+            <div class="connector-cap">Social assets, ads, presentation decks</div>
+            <div class="connector-cap">Brand-consistent marketing materials</div>
+          </div>
+          <div class="connector-note">Already connected via claude.ai settings</div>
+        </div>
+
+        <div class="connector-card">
+          <div class="connector-top">
+            <div class="connector-name">Supabase</div>
+            <div class="connector-badge connector-badge-neutral">Backend</div>
+          </div>
+          <div class="connector-desc">When building functional UIs that need real data, Supabase lets Claude read your schema and generate UI that maps to actual data structures not placeholder arrays. Useful for dashboards, admin panels, and data-heavy interfaces.</div>
+          <div class="connector-caps">
+            <div class="connector-cap">Read schema before building data-heavy UIs</div>
+            <div class="connector-cap">Generate queries and types aligned with your DB</div>
+          </div>
+          <div class="connector-note">Already connected via claude.ai settings</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- CONTEXT FILES                                    -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="extra-section" id="context-files">
+      <div class="extra-header">
+        <div class="extra-title">Context Files</div>
+        <div class="extra-desc">Skills teach Claude <em>how</em> to do things. Context files tell it <em>what</em> to work with. Together they produce consistent, on-brand output across every session.</div>
+      </div>
+
+      <div class="context-grid">
+
+        <div class="context-card">
+          <div class="context-file">CLAUDE.md</div>
+          <div class="context-purpose">Project memory &amp; preferences</div>
+          <div class="context-desc">A plain markdown file that Claude Code reads at the start of every session. Put your stack, conventions, file structure, and preferences here so Claude always has the right baseline no re-explaining each session.</div>
+          <div class="context-example">
+            <div class="context-example-label">Example contents</div>
+            <code class="gs-code"># Project
+Stack: Next.js 14, Tailwind, shadcn/ui
+Design tokens: tokens/design.ts
+Component folder: src/components/
+
+# Preferences
+- Use TypeScript strict mode
+- Prefer composition over prop drilling
+- Save output files to ~/Claude/</code>
+          </div>
+          <div class="context-location">Location: <code style="font-family:'JetBrains Mono',monospace;font-size:11px;colour:var(--accent)">~/.claude/CLAUDE.md</code> (global) or <code style="font-family:'JetBrains Mono',monospace;font-size:11px;colour:var(--accent)">.claude/CLAUDE.md</code> (project)</div>
+        </div>
+
+        <div class="context-card">
+          <div class="context-file">DESIGN.md</div>
+          <div class="context-purpose">Brand &amp; visual system</div>
+          <div class="context-desc">A structured file describing your brand's visual language colours, typography, spacing, component patterns, tone. Claude reads it before generating any UI, ensuring every output stays on-brand without repeated instructions.</div>
+          <div class="context-example">
+            <div class="context-example-label">Example contents</div>
+            <code class="gs-code"># Brand
+Name: Hypaspace
+Tone: Bold, technical, minimal
+
+# Colours
+Primary: #6f6af8
+Background: #0b0b0f
+Surface: #111117
+
+# Typography
+Display: Special Gothic Expanded One
+Body: Syne
+Mono: JetBrains Mono</code>
+          </div>
+          <div class="context-location">Location: project root or attach in chat · <a href="https://getdesign.md" target="_blank" style="colour:var(--accent);text-decoration:none">getdesign.md</a> for templates</div>
+        </div>
+
+        <div class="context-card">
+          <div class="context-file">SKILL.md</div>
+          <div class="context-purpose">Custom skill definition</div>
+          <div class="context-desc">The format that all skills use. You can write your own encode your team's workflow, brand standards, or domain expertise as a reusable skill. Any folder with a SKILL.md becomes a Claude skill.</div>
+          <div class="context-example">
+            <div class="context-example-label">Minimal structure</div>
+            <code class="gs-code">---
+name: my-skill
+description: When to activate this skill
+---
+
+# My Skill
+
+Instructions for Claude go here.
+Reference files, examples, and
+decision frameworks all valid.</code>
+          </div>
+          <div class="context-location">Location: <code style="font-family:'JetBrains Mono',monospace;font-size:11px;colour:var(--accent)">~/.claude/skills/my-skill/SKILL.md</code></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- WHAT ARE SKILLS?                                 -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="extra-section" id="what-are-skills">
+      <div class="extra-header">
+        <div class="extra-title">How Skills Work</div>
+        <div class="extra-desc">A primer for anyone new to the Claude skills system.</div>
+      </div>
+
+      <div class="explainer-grid">
+        <div class="explainer-card">
+          <div class="explainer-num">01</div>
+          <div class="explainer-label">Skills are instruction folders</div>
+          <div class="explainer-body">A skill is a folder containing a <code style="font-family:'JetBrains Mono',monospace;font-size:11px;colour:var(--accent)">SKILL.md</code> file plus any supporting scripts, data files, or references. Claude reads these at session start and uses them as specialised knowledge for specific tasks.</div>
+        </div>
+        <div class="explainer-card">
+          <div class="explainer-num">02</div>
+          <div class="explainer-label">They activate automatically</div>
+          <div class="explainer-body">You don't invoke most skills by name. Claude reads all installed SKILL.md files and activates the right one based on your request. Ask it to "build a landing page" and the frontend-design skill activates. Ask it to run an accessibility audit and it reaches for the right commands.</div>
+        </div>
+        <div class="explainer-card">
+          <div class="explainer-num">03</div>
+          <div class="explainer-label">They're lightweight</div>
+          <div class="explainer-body">Skills only load around 100 tokens at session start far less than an equivalent MCP server. Multiple skills can be active simultaneously without significant performance impact. Prefer skills over MCP servers where both could solve the problem.</div>
+        </div>
+        <div class="explainer-card">
+          <div class="explainer-num">04</div>
+          <div class="explainer-label">Anyone can write one</div>
+          <div class="explainer-body">A skill is just markdown. If you find yourself repeating the same context, preferences, or instructions across sessions, those belong in a skill. Encode your design system, your component patterns, your team's conventions and they'll be available in every session.</div>
+        </div>
+        <div class="explainer-card">
+          <div class="explainer-num">05</div>
+          <div class="explainer-label">Skills vs prompts vs MCP</div>
+          <div class="explainer-body"><strong style="colour:var(--text)">Prompts</strong> are one-shot you write them each time. <strong style="colour:var(--text)">Skills</strong> persist across sessions and activate by context. <strong style="colour:var(--text)">MCP servers</strong> give Claude live tool access (APIs, file systems, databases) but consume more tokens. Use skills for reusable expertise; MCP for live data.</div>
+        </div>
+        <div class="explainer-card">
+          <div class="explainer-num">06</div>
+          <div class="explainer-label">They work in Claude Code only</div>
+          <div class="explainer-body">Skills are a Claude Code feature they require the terminal-based agent, not the claude.ai chat interface. If you're using the web UI, the equivalent is uploading reference documents or writing a detailed system prompt. Claude Code is available via <code style="font-family:'JetBrains Mono',monospace;font-size:11px;colour:var(--accent)">npm install -g @anthropic-ai/claude-code</code>.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- TIPS & GOTCHAS                                   -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="extra-section" id="tips">
+      <div class="extra-header">
+        <div class="extra-title">Tips &amp; Gotchas</div>
+        <div class="extra-desc">Things that aren't obvious until you've hit them.</div>
+      </div>
+
+      <div class="tips-grid">
+        <div class="tip-card tip-warn">
+          <div class="tip-icon"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">warning</span></div>
+          <div class="tip-label">Order matters in pipelines</div>
+          <div class="tip-body">Running <code>/polish</code> before <code>/harden</code> wastes effort harden changes structure, polish changes surface. Run <code>/audit</code> → <code>/harden</code> → <code>/polish</code>, in that order, every time.</div>
+        </div>
+        <div class="tip-card tip-warn">
+          <div class="tip-icon"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">warning</span></div>
+          <div class="tip-label">Too many active skills = token bloat</div>
+          <div class="tip-body">Skills load ~100 tokens each at session start. 5–10 skills is fine. 30+ starts affecting context budget meaningfully. Keep only what you actively use global; put project-specific skills in the project folder.</div>
+        </div>
+        <div class="tip-card tip-warn">
+          <div class="tip-icon"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">warning</span></div>
+          <div class="tip-label">/overdrive is for showcases only</div>
+          <div class="tip-body">Shaders and spring physics are expensive and inappropriate for production apps. <code>/overdrive</code> is explicitly for portfolio pieces, launch demos, and contexts where motion IS the product. Don't reach for it on functional tooling.</div>
+        </div>
+        <div class="tip-card tip-go">
+          <div class="tip-icon"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">arrow_forward</span></div>
+          <div class="tip-label">Set context once with /teach-impeccable</div>
+          <div class="tip-body">Running <code>/teach-impeccable</code> at project start saves your design context to config so every subsequent skill has it. Skip this and you'll be re-explaining your design system on every command.</div>
+        </div>
+        <div class="tip-card tip-go">
+          <div class="tip-icon"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">arrow_forward</span></div>
+          <div class="tip-label">Run /design-lab before /frontend-design</div>
+          <div class="tip-body">It's tempting to jump straight to building. Don't. Spending 5 minutes in <code>/design-lab</code> exploring directions prevents hours of creative pivots later. The 5 directions it generates are cheap; rebuilding a committed design isn't.</div>
+        </div>
+        <div class="tip-card tip-go">
+          <div class="tip-icon"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">arrow_forward</span></div>
+          <div class="tip-label">Figma MCP requires a restart</div>
+          <div class="tip-body">MCP servers initialise at Claude Code startup. If you add the Figma connector mid-session and it doesn't appear, fully restart Claude Code. Also disconnect any duplicate Figma instances the desktop plugin and remote MCP can conflict.</div>
+        </div>
+        <div class="tip-card tip-go">
+          <div class="tip-icon"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">arrow_forward</span></div>
+          <div class="tip-label">Prefer skills over MCP for design context</div>
+          <div class="tip-body">If you're tempted to use an MCP server just to provide design context, a DESIGN.md + skill is almost always better lighter, faster, and portable across projects. Reserve MCP for live data that genuinely needs an API.</div>
+        </div>
+        <div class="tip-card tip-warn">
+          <div class="tip-icon"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">warning</span></div>
+          <div class="tip-label">Figma MCP is read-only in some setups</div>
+          <div class="tip-body">The write-to-canvas and code-to-canvas features require the <em>remote</em> MCP server, not the desktop version. If you're on desktop MCP and write features aren't working, switch to <code>mcp.figma.com/mcp</code>.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-text" style="display:flex; align-items:center; gap:12px;">
+    <div style="opacity:0.7;display:flex;align-items:center">
+      <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" height="16" width="auto" viewBox="0 0 497.8 100">
+  <defs><style>.st0{fill:#fff}.st1{fill:#7e08fa}</style></defs>
+  <polygon class="st0" points="273.8 0 248.5 38.2 223.2 0 195.5 0 234.7 59 208.4 98.6 236.1 98.6 301.5 0 273.8 0"/>
+  <path class="st1" d="M0,98.6L65.4,0h27.6S27.6,98.6,27.6,98.6H0Z"/>
+  <path class="st0" d="M99.8,98.6V0h24.2v37.9h40.6V0h24.2v98.6h-24.2v-38.6h-40.6v38.6h-24.2Z"/>
+  <path class="st0" d="M452.9,100c-9.1,0-17-1.8-23.7-5.4-6.7-3.6-11.9-8.8-15.6-15.4-3.7-6.7-5.5-14.5-5.5-23.5V0h24.2v55.6c0,4.4.8,8.3,2.5,11.6,1.7,3.3,4.1,5.9,7.2,7.7,3.2,1.8,6.8,2.7,10.9,2.7s7.9-.9,10.9-2.7c3-1.8,5.4-4.3,7.1-7.7,1.7-3.3,2.5-7.2,2.5-11.6V0h24.2v55.6c0,8.9-1.9,16.7-5.6,23.4-3.7,6.7-8.9,11.8-15.6,15.5-6.7,3.7-14.6,5.5-23.7,5.5Z"/>
+  <polygon class="st0" points="414.1 98.6 375 39.6 401.2 0 373.6 0 332.4 62.1 332.4 0 308.2 0 308.2 98.6 332.4 98.6 335.8 98.6 361.2 60.4 386.5 98.6 414.1 98.6"/>
+</svg>
+    </div>
+    <span>© Copyright 2026 HYKU</span>
+  </div>
+  <div class="footer-text" style="display:flex;align-items:center;gap:12px;">
+    <a href="https://www.hypaspace.co.uk" target="_blank" style="color:var(--text-dim);text-decoration:none;transition:color 0.15s;display:flex;align-items:center;gap:8px" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-dim)'">
+      Designed by Hypaspace
+      <svg height="18" viewBox="0 0 689.5577393 201.9450073" xmlns="http://www.w3.org/2000/svg" style="fill:#ffffff; opacity:0.4; flex-shrink:0;">
+      <g>
+        <polygon points="66.3349915,201.9450073 66.3349915,164.4631958 99.5024719,146.5632629 99.5024719,184.0450745"/>
+        <polygon points="0,55.3817406 0,17.8999367 33.1674881,0 33.1674881,37.4818039"/>
+        <polygon points="66.3349762,91.1826935 66.3349762,53.7008934 99.5024643,35.8009567 99.5024643,73.2827606"/>
+        <polygon points="0,166.1435089 0,128.6617126 33.1674881,110.7617722 33.1674881,148.243576"/>
+        <polygon points="99.5024719,146.5632629 99.5024719,109.081459 0.0000133,55.3817406 0.0000133,92.8635406"/>
+        <path d="M159.5023804,134.6300049V67.3150024h16.8306885v26.6550903h26.3385162V67.3150024h16.8307037v67.3150024h-16.8307037v-26.6550903h-26.3385162v26.6550903H159.5023804z"/>
+        <path d="M241.7667542,153.0280304c-2.5066986,0-4.6501007-0.1245575-6.4302216-0.3684692c-1.7749329-0.243927-3.5343018-0.7162018-5.2780914-1.4116516v-11.7082977c1.1832886,0.4203796,2.2835388,0.6954346,3.2955627,0.835556c1.0068359,0.1401367,2.0344238,0.2127838,3.0827637,0.2127838c2.8544312,0,4.9978333-0.508606,6.4250488-1.5154266c1.4324036-1.0120239,2.8751831-2.807724,4.3387146-5.3870697l-22.2644653-48.6003952h17.6662598l13.0680542,31.4583054l12.8552551-31.4583054h17.5624695l-18.9222107,45.4657211c-1.8787231,4.5307465-3.9702454,8.4854126-6.2693481,11.8639984c-2.2991028,3.3786011-4.982254,5.9942932-8.0494537,7.8418732C249.779892,152.0990601,246.0847168,153.0280304,241.7667542,153.0280304z"/>
+        <path d="M293.0892334,153.0280304V85.0850601h14.635376l0.8355713,4.2842255c2.0188599-1.6711349,4.2868042-2.9789734,6.7935181-3.918335c2.5119019-0.9419632,5.4337769-1.411644,8.7812195-1.411644c7.0374451,0,12.6113586,1.8994904,16.7217102,5.6958618c4.1155701,3.7989731,6.1707458,10.1565475,6.1707458,19.0753098c0,8.8487015-2.1070862,15.5384216-6.326416,20.0691605c-4.2141724,4.5307465-10.0164185,6.7935333-17.4015808,6.7935333c-5.2261963,0-9.6894836-1.0794983-13.3794556-3.2384796v20.593338H293.0892334z M319.0125427,123.3420715c7.2450256,0,10.8727417-4.9511185,10.8727417-14.8429794c0-4.7383423-0.8355713-7.9456711-2.5118713-9.616806c-1.6711426-1.6737213-4.3543091-2.5092926-8.049469-2.5092926c-3.5498657,0-6.6897278,1.2533493-9.4040222,3.7626495v20.0665665c1.3233948,0.9808807,2.662384,1.7437897,4.0221252,2.2991028C315.3017883,123.061821,316.9884949,123.3420715,319.0125427,123.3420715z"/>
+        <path d="M371.5909424,135.673172c-3.1346741,0-6.0461731-0.5553284-8.7293091-1.6711426c-2.6831665-1.1158142-4.8265686-2.8388519-6.4250488-5.1742859c-1.6036682-2.335434-2.4080811-5.241745-2.4080811-8.729332c0-5.0860519,1.7282104-9.0770569,5.1742554-11.967804c3.4512634-2.8907471,8.6255493-4.3361206,15.5228577-4.3361206h13.7998352v-1.1495514c0-2.5092926-0.8355713-4.3023911-2.5119019-5.3844757c-1.6711121-1.0794907-4.8057861-1.6192322-9.4039917-1.6192322c-5.6465759,0-11.1841431,0.8718948-16.6231079,2.6130905V87.3841705c2.439209-0.9756927,5.4182129-1.7775269,8.9369202-2.4055023c3.5187073-0.6253738,7.2294617-0.9393616,11.1322327-0.9393616c7.6654053,0,13.6752625,1.567337,18.0347595,4.7020111c4.3542786,3.1372604,6.5288086,8.1195221,6.5288086,14.9493713v30.9393158h-14.7339783l-0.8355713-4.1830292c-1.8164368,1.6711426-4.131134,2.9634094-6.9544067,3.8664551C379.2719421,135.2216492,375.7739868,135.673172,371.5909424,135.673172z M376.920929,125.3245926c2.6468201,0,4.9459229-0.4515152,6.8973083-1.3597412c1.9513855-0.9030304,3.5187378-2.0499878,4.7072144-3.4460602v-7.0063019h-11.9158936c-4.9511414,0-7.4215088,1.9877167-7.4215088,5.9579544c0,1.8164444,0.6279602,3.2436523,1.8787231,4.2868195C372.3227234,124.8056107,374.2741089,125.3245926,376.920929,125.3245926z"/>
+        <path d="M433.6771851,135.673172c-3.9702454,0-7.7328796-0.2802582-11.2879333-0.8355713s-6.3783264-1.2559509-8.4698486-2.091507v-12.855278c2.4392395,1.0431671,5.2625122,1.8475876,8.4698486,2.4029083c3.2021484,0.5605011,6.0617371,0.8355637,8.5684509,0.8355637c2.9945374,0,5.1742859-0.1349335,6.5340271-0.4151917c1.3597412-0.2802505,2.0396118-1.0483475,2.0396118-2.2991028c0-1.3960724-1.1158142-2.4392319-3.3474731-3.1398621c-2.2316284-0.6954422-5.2936401-1.7022705-9.1964111-3.0308762c-4.5307312-1.5984726-7.9612427-3.4616318-10.2966614-5.5894699c-2.3354492-2.1278381-3.5031738-5.2780838-3.5031738-9.4585114c0-4.8784637,1.8320312-8.6255341,5.4908752-11.2386246s9.4922485-3.9183426,17.5053711-3.9183426c3.1398621,0,6.2382202,0.243927,9.3054199,0.7317734s5.5739136,1.0457535,7.5252991,1.6711273v12.6476746c-1.9513855-0.9030304-4.1830444-1.567337-6.6897278-1.9851151c-2.5067139-0.4177856-4.7746582-0.6279755-6.7935181-0.6279755c-2.5793762,0-4.7590942,0.1582947-6.5340271,0.4722748c-1.7749329,0.3113937-2.6676025,1.0613251-2.6676025,2.2472076c0,1.3234177,0.975708,2.2472076,2.9270935,2.7687912c1.9513855,0.5215759,4.7746582,1.3779068,8.4698486,2.5611877c3.902771,1.1858826,6.9336243,2.4573975,9.0926208,3.8119507c2.1589661,1.3597412,3.6951599,2.9789734,4.5982056,4.8628922c0.9082336,1.8787308,1.3597412,4.2504883,1.3597412,7.1049118c0,4.9511185-1.9513855,8.7500992-5.8541565,11.3969193S441.269928,135.673172,433.6771851,135.673172z"/>
+        <path d="M465.8698425,153.0280304V85.0850601h14.635376l0.8355713,4.2842255c2.0188599-1.6711349,4.2868347-2.9789734,6.7935181-3.918335c2.5119019-0.9419632,5.4337769-1.411644,8.78125-1.411644c7.0374451,0,12.6113281,1.8994904,16.7217102,5.6958618c4.1155396,3.7989731,6.1707153,10.1565475,6.1707153,19.0753098c0,8.8487015-2.1070557,15.5384216-6.326416,20.0691605c-4.2141724,4.5307465-10.0164185,6.7935333-17.4015808,6.7935333c-5.2261963,0-9.6894531-1.0794983-13.3794556-3.2384796v20.593338H465.8698425z M491.7931519,123.3420715c7.2450562,0,10.8727722-4.9511185,10.8727722-14.8429794c0-4.7383423-0.8355713-7.9456711-2.5119019-9.616806c-1.6711426-1.6737213-4.3542786-2.5092926-8.049469-2.5092926c-3.5498657,0-6.6897278,1.2533493-9.4040222,3.7626495v20.0665665c1.3234253,0.9808807,2.6624146,1.7437897,4.0221558,2.2991028C488.082428,123.061821,489.7691345,123.3420715,491.7931519,123.3420715z"/>
+        <path d="M544.371582,135.673172c-3.1347046,0-6.0462036-0.5553284-8.7293701-1.6711426c-2.6831055-1.1158142-4.8265381-2.8388519-6.4249878-5.1742859c-1.6036987-2.335434-2.4081421-5.241745-2.4081421-8.729332c0-5.0860519,1.7282715-9.0770569,5.1743164-11.967804c3.4512329-2.8907471,8.6255493-4.3361206,15.5228271-4.3361206h13.7998657v-1.1495514c0-2.5092926-0.8355713-4.3023911-2.5119019-5.3844757c-1.6711426-1.0794907-4.8057861-1.6192322-9.4040527-1.6192322c-5.6465454,0-11.184082,0.8718948-16.6230469,2.6130905V87.3841705c2.439209-0.9756927,5.4181519-1.7775269,8.9368896-2.4055023c3.5187378-0.6253738,7.2294922-0.9393616,11.1322632-0.9393616c7.6654053,0,13.6752319,1.567337,18.034729,4.7020111c4.3543091,3.1372604,6.5288086,8.1195221,6.5288086,14.9493713v30.9393158h-14.7339478l-0.8355713-4.1830292c-1.8164673,1.6711426-4.1311646,2.9634094-6.9544067,3.8664551C552.0525513,135.2216492,548.5546265,135.673172,544.371582,135.673172z M549.7015381,125.3245926c2.6468506,0,4.9459229-0.4515152,6.8973389-1.3597412c1.951355-0.9030304,3.5187378-2.0499878,4.7072144-3.4460602v-7.0063019h-11.9159546c-4.9511108,0-7.4214478,1.9877167-7.4214478,5.9579544c0,1.8164444,0.6279297,3.2436523,1.8787231,4.2868195C545.1033325,124.8056107,547.0547485,125.3245926,549.7015381,125.3245926z"/>
+        <path d="M614.1906738,135.673172c-8.8486938,0-15.7667847-2.1589813-20.7490234-6.482132c-4.9822388-4.3179626-7.4733887-10.7637634-7.4733887-19.3374023c0-8.7059784,2.5949097-15.1881027,7.789978-19.4385986c5.1898193-4.2504883,12.1079102-6.3757324,20.7490234-6.3757324c3.6224976,0,6.7727661,0.259491,9.4611206,0.7836685c2.6779785,0.5215836,5.2780762,1.3753128,7.78479,2.5611954v11.9159012c-3.902771-1.8813248-8.4646606-2.8232803-13.6908569-2.8232803c-4.878479,0-8.5892334,0.9782867-11.1322632,2.9270782c-2.5482178,1.9513855-3.8197021,5.4363708-3.8197021,10.4497681c0,4.6708755,1.1884766,8.0702286,3.5550537,10.1928787c2.3717651,2.1278381,6.1343994,3.1865692,11.2879028,3.1865692c5.0860596,0,9.7258301-1.0431595,13.9036255-3.1346741v12.4400864c-2.5067139,1.1158142-5.2105713,1.9150543-8.1013794,2.4028931C620.8648071,135.429245,617.6782837,135.673172,614.1906738,135.673172z"/>
+        <path d="M667.5008545,135.673172c-8.6411133,0-15.5747681-2.1434174-20.8009033-6.4250488c-5.2261963-4.2868195-7.8419189-10.7533722-7.8419189-19.3944855c0-7.8704071,2.1589966-14.1423492,6.4821777-18.8106232c4.3179321-4.6682739,10.8000488-7.0037079,19.4411621-7.0037079c7.8730469,0,13.9710693,2.0214462,18.2942505,6.0617523c4.3179321,4.0428925,6.4821167,9.4766693,6.4821167,16.3065186v8.8850327h-35.124939c0.7681274,3.2747955,2.5637817,5.5583344,5.387085,6.8454132c2.8181152,1.2922745,6.6689453,1.9358215,11.5474243,1.9358215c2.7194824,0,5.4908447-0.243927,8.30896-0.7317734c2.8233032-0.4878464,5.1742554-1.1158218,7.0581665-1.8839188v10.9765396c-2.3717651,1.1158295-5.1950073,1.9306335-8.4697876,2.4548035C674.9898071,135.4136658,671.4036255,135.673172,667.5008545,135.673172z M654.4328003,105.5720139h20.489563v-2.1953125c0-2.4392319-0.7317505-4.3724518-2.1953125-5.8022537c-1.463562-1.4272079-3.9390869-2.1434097-7.4215088-2.1434097c-4.0429077,0-6.8661499,0.8199921-8.4646606,2.4573975C655.2372437,99.5258331,654.4328003,102.0870209,654.4328003,105.5720139z"/>
+      </g>
+    </svg>
+    </a>
+  </div>
+</footer>
+
+<script>
+
+
+  const search = document.getElementById('search');
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const cards = document.querySelectorAll('.skill-card, .gl-row');
+  const sections = document.querySelectorAll('.category-section');
+  const emptyState = document.getElementById('empty-state');
+  const resultsCount = document.getElementById('results-count');
+  const navLinks = document.querySelectorAll('.nav-link[data-target]');
+
+  let activeFilter = 'all';
+  let searchQuery = '';
+
+  function update() {
+    let visible = 0;
+
+    sections.forEach(section => {
+      let sectionVisible = false;
+
+      section.querySelectorAll('.skill-card').forEach(card => {
+        const cmd = (card.dataset.cmd || '').toLowerCase();
+        const trigger = (card.querySelector('.skill-trigger') || card.querySelector('.gl-term') || {textContent:''}).textContent.toLowerCase();
+        const desc = (card.querySelector('.skill-desc') || card.querySelector('.gl-def') || {textContent:''}).textContent.toLowerCase();
+        const tags = (card.dataset.tags || '').toLowerCase();
+        const cardCat = (card.dataset.category || '');
+
+        const isGlos = cardCat && cardCat.startsWith('glossary-');
+        const matchesFilter = activeFilter === 'all' || cardCat === activeFilter || (activeFilter === 'glossary' && isGlos);
+        const matchesSearch = !searchQuery ||
+          cmd.includes(searchQuery) ||
+          trigger.includes(searchQuery) ||
+          desc.includes(searchQuery) ||
+          tags.includes(searchQuery);
+
+        if (matchesFilter && matchesSearch) {
+          card.classList.remove('hidden');
+          sectionVisible = true;
+          visible++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      section.classList.toggle('hidden', !sectionVisible);
+    });
+
+    // Hide non-skill sections when filtering or searching
+    const hiddenWhenFiltering = ['getting-started', 'connectors', 'context-files', 'what-are-skills', 'tips'];
+    hiddenWhenFiltering.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = (activeFilter !== 'all' || searchQuery) ? 'none' : '';
+    });
+
+    emptyState.classList.toggle('visible', visible === 0);
+    resultsCount.textContent = visible + ' results';
+
+    // Scroll to first visible section when filtering
+    if (activeFilter !== 'all' || searchQuery) {
+      const first = Array.from(sections).find(s => !s.classList.contains('hidden'));
+      if (first) first.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (!searchQuery) {
+      // Scroll back to top when clearing filter
+      document.querySelector('.content').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  search.addEventListener('input', e => {
+    searchQuery = e.target.value.toLowerCase().trim();
+    update();
+  });
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = btn.dataset.filter;
+      update();
+    });
+  });
+
+  // Nav highlighting
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      const target = link.dataset.target;
+      const el = document.getElementById(target);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      navLinks.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+    });
+  });
+
+
+
+  // Scroll spy — watch all navigable sections
+  const allObservable = document.querySelectorAll('.category-section, .getting-started, .extra-section, #pipelines, .glossary-section, [id^="glossary-"]');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navLinks.forEach(l => {
+          l.classList.toggle('active', l.dataset.target === id);
+        });
+      }
+    });
+  }, { rootMargin: '-10% 0px -80% 0px' });
+
+  allObservable.forEach(s => { if (s.id) observer.observe(s); });
+  // ── COPY FUNCTIONALITY ──
+
+  // 1. Skill cards: inject copy button, copy slash command on click
+  document.querySelectorAll('.skill-card:not(.glossary-card)').forEach(card => {
+    const cmd = card.dataset.cmd;
+    if (!cmd) return;
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy code';
+    btn.setAttribute('aria-label', `Copy ${cmd}`);
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(cmd).then(() => {
+        btn.textContent = 'Copied ✓';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 1800);
+      });
+    });
+    card.appendChild(btn);
+  });
+
+  // 2. Code blocks: wrap in copy container and inject copy button
+  document.querySelectorAll('.gs-code, .connector-code').forEach(block => {
+    // Skip if already wrapped
+    if (block.parentElement.classList.contains('code-copy-wrap')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'code-copy-wrap';
+    block.parentNode.insertBefore(wrap, block);
+    wrap.appendChild(block);
+
+    const btn = document.createElement('button');
+    btn.className = 'code-copy-btn';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', () => {
+      const text = block.textContent.trim();
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied ✓';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 1800);
+      });
+    });
+    wrap.appendChild(btn);
+  });
+
+  // Install tabs
+  document.querySelectorAll('.gs-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const group = tab.closest('.gs-tab-group');
+      group.querySelectorAll('.gs-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const target = tab.dataset.tab;
+      // find all code blocks in the same step
+      const step = tab.closest('.gs-step-body');
+      step.querySelectorAll('.gs-code-block').forEach(b => b.classList.remove('active'));
+      step.querySelector(`#tab-${target}`).classList.add('active');
+    });
+  });
+
+
+  // ── COLLAPSIBLE NAV SECTIONS ──
+  document.querySelectorAll('.nav-label-collapsible').forEach(label => {
+    const sectionId = label.dataset.section;
+    const body = document.getElementById(sectionId);
+    const icon = label.querySelector('.nav-collapse-icon');
+    if (!body) return;
+    label.addEventListener('click', () => {
+      const isCollapsed = body.classList.toggle('collapsed');
+      if (icon) icon.style.transform = isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)';
+    });
+  });
+
+
+  // ── HAMBURGER MENU ──
+  (function() {
+    const btn     = document.getElementById('hamburger');
+    const overlay = document.getElementById('mobile-nav-overlay');
+    const drawer  = document.getElementById('mobile-nav-drawer');
+    const closeBtn = document.getElementById('mobile-nav-close');
+    const content = document.getElementById('mobile-nav-content');
+    const desktopNav = document.getElementById('sidebar-nav');
+    if (!btn) return;
+
+    // Clone desktop nav into mobile drawer
+    if (desktopNav && content) {
+      content.innerHTML = desktopNav.innerHTML;
+      // Make mobile nav links close the drawer and navigate
+      content.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => close());
+      });
+      // Make collapsible labels work in mobile drawer too
+      content.querySelectorAll('.nav-label-collapsible').forEach(label => {
+        const sectionId = label.dataset.section;
+        const body = content.querySelector('#' + sectionId);
+        const icon = label.querySelector('.nav-collapse-icon');
+        if (!body) return;
+        label.addEventListener('click', () => {
+          const isCollapsed = body.classList.toggle('collapsed');
+          if (icon) icon.style.transform = isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)';
+        });
+      });
+    }
+
+    function open() {
+      btn.classList.add('open');
+      overlay.classList.add('open');
+      drawer.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      btn.classList.remove('open');
+      overlay.classList.remove('open');
+      drawer.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    btn.addEventListener('click', () => drawer.classList.contains('open') ? close() : open());
+    overlay.addEventListener('click', close);
+    closeBtn.addEventListener('click', close);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  })();
+
+
+  // Search keyboard shortcut — / or Cmd+K focuses search
+  document.addEventListener('keydown', e => {
+    const search = document.getElementById('search');
+    if (!search) return;
+    if (document.activeElement === search) return;
+    if (e.key === '/' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      const tag = document.activeElement?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      e.preventDefault();
+      search.focus();
+    }
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      search.focus();
+    }
+  });
+  // ESC clears and blurs search
+  document.getElementById('search')?.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      e.target.value = '';
+      e.target.blur();
+      searchQuery = '';
+      update();
+    }
+  });
+
+
+  // Back to top
+  const btt = document.getElementById('back-to-top');
+  window.addEventListener('scroll', () => {
+    btt.classList.toggle('visible', window.scrollY > 400);
+  }, { passive: true });
+  btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+</script>
+
+
+
+
+
+
+
+
+
+<script>
+
+(function(){
+  const hero = document.getElementById('hero-header');
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const W_COLOR = '#ffffff';
+
+  let W=0, H=0, pts=[], raf=0, tick=0;
+  let gridCols=0, gridRows=0, gridCount=0;
+  const mouse = {x:-9999,y:-9999};
+
+  // alpha → 2-char hex
+  function ah(a){
+    return Math.round(Math.min(1,Math.max(0,a))*255).toString(16).padStart(2,'0');
+  }
+
+  // Particle factory
+  function mkPt(x,y,ordered){
+    return {x,y,ox:x,oy:y,
+      vx:(Math.random()-.5)*1.4,
+      vy:(Math.random()-.5)*1.4,
+      ord:ordered, inf:0, nb:[]};
+  }
+
+  function build(){
+    pts=[];
+    const sp=38;
+    gridCols = Math.max(2, Math.round(W/sp));
+    gridRows = Math.max(2, Math.round(H*.5/sp));
+    gridCount = gridCols * gridRows;
+
+    // Ordered grid top half
+    for(let r=0;r<gridRows;r++){
+      for(let cl=0;cl<gridCols;cl++){
+        const x = (cl+.5)*(W/gridCols);
+        const y = (r+.5)*(H*.5/gridRows);
+        pts.push(mkPt(x,y,true));
+      }
+    }
+    // Chaotic bottom half
+    const chaos = Math.round(gridCount*.72);
+    for(let i=0;i<chaos;i++){
+      pts.push(mkPt(Math.random()*W, H*.5+Math.random()*H*.5, false));
+    }
+  }
+
+  // Neighbour update (spatial early exit)
+  const NR=90;
+  function updateNB(){
+    for(const p of pts) p.nb=[];
+    for(let i=0;i<pts.length;i++){
+      const a=pts[i];
+      for(let j=i+1;j<pts.length;j++){
+        const b=pts[j];
+        if(Math.abs(a.x-b.x)>NR||Math.abs(a.y-b.y)>NR) continue;
+        const d=Math.hypot(a.x-b.x,a.y-b.y);
+        if(d<NR){a.nb.push(b);b.nb.push(a);}
+      }
+    }
+  }
+
+  // Per-particle update
+  function updatePt(p){
+    // Mouse repulsion
+    const mdx=p.x-mouse.x, mdy=p.y-mouse.y;
+    const md=Math.hypot(mdx,mdy);
+    const MR=115;
+    let mfx=0,mfy=0;
+    if(md<MR&&md>.5){
+      const f=(1-md/MR)*4.5;
+      mfx=(mdx/md)*f; mfy=(mdy/md)*f;
+    }
+
+    if(p.ord){
+      let cx=0,cy=0,ms=0;
+      for(const n of p.nb){
+        if(n.ord) continue;
+        const d=Math.hypot(p.x-n.x,p.y-n.y);
+        const s=Math.max(0,1-d/NR);
+        cx+=n.vx*s; cy+=n.vy*s;
+        if(s>ms) ms=s;
+      }
+      if(md<MR) ms=Math.max(ms,(1-md/MR)*.75);
+      p.inf=Math.max(p.inf,ms);
+      const t=p.inf;
+      p.x+=(p.ox-p.x)*.06*(1-t)+(cx+mfx)*t+mfx*.25;
+      p.y+=(p.oy-p.y)*.06*(1-t)+(cy+mfy)*t+mfy*.25;
+      p.inf*=.987;
+    } else {
+      p.vx+=(Math.random()-.5)*.38+mfx*.55;
+      p.vy+=(Math.random()-.5)*.38+mfy*.55;
+      p.vx*=.945; p.vy*=.945;
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0){p.x=0;p.vx=Math.abs(p.vx);}
+      if(p.x>W){p.x=W;p.vx=-Math.abs(p.vx);}
+      if(p.y<H*.5){p.y=H*.5;p.vy=Math.abs(p.vy);}
+      if(p.y>H){p.y=H;p.vy=-Math.abs(p.vy);}
+    }
+  }
+
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    if(tick%28===0) updateNB();
+
+    // ── Neighbour connection lines (all particles) ──
+    ctx.lineWidth=.4;
+    const LD=52;
+    for(const p of pts){
+      for(const n of p.nb){
+        if(n.x<p.x||(n.x===p.x&&n.y<p.y)) continue;
+        const d=Math.hypot(p.x-n.x,p.y-n.y);
+        if(d<LD){
+          ctx.strokeStyle=W_COLOR+ah(.18*(1-d/LD));
+          ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(n.x,n.y);ctx.stroke();
+        }
+      }
+    }
+
+    // ── Diagonal grid lines (top ordered half only) ──
+    ctx.lineWidth=.32;
+    for(let r=0;r<gridRows-1;r++){
+      for(let cl=0;cl<gridCols-1;cl++){
+        const tl=pts[r*gridCols+cl];
+        const tr=pts[r*gridCols+(cl+1)];
+        const bl=pts[(r+1)*gridCols+cl];
+        const br=pts[(r+1)*gridCols+(cl+1)];
+
+        // TL → BR diagonal
+        const dtlbr=Math.hypot(tl.x-br.x,tl.y-br.y);
+        const atl=Math.max(0,.13*(1-dtlbr/130))*(1-tl.inf*.55);
+        if(atl>.005){
+          ctx.strokeStyle=W_COLOR+ah(atl);
+          ctx.beginPath();ctx.moveTo(tl.x,tl.y);ctx.lineTo(br.x,br.y);ctx.stroke();
+        }
+
+        // TR → BL diagonal
+        const dtrbl=Math.hypot(tr.x-bl.x,tr.y-bl.y);
+        const atr=Math.max(0,.13*(1-dtrbl/130))*(1-tr.inf*.55);
+        if(atr>.005){
+          ctx.strokeStyle=W_COLOR+ah(atr);
+          ctx.beginPath();ctx.moveTo(tr.x,tr.y);ctx.lineTo(bl.x,bl.y);ctx.stroke();
+        }
+      }
+    }
+
+    // ── Draw + update particles ──
+    for(const p of pts){
+      updatePt(p);
+      const alpha=p.ord?Math.max(.1,.72-p.inf*.45):.62;
+      ctx.fillStyle=W_COLOR+ah(alpha);
+      ctx.beginPath();ctx.arc(p.x,p.y,1.7,0,Math.PI*2);ctx.fill();
+    }
+
+    tick++;
+    raf=requestAnimationFrame(frame);
+  }
+
+  function resize(){
+    cancelAnimationFrame(raf);
+    ctx.setTransform(1,0,0,1,0,0);
+    W=hero.offsetWidth; H=hero.offsetHeight;
+    canvas.width=W*dpr; canvas.height=H*dpr;
+    canvas.style.width=W+'px'; canvas.style.height=H+'px';
+    ctx.scale(dpr,dpr);
+    build(); updateNB(); frame();
+  }
+
+  hero.addEventListener('mousemove',e=>{
+    const r=hero.getBoundingClientRect();
+    mouse.x=e.clientX-r.left; mouse.y=e.clientY-r.top;
+  });
+  hero.addEventListener('mouseleave',()=>{mouse.x=-9999;mouse.y=-9999;});
+
+  resize();
+  let rt;
+  window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(resize,120);});
+})();
+
+
+</script>
+
+<button class="back-to-top" id="back-to-top" aria-label="Back to top" title="Back to top">
+  <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">arrow_upward</span>
+</button>
+
+</body>
+</html>

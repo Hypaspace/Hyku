@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HYKU Synthesising Code &amp; Craft</title>
+<title>HYKU v3 — Synthesising Code &amp; Craft</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Special+Gothic+Expanded+One&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap');
@@ -23,10 +23,9 @@
   --text-dim: #3a3a50;
 }
 
-html { scroll-behavior: smooth; overflow-x: hidden; }
+html { scroll-behavior: smooth; }
 
 body {
-  overflow-x: hidden;
   background: var(--bg);
   color: var(--text);
   font-family: 'Syne', sans-serif;
@@ -91,8 +90,9 @@ h1 span { color: var(--accent); }
   flex-wrap: nowrap;
   position: sticky;
   top: 0;
-  z-index: 200;
+  z-index: 100;
   background: rgba(11,11,15,0.96);
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
 }
 .controls-logo {
@@ -169,7 +169,7 @@ h1 span { color: var(--accent); }
 main {
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
-  min-height: calc(100vh - 200px);
+  min-height: 100vh;
   align-items: start;
 }
 
@@ -178,10 +178,11 @@ nav {
   border-right: 1px solid var(--border);
   padding: 32px 0;
   position: sticky;
-  top: var(--controls-h, 61px);
-  height: calc(100vh - var(--controls-h, 61px));
+  top: 52px;
+  height: calc(100vh - 52px);
   overflow-y: auto;
   background: var(--bg);
+  align-self: start;
 }
 nav::-webkit-scrollbar { width: 3px; }
 nav::-webkit-scrollbar-track { background: transparent; }
@@ -394,7 +395,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   font-size: 11px;
   color: var(--text-dim);
 }
-.pipelines-body { display: none; margin-top: 32px; }
+.pipelines-.pipelines-.pipelines-body-x { display: none; margin-top: 32px; }
 .pipelines-body.open { display: block; }
 .pipeline-grid {
   display: grid;
@@ -540,7 +541,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   min-width: 0;
 }
 .gs-step:last-child { border-bottom: none; }
-.gs-step-body { min-width: 0; overflow: hidden; max-width: 100%; }
+.gs-step-.gs-step-.gs-step-.gs-step-content { min-width: 0; overflow: hidden; max-width: 100%; }
 .gs-step-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); padding-top: 2px; }
 .gs-step-label { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
 .gs-step-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 10px; }
@@ -673,7 +674,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   display: flex;
   align-items: center;
 }
-.how-to-use-body {
+.how-to-use-.how-to-use-body-fix {
   font-size: 13px;
   color: var(--text-muted);
   line-height: 1.7;
@@ -713,7 +714,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 #tips,
 #glossary,
 [id^="glossary-"] {
-  scroll-margin-top: 120px;
+  scroll-margin-top: var(--ctrl-h, 60px);
 }
 
 
@@ -841,6 +842,244 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 }
 .back-to-top.visible { opacity: 1; pointer-events: auto; }
 .back-to-top:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+
+
+/* ══════════════════════════════════════
+   SWIPE CARDS (mobile + tablet)
+   ══════════════════════════════════════ */
+@media (max-width: 900px) {
+  /* All skill category grids become horizontal scroll strips */
+  .category-section .skills-grid,
+  .extra-section .skills-grid,
+  .connector-grid,
+  .context-grid,
+  .explainer-grid,
+  .tips-grid,
+  .gs-sources {
+    display: flex !important;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: visible;
+    gap: 12px;
+    padding-bottom: 8px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .category-section .skills-grid::-webkit-scrollbar,
+  .extra-section .skills-grid::-webkit-scrollbar,
+  .connector-grid::-webkit-scrollbar,
+  .context-grid::-webkit-scrollbar,
+  .explainer-grid::-webkit-scrollbar,
+  .tips-grid::-webkit-scrollbar,
+  .gs-sources::-webkit-scrollbar { display: none; }
+
+  .category-section .skills-grid .skill-card,
+  .extra-section .skills-grid .skill-card,
+  .connector-grid > *,
+  .context-grid > *,
+  .explainer-grid > *,
+  .tips-grid > *,
+  .gs-sources > * {
+    flex: 0 0 80vw;
+    max-width: 320px;
+    scroll-snap-align: start;
+  }
+  /* Glossary stays grid — no swipe */
+  #glossary .skills-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+    overflow-x: visible;
+    scroll-snap-type: none;
+  }
+  #glossary .skills-grid .skill-card {
+    flex: unset; max-width: unset;
+  }
+}
+@media (max-width: 600px) {
+  .category-section .skills-grid .skill-card,
+  .extra-section .skills-grid .skill-card,
+  .connector-grid > *,
+  .context-grid > *,
+  .explainer-grid > *,
+  .tips-grid > *,
+  .gs-sources > * {
+    flex: 0 0 86vw;
+  }
+  #glossary .skills-grid { grid-template-columns: 1fr; }
+}
+
+/* ══════════════════════════════════════
+   COLLAPSIBLE CODE BLOCKS
+   ══════════════════════════════════════ */
+.code-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.15s, color 0.15s;
+}
+.code-toggle-btn:hover { background: var(--surface); color: var(--text); }
+.code-toggle-btn .ct-icon {
+  font-family: 'Material Symbols Outlined';
+  font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 20;
+  font-size: 14px;
+  transition: transform 0.2s;
+}
+.code-toggle-btn.open .ct-icon { transform: rotate(180deg); }
+.collapsible-code { display: none; margin-top: 6px; }
+.collapsible-code.open { display: block; }
+
+/* ══════════════════════════════════════
+   GLOSSARY ACCORDION
+   ══════════════════════════════════════ */
+.gl-acc-btn {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 20px;
+  background: var(--surface);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s;
+}
+.gl-acc-btn:hover { background: var(--surface2); }
+.gl-acc-btn .gl-acc-term {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.gl-acc-btn .gl-acc-icon {
+  font-family: 'Material Symbols Outlined';
+  font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 20;
+  font-size: 16px;
+  color: var(--text-dim);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.gl-acc-btn.open .gl-acc-icon { transform: rotate(180deg); }
+.gl-acc-def {
+  display: none;
+  padding: 8px 20px 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.65;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.gl-acc-def.open { display: block; }
+/* Hide original dl structure — accordion replaces it */
+.gl-row { display: contents; }
+.gl-term, .gl-def { display: none; }
+
+/* ══════════════════════════════════════
+   LIGHT MODE
+   ══════════════════════════════════════ */
+:root.light {
+  --bg:         #f0f0f5;
+  --surface:    #ffffff;
+  --surface2:   #e6e6ef;
+  --border:     #d0d0de;
+  --accent:     #5550cc;
+  --accent2:    #c86000;
+  --accent3:    #0a8a5c;
+  --text:       #0b0b0f;
+  --text-muted: #50506a;
+  --text-dim:   #8888a4;
+}
+:root.light 
+:root.light nav           { background: var(--bg); border-color: var(--border); }
+:root.light .controls     { background: rgba(240,240,245,0.96); }
+:root.light footer        { background: var(--bg); }
+:root.light .skill-card   { background: var(--surface); }
+:root.light .tip-card     { background: var(--surface); }
+:root.light .gl-acc-btn   { background: var(--surface); }
+:root.light .gl-acc-def   { background: var(--bg); }
+:root.light .how-to-use   { background: rgba(85,80,204,0.06); }
+:root.light .filter-btn   { background: transparent; }
+:root.light .filter-btn.active { background: var(--accent); color: #fff; }
+:root.light #search       { background: var(--surface); color: var(--text); }
+:root.light .gl-list      { background: var(--surface); }
+:root.light .mobile-nav-drawer { background: var(--bg); }
+:root.light .nav-link     { color: var(--text-muted); }
+:root.light .nav-link.active { color: var(--accent); }
+:root.light .nav-label    { color: var(--text-muted); }
+:root.light .gs-code      { background: #f8f8fc; color: var(--accent3); border-color: var(--border); }
+:root.light pre           { background: #f8f8fc; }
+:root.light .connector-card,
+:root.light .context-card,
+:root.light .explainer-card { background: var(--surface); }
+/* HYKU + Hypaspace logos */
+:root.light .hyku-logo .st0 { fill: #0b0b0f; }
+:root.light .hyku-logo .st1 { fill: #5550cc; }
+:root.light .hypaspace-logo * { fill: #8888a4 !important; }
+/* Hero in light mode */
+:root.light #hero-header { background: #dcdcee; }
+:root.light #hero-header canvas { opacity: 1; filter: invert(1) brightness(0.35) contrast(1.3); }
+:root.light #hero-header .vig {
+  background: radial-gradient(ellipse 60% 50% at 50% 50%,
+    rgba(220,220,238,0.65) 0%, rgba(220,220,238,0.1) 65%, transparent 100%);
+}
+:root.light #hero-header .header-eyebrow { color: var(--accent); }
+:root.light #hero-header h1 .h1-static { color: var(--text); }
+:root.light #hero-header .header-desc { color: var(--text-muted); }
+:root.light #hero-header .meta-pill { background: var(--surface); color: var(--text-muted); border-color: var(--border); }
+:root.light #hero-header .hyku-logo .st0 { fill: #0b0b0f; }
+:root.light #hero-header .hyku-logo .st1 { fill: #5550cc; }
+
+.theme-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  transition: all 0.15s;
+}
+.theme-btn:hover { background: var(--surface2); color: var(--text); }
+.theme-btn .material-symbols-outlined {
+  font-size: 16px;
+  font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 20;
+}
+
+
+/* ── GLOSSARY SECTION COLLAPSE ── */
+.category-header { cursor: default; }
+.category-header.collapsible { cursor: pointer; user-select: none; }
+.category-header.collapsible:hover { opacity: 0.85; }
+.cat-collapse-icon {
+  font-family: 'Material Symbols Outlined';
+  font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 20;
+  font-size: 18px;
+  color: var(--text-dim);
+  transition: transform 0.22s ease;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.cat-collapse-icon.collapsed { transform: rotate(-90deg); }
+.cat-collapsible-body { transition: max-height 0.3s ease, opacity 0.25s ease; overflow: hidden; }
+.cat-collapsible-body.collapsed { max-height: 0 !important; opacity: 0; }
 
 /* ── EXTRA SECTIONS ── */
 .extra-section {
@@ -994,7 +1233,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 }
 .explainer-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); }
 .explainer-label { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; }
-.explainer-body { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+.explainer-.gl-def-acc-x { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
 
 /* ── TIPS ── */
 .tips-grid {
@@ -1034,7 +1273,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 .tip-warn .tip-icon { color: var(--accent2); }
 .tip-go   .tip-icon { color: var(--accent3); }
 .tip-label { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; }
-.tip-body  { font-size: 13px; color: var(--text-muted); line-height: 1.65; flex: 1; }
+.tip-.tip-.tip-body-fix  { font-size: 13px; color: var(--text-muted); line-height: 1.65; flex: 1; }
 .tip-body code { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); background: var(--surface2); padding: 1px 5px; border-radius: 3px; }
 
 /* ── FOOTER ── */
@@ -1124,7 +1363,7 @@ footer {
 
   /* How to use */
   .how-to-use { padding: 14px 16px; }
-  .how-to-use-body { font-size: 12px; }
+  .how-to-use-.gs-step-desc-mobile { font-size: 12px; }
 
   /* Getting Started */
   .gs-intro { font-size: 13px; }
@@ -1287,7 +1526,7 @@ h1 span { color: var(--accent); }
   <div class="controls-top-row">
   <div class="controls-logo">
     <a href="#" style="display:flex;align-items:center;text-decoration:none">
-      <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" height="22" width="auto" viewBox="0 0 497.8 100">
+      <svg id="Layer_1" class="hyku-logo" xmlns="http://www.w3.org/2000/svg" height="22" width="auto" viewBox="0 0 497.8 100">
   <defs><style>.st0{fill:#fff}.st1{fill:#7e08fa}</style></defs>
   <polygon class="st0" points="273.8 0 248.5 38.2 223.2 0 195.5 0 234.7 59 208.4 98.6 236.1 98.6 301.5 0 273.8 0"/>
   <path class="st1" d="M0,98.6L65.4,0h27.6S27.6,98.6,27.6,98.6H0Z"/>
@@ -1316,6 +1555,9 @@ h1 span { color: var(--accent); }
     <span class="search-icon">⌕</span>
     <input type="text" id="search" placeholder="Search…" autocomplete="off">
   </div>
+  <button class="theme-btn" id="theme-btn" aria-label="Toggle light/dark mode">
+    <span class="material-symbols-outlined" id="theme-icon" style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">light_mode</span>
+  </button>
   <button class="hamburger" id="hamburger" aria-label="Open navigation">
     <span></span><span></span><span></span>
   </button>
@@ -1493,7 +1735,7 @@ h1 span { color: var(--accent); }
             <div class="gs-step-body">
               <div class="gs-step-label">Make sure Claude Code is installed</div>
               <div class="gs-step-desc">Skills require <a href="https://claude.ai/code" target="_blank">Claude Code</a> Anthropic's terminal-based coding agent. Install it globally via npm if you haven't already.</div>
-              <code class="gs-code">npm install -g @anthropic-ai/claude-code</code>
+              <button class="code-toggle-btn" onclick="(function(b){var p=b.nextElementSibling;var open=p.classList.toggle('open');b.classList.toggle('open',open);b.querySelector('.ct-label').textContent=open?'Hide code':'Show code';b.querySelector('.ct-icon').textContent=open?'expand_less':'expand_more';})(this)"><span class="ct-label">Show code</span><span class="material-symbols-outlined ct-icon" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">expand_more</span></button><div class="collapsible-code"><code class="gs-code">npm install -g @anthropic-ai/claude-code</code></div>
             </div>
           </div>
 
@@ -1502,7 +1744,7 @@ h1 span { color: var(--accent); }
             <div class="gs-step-body">
               <div class="gs-step-label">Create your skills folder</div>
               <div class="gs-step-desc">Skills live in <code style="font-family:'JetBrains Mono',monospace;font-size:12px;colour:var(--accent)">~/.claude/skills/</code> for global access across all projects, or <code style="font-family:'JetBrains Mono',monospace;font-size:12px;colour:var(--accent)">.claude/skills/</code> inside a project for project-scoped skills.</div>
-              <code class="gs-code">mkdir -p ~/.claude/skills</code>
+              <button class="code-toggle-btn" onclick="(function(b){var p=b.nextElementSibling;var open=p.classList.toggle('open');b.classList.toggle('open',open);b.querySelector('.ct-label').textContent=open?'Hide code':'Show code';b.querySelector('.ct-icon').textContent=open?'expand_less':'expand_more';})(this)"><span class="ct-label">Show code</span><span class="material-symbols-outlined ct-icon" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">expand_more</span></button><div class="collapsible-code"><code class="gs-code">mkdir -p ~/.claude/skills</code></div>
             </div>
           </div>
 
@@ -1511,7 +1753,7 @@ h1 span { color: var(--accent); }
             <div class="gs-step-body">
               <div class="gs-step-label">Download and install skills</div>
               <div class="gs-step-desc">Choose your preferred method. The plugin command is the fastest; manual install gives you more control.</div>
-              <div class="gs-tab-group" id="install-tabs">
+              <button class="code-toggle-btn" onclick="(function(b){var d=b.nextElementSibling;d.classList.toggle('open');b.classList.toggle('open');b.querySelector('.ct-icon').textContent=d.classList.contains('open')?'expand_less':'expand_more';})(this)"><span>Show code</span><span class="ct-icon material-symbols-outlined">expand_more</span></button><div class="collapsible-code"><div class="gs-tab-group" id="install-tabs">
                 <button class="gs-tab active" data-tab="plugin">Claude Code plugin</button>
                 <button class="gs-tab" data-tab="manual">Manual (git clone)</button>
                 <button class="gs-tab" data-tab="npm">npm CLI</button>
@@ -1549,21 +1791,21 @@ npm install -g uipro-cli
 cd /path/to/your/project
 uipro init --ai claude</code>
             </div>
-          </div>
+          </div></div>
 
           <div class="gs-step">
             <div class="gs-step-num">04</div>
             <div class="gs-step-body">
               <div class="gs-step-label">Verify installation</div>
               <div class="gs-step-desc">Open Claude Code in your terminal and check that skills are available. Then try invoking one.</div>
-              <code class="gs-code"># Start Claude Code
+              <button class="code-toggle-btn" onclick="(function(b){var p=b.nextElementSibling;var open=p.classList.toggle('open');b.classList.toggle('open',open);b.querySelector('.ct-label').textContent=open?'Hide code':'Show code';b.querySelector('.ct-icon').textContent=open?'expand_less':'expand_more';})(this)"><span class="ct-label">Show code</span><span class="material-symbols-outlined ct-icon" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">expand_more</span></button><div class="collapsible-code"><code class="gs-code"># Start Claude Code
 claude
 
 # List installed skills
 /skills list
 
 # Try a skill ask Claude to build something
-"Build me a landing page for a SaaS product, dark and editorial tone"</code>
+"Build me a landing page for a SaaS product, dark and editorial tone"</code></div>
             </div>
           </div>
 
@@ -2828,7 +3070,7 @@ claude
           <div class="context-desc">A plain markdown file that Claude Code reads at the start of every session. Put your stack, conventions, file structure, and preferences here so Claude always has the right baseline no re-explaining each session.</div>
           <div class="context-example">
             <div class="context-example-label">Example contents</div>
-            <code class="gs-code"># Project
+            <button class="code-toggle-btn" onclick="(function(b){var p=b.nextElementSibling;var open=p.classList.toggle('open');b.classList.toggle('open',open);b.querySelector('.ct-label').textContent=open?'Hide code':'Show code';b.querySelector('.ct-icon').textContent=open?'expand_less':'expand_more';})(this)"><span class="ct-label">Show code</span><span class="material-symbols-outlined ct-icon" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">expand_more</span></button><div class="collapsible-code"><code class="gs-code"># Project
 Stack: Next.js 14, Tailwind, shadcn/ui
 Design tokens: tokens/design.ts
 Component folder: src/components/
@@ -2836,7 +3078,7 @@ Component folder: src/components/
 # Preferences
 - Use TypeScript strict mode
 - Prefer composition over prop drilling
-- Save output files to ~/Claude/</code>
+- Save output files to ~/Claude/</code></div>
           </div>
           <div class="context-location">Location: <code style="font-family:'JetBrains Mono',monospace;font-size:11px;colour:var(--accent)">~/.claude/CLAUDE.md</code> (global) or <code style="font-family:'JetBrains Mono',monospace;font-size:11px;colour:var(--accent)">.claude/CLAUDE.md</code> (project)</div>
         </div>
@@ -2847,7 +3089,7 @@ Component folder: src/components/
           <div class="context-desc">A structured file describing your brand's visual language colours, typography, spacing, component patterns, tone. Claude reads it before generating any UI, ensuring every output stays on-brand without repeated instructions.</div>
           <div class="context-example">
             <div class="context-example-label">Example contents</div>
-            <code class="gs-code"># Brand
+            <button class="code-toggle-btn" onclick="(function(b){var p=b.nextElementSibling;var open=p.classList.toggle('open');b.classList.toggle('open',open);b.querySelector('.ct-label').textContent=open?'Hide code':'Show code';b.querySelector('.ct-icon').textContent=open?'expand_less':'expand_more';})(this)"><span class="ct-label">Show code</span><span class="material-symbols-outlined ct-icon" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">expand_more</span></button><div class="collapsible-code"><code class="gs-code"># Brand
 Name: Hypaspace
 Tone: Bold, technical, minimal
 
@@ -2859,7 +3101,7 @@ Surface: #111117
 # Typography
 Display: Special Gothic Expanded One
 Body: Syne
-Mono: JetBrains Mono</code>
+Mono: JetBrains Mono</code></div>
           </div>
           <div class="context-location">Location: project root or attach in chat · <a href="https://getdesign.md" target="_blank" style="colour:var(--accent);text-decoration:none">getdesign.md</a> for templates</div>
         </div>
@@ -2870,7 +3112,7 @@ Mono: JetBrains Mono</code>
           <div class="context-desc">The format that all skills use. You can write your own encode your team's workflow, brand standards, or domain expertise as a reusable skill. Any folder with a SKILL.md becomes a Claude skill.</div>
           <div class="context-example">
             <div class="context-example-label">Minimal structure</div>
-            <code class="gs-code">---
+            <button class="code-toggle-btn" onclick="(function(b){var p=b.nextElementSibling;var open=p.classList.toggle('open');b.classList.toggle('open',open);b.querySelector('.ct-label').textContent=open?'Hide code':'Show code';b.querySelector('.ct-icon').textContent=open?'expand_less':'expand_more';})(this)"><span class="ct-label">Show code</span><span class="material-symbols-outlined ct-icon" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">expand_more</span></button><div class="collapsible-code"><code class="gs-code">---
 name: my-skill
 description: When to activate this skill
 ---
@@ -2879,7 +3121,7 @@ description: When to activate this skill
 
 Instructions for Claude go here.
 Reference files, examples, and
-decision frameworks all valid.</code>
+decision frameworks all valid.</code></div>
           </div>
           <div class="context-location">Location: <code style="font-family:'JetBrains Mono',monospace;font-size:11px;colour:var(--accent)">~/.claude/skills/my-skill/SKILL.md</code></div>
         </div>
@@ -2989,7 +3231,7 @@ decision frameworks all valid.</code>
 <footer>
   <div class="footer-text" style="display:flex; align-items:center; gap:12px;">
     <div style="opacity:0.7;display:flex;align-items:center">
-      <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" height="16" width="auto" viewBox="0 0 497.8 100">
+      <svg id="Layer_1" class="hyku-logo" xmlns="http://www.w3.org/2000/svg" height="16" width="auto" viewBox="0 0 497.8 100">
   <defs><style>.st0{fill:#fff}.st1{fill:#7e08fa}</style></defs>
   <polygon class="st0" points="273.8 0 248.5 38.2 223.2 0 195.5 0 234.7 59 208.4 98.6 236.1 98.6 301.5 0 273.8 0"/>
   <path class="st1" d="M0,98.6L65.4,0h27.6S27.6,98.6,27.6,98.6H0Z"/>
@@ -3003,7 +3245,7 @@ decision frameworks all valid.</code>
   <div class="footer-text" style="display:flex;align-items:center;gap:12px;">
     <a href="https://www.hypaspace.co.uk" target="_blank" style="color:var(--text-dim);text-decoration:none;transition:color 0.15s;display:flex;align-items:center;gap:8px" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-dim)'">
       Designed by Hypaspace
-      <svg height="18" viewBox="0 0 689.5577393 201.9450073" xmlns="http://www.w3.org/2000/svg" style="fill:#ffffff; opacity:0.4; flex-shrink:0;">
+      <svg class="hypaspace-logo" height="18" viewBox="0 0 689.5577393 201.9450073" xmlns="http://www.w3.org/2000/svg" style="fill:#ffffff; opacity:0.4; flex-shrink:0;">
       <g>
         <polygon points="66.3349915,201.9450073 66.3349915,164.4631958 99.5024719,146.5632629 99.5024719,184.0450745"/>
         <polygon points="0,55.3817406 0,17.8999367 33.1674881,0 33.1674881,37.4818039"/>
@@ -3225,8 +3467,17 @@ decision frameworks all valid.</code>
     if (desktopNav && content) {
       content.innerHTML = desktopNav.innerHTML;
       // Make mobile nav links close the drawer and navigate
-      content.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', () => close());
+      content.querySelectorAll('.nav-link[data-target]').forEach(link => {
+        link.addEventListener('click', () => {
+          const target = link.dataset.target;
+          const el = document.getElementById(target);
+          if (el) {
+            close();
+            setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+          } else {
+            close();
+          }
+        });
       });
       // Make collapsible labels work in mobile drawer too
       content.querySelectorAll('.nav-label-collapsible').forEach(label => {
@@ -3294,6 +3545,55 @@ decision frameworks all valid.</code>
     btt.classList.toggle('visible', window.scrollY > 400);
   }, { passive: true });
   btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+
+    grid.addEventListener('mouseleave', () => { isDown = false; grid.style.cursor = 'grab'; });
+    grid.addEventListener('mouseup', () => { isDown = false; grid.style.cursor = 'grab'; });
+    grid.addEventListener('mousemove', e => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - grid.offsetLeft;
+      grid.scrollLeft = scrollLeft - (x - startX) * 1.2;
+    });
+  });
+
+
+  // ── GLOSSARY SECTION COLLAPSE ──
+  document.querySelectorAll('#glossary .category-section').forEach(function(section) {
+    var header = section.querySelector('.category-header');
+    var body   = section.querySelector('.gl-list') || section.querySelector('.skills-grid');
+    if (!header || !body) return;
+
+    // Add collapse icon to header
+    header.classList.add('collapsible');
+    var icon = document.createElement('span');
+    icon.className = 'cat-collapse-icon material-symbols-outlined';
+    icon.textContent = 'expand_more';
+    header.appendChild(icon);
+
+    // Wrap body in collapsible container
+    var wrap = document.createElement('div');
+    wrap.className = 'cat-collapsible-body';
+    wrap.style.maxHeight = body.scrollHeight + 'px';
+    body.parentNode.insertBefore(wrap, body);
+    wrap.appendChild(body);
+
+    header.addEventListener('click', function() {
+      var isCollapsed = wrap.classList.toggle('collapsed');
+      icon.classList.toggle('collapsed', isCollapsed);
+      if (!isCollapsed) {
+        wrap.style.maxHeight = wrap.scrollHeight + 'px';
+        // After animation, remove fixed max-height so content can grow
+        setTimeout(function() { wrap.style.maxHeight = 'none'; }, 320);
+      } else {
+        // Set a fixed height before collapsing so transition works
+        wrap.style.maxHeight = wrap.scrollHeight + 'px';
+        requestAnimationFrame(function() {
+          wrap.style.maxHeight = '0';
+        });
+      }
+    });
+  });
 
 </script>
 
@@ -3485,6 +3785,103 @@ decision frameworks all valid.</code>
   window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(resize,120);});
 })();
 
+
+
+  // ══════════════════════════════════════
+  // GLOSSARY ACCORDION
+  // ══════════════════════════════════════
+  document.querySelectorAll('.gl-list').forEach(function(list) {
+    var rows = Array.from(list.querySelectorAll('.gl-row'));
+    rows.forEach(function(row) {
+      var termEl = row.querySelector('.gl-term');
+      var defEl  = row.querySelector('.gl-def');
+      if (!termEl || !defEl) return;
+
+      var btn = document.createElement('button');
+      btn.className = 'gl-acc-btn';
+      btn.innerHTML =
+        '<span class="gl-acc-term">' + termEl.textContent + '</span>' +
+        '<span class="material-symbols-outlined gl-acc-icon">expand_more</span>';
+
+      var defDiv = document.createElement('div');
+      defDiv.className = 'gl-acc-def';
+      defDiv.textContent = defEl.textContent;
+
+      // Insert btn and defDiv, then hide original row
+      list.insertBefore(btn, row);
+      list.insertBefore(defDiv, row);
+
+      btn.addEventListener('click', function() {
+        var open = defDiv.classList.toggle('open');
+        btn.classList.toggle('open', open);
+      });
+    });
+  });
+
+  // ══════════════════════════════════════
+  // LIGHT MODE TOGGLE
+  // ══════════════════════════════════════
+  (function() {
+    var btn  = document.getElementById('theme-btn');
+    var icon = document.getElementById('theme-icon');
+    var root = document.documentElement;
+
+    function setTheme(light) {
+      if (light) {
+        root.classList.add('light');
+        if (icon) icon.textContent = 'dark_mode';
+      } else {
+        root.classList.remove('light');
+        if (icon) icon.textContent = 'light_mode';
+      }
+      try { localStorage.setItem('hyku-theme', light ? 'light' : 'dark'); } catch(e) {}
+    }
+
+    // Restore saved preference
+    try {
+      if (localStorage.getItem('hyku-theme') === 'light') setTheme(true);
+    } catch(e) {}
+
+    if (btn) {
+      btn.addEventListener('click', function() {
+        setTheme(!root.classList.contains('light'));
+      });
+    }
+  })();
+
+  // ══════════════════════════════════════
+  // DRAG-TO-SCROLL on swipe strips (desktop)
+  // ══════════════════════════════════════
+  document.querySelectorAll('.skills-grid, .connector-grid, .context-grid, .explainer-grid, .tips-grid, .gs-sources').forEach(function(el) {
+    var down = false, startX, scrollLeft;
+    el.addEventListener('mousedown', function(e) {
+      down = true;
+      startX = e.pageX - el.offsetLeft;
+      scrollLeft = el.scrollLeft;
+      el.style.cursor = 'grabbing';
+    });
+    document.addEventListener('mouseup', function() { down = false; el.style.cursor = ''; });
+    el.addEventListener('mouseleave', function() { down = false; el.style.cursor = ''; });
+    el.addEventListener('mousemove', function(e) {
+      if (!down) return;
+      e.preventDefault();
+      el.scrollLeft = scrollLeft - (e.pageX - el.offsetLeft - startX) * 1.2;
+    });
+  });
+
+
+  // ── SET CONTROLS HEIGHT VAR ──
+  function setControlsH() {
+    const ctrl = document.querySelector('.controls');
+    if (ctrl) {
+      const h = ctrl.offsetHeight + 'px';
+      document.documentElement.style.setProperty('--ctrl-h', h);
+      document.documentElement.style.setProperty('--controls-h', h);
+      document.documentElement.style.setProperty('--scroll-padding', h);
+    }
+  }
+  setControlsH();
+  window.addEventListener('resize', setControlsH);
 
 </script>
 

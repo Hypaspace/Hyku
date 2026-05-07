@@ -1043,6 +1043,12 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 :root.light #hero-header .hyku-logo .st0 { fill: #0b0b0f; }
 :root.light #hero-header .hyku-logo .st1 { fill: #5550cc; }
 
+/* Light mode mobile drawer */
+:root.light .mobile-nav-drawer { background: var(--bg); border-color: var(--border); }
+:root.light .mobile-nav-header { border-color: var(--border); }
+:root.light .mobile-nav-title { color: var(--text-muted); }
+:root.light .mobile-nav-close { color: var(--text-muted); }
+:root.light .mobile-nav-overlay { background: rgba(0,0,0,0.3); }
 .theme-btn {
   display: flex;
   align-items: center;
@@ -3455,60 +3461,54 @@ decision frameworks all valid.</code></div>
 
   // ── HAMBURGER MENU ──
   (function() {
-    const btn     = document.getElementById('hamburger');
-    const overlay = document.getElementById('mobile-nav-overlay');
-    const drawer  = document.getElementById('mobile-nav-drawer');
+    const btn      = document.getElementById('hamburger');
+    const overlay  = document.getElementById('mobile-nav-overlay');
+    const drawer   = document.getElementById('mobile-nav-drawer');
     const closeBtn = document.getElementById('mobile-nav-close');
-    const content = document.getElementById('mobile-nav-content');
-    const desktopNav = document.getElementById('sidebar-nav');
-    if (!btn) return;
+    const content  = document.getElementById('mobile-nav-content');
+    if (!btn || !overlay || !drawer) return;
 
-    // Clone desktop nav into mobile drawer
-    if (desktopNav && content) {
-      content.innerHTML = desktopNav.innerHTML;
-      // Make mobile nav links close the drawer and navigate
-      content.querySelectorAll('.nav-link[data-target]').forEach(link => {
-        link.addEventListener('click', () => {
-          const target = link.dataset.target;
-          const el = document.getElementById(target);
-          if (el) {
-            close();
-            setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
-          } else {
-            close();
-          }
+    function openDrawer() {
+      // Re-clone desktop nav each time so it reflects current state
+      const desktopNav = document.getElementById('sidebar-nav');
+      if (desktopNav && content) {
+        content.innerHTML = desktopNav.innerHTML;
+        // Wire up nav links in drawer
+        content.querySelectorAll('.nav-link[data-target]').forEach(link => {
+          link.addEventListener('click', () => {
+            const target = link.dataset.target;
+            const el = document.getElementById(target);
+            closeDrawer();
+            if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 320);
+          });
         });
-      });
-      // Make collapsible labels work in mobile drawer too
-      content.querySelectorAll('.nav-label-collapsible').forEach(label => {
-        const sectionId = label.dataset.section;
-        const body = content.querySelector('#' + sectionId);
-        const icon = label.querySelector('.nav-collapse-icon');
-        if (!body) return;
-        label.addEventListener('click', () => {
-          const isCollapsed = body.classList.toggle('collapsed');
-          if (icon) icon.style.transform = isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)';
+        // Wire up collapsibles in drawer
+        content.querySelectorAll('.nav-label-collapsible').forEach(label => {
+          const sectionId = label.dataset.section;
+          const body = content.querySelector('#' + sectionId);
+          const icon = label.querySelector('.nav-collapse-icon');
+          if (!body) return;
+          label.addEventListener('click', () => {
+            const collapsed = body.classList.toggle('collapsed');
+            if (icon) icon.style.transform = collapsed ? 'rotate(-90deg)' : 'rotate(0deg)';
+          });
         });
-      });
-    }
-
-    function open() {
+      }
       btn.classList.add('open');
       overlay.classList.add('open');
       drawer.classList.add('open');
-      document.body.style.overflow = 'hidden';
     }
-    function close() {
+
+    function closeDrawer() {
       btn.classList.remove('open');
       overlay.classList.remove('open');
       drawer.classList.remove('open');
-      document.body.style.overflow = '';
     }
 
-    btn.addEventListener('click', () => drawer.classList.contains('open') ? close() : open());
-    overlay.addEventListener('click', close);
-    closeBtn.addEventListener('click', close);
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+    btn.addEventListener('click', () => drawer.classList.contains('open') ? closeDrawer() : openDrawer());
+    overlay.addEventListener('click', closeDrawer);
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
   })();
 
 
@@ -3547,16 +3547,16 @@ decision frameworks all valid.</code></div>
   btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
 
-    grid.addEventListener('mouseleave', () => { isDown = false; grid.style.cursor = 'grab'; });
-    grid.addEventListener('mouseup', () => { isDown = false; grid.style.cursor = 'grab'; });
-    grid.addEventListener('mousemove', e => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - grid.offsetLeft;
-      grid.scrollLeft = scrollLeft - (x - startX) * 1.2;
-    });
-  });
 
+
+  // ── DRAG TO SCROLL (desktop) ──
+  document.querySelectorAll('.skills-grid, .connector-grid, .context-grid, .explainer-grid, .tips-grid, .gs-sources').forEach(function(grid) {
+    var isDown = false, startX, scrollLeft;
+    grid.addEventListener('mousedown', function(e) { isDown = true; startX = e.pageX - grid.offsetLeft; scrollLeft = grid.scrollLeft; grid.style.cursor = 'grabbing'; });
+    document.addEventListener('mouseup', function() { isDown = false; if (grid) grid.style.cursor = ''; });
+    grid.addEventListener('mouseleave', function() { isDown = false; grid.style.cursor = ''; });
+    grid.addEventListener('mousemove', function(e) { if (!isDown) return; e.preventDefault(); grid.scrollLeft = scrollLeft - (e.pageX - grid.offsetLeft - startX) * 1.2; });
+  });
 
   // ── GLOSSARY SECTION COLLAPSE ──
   document.querySelectorAll('#glossary .category-section').forEach(function(section) {

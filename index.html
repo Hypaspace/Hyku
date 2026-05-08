@@ -3931,8 +3931,8 @@ decision frameworks all valid.</code></div>
 
   // ── SOUND SYSTEM ──
   (function() {
-    let actx = null;
-    let soundEnabled = true;
+    var actx = null;
+    var soundEnabled = true;
     try { soundEnabled = localStorage.getItem('hyku-sound') !== 'off'; } catch(e) {}
 
     function getCtx() {
@@ -3940,127 +3940,106 @@ decision frameworks all valid.</code></div>
       return actx;
     }
 
-    // Warm up AudioContext on first real user gesture so hover sounds work immediately after
-    function warmUp() {
+    // Unlock AudioContext on first user gesture (browsers block audio until interaction)
+    function unlock() {
       var ac = getCtx();
       if (ac.state === 'suspended') ac.resume();
     }
-    ['click','keydown','touchstart','pointerdown'].forEach(function(evt) {
-      document.addEventListener(evt, function warm() {
-        warmUp();
-        document.removeEventListener(evt, warm);
-      }, { once: true, passive: true });
-    });
+    document.addEventListener('click',       unlock, { once: true });
+    document.addEventListener('keydown',     unlock, { once: true });
+    document.addEventListener('pointerdown', unlock, { once: true });
 
-    function tone(freq, dur, gainVal, freqEnd, waveType) {
-      if (!soundEnabled) return;
-      try {
-        const ac = getCtx();
-        const play = function() {
-          const osc = ac.createOscillator();
-          const gain = ac.createGain();
-          osc.connect(gain);
-          gain.connect(ac.destination);
-          osc.type = waveType || 'sine';
-          osc.frequency.setValueAtTime(freq, ac.currentTime);
-          if (freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, ac.currentTime + dur);
-          gain.gain.setValueAtTime(gainVal, ac.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + dur);
-          osc.start(ac.currentTime);
-          osc.stop(ac.currentTime + dur + 0.01);
-        };
-        if (ac.state === 'suspended') { ac.resume().then(play); } else { play(); }
-      } catch(e) {}
-    }
-
-    // Soft tick for nav link hover
-    function playHover() { tone(1100, 0.055, 0.07, 800); }
-
-    // Satisfying click for filter buttons
-    function playNavClick() { tone(380, 0.09, 0.1, 180); }
-
-    // Ascending sweep → light mode, descending → dark mode
-    function playToggle(goingLight) {
-      if (goingLight) { tone(320, 0.18, 0.09, 680); }
-      else { tone(680, 0.18, 0.09, 260); }
-    }
-
-    // Accordion: two-note chime open, reverse close
-    function playAccordion(opening) {
-      if (opening) { tone(440, 0.07, 0.06); setTimeout(function(){ tone(660, 0.09, 0.06); }, 65); }
-      else { tone(550, 0.07, 0.05); setTimeout(function(){ tone(370, 0.09, 0.05); }, 65); }
-    }
-
-    // Show/hide code: soft pop open, softer click close
-    function playShowCode(opening) {
-      if (opening) { tone(520, 0.11, 0.07, 340); }
-      else { tone(340, 0.09, 0.05, 260); }
-    }
-
-    // Copy: bright success ping
-    function playCopy() { tone(900, 0.06, 0.07); setTimeout(function(){ tone(1200, 0.12, 0.06); }, 55); }
-
-    // Horizontal scroll: short filtered noise swipe
-    function playSwipe() {
+    function tone(freq, dur, vol, freqEnd) {
       if (!soundEnabled) return;
       try {
         var ac = getCtx();
-        var bufLen = Math.floor(ac.sampleRate * 0.055);
-        var buf = ac.createBuffer(1, bufLen, ac.sampleRate);
-        var data = buf.getChannelData(0);
-        for (var i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
-        var src = ac.createBufferSource();
-        src.buffer = buf;
-        var filt = ac.createBiquadFilter();
-        filt.type = 'bandpass';
-        filt.frequency.value = 1800;
-        filt.Q.value = 0.7;
-        var g = ac.createGain();
-        g.gain.setValueAtTime(0.055, ac.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.055);
+        var go = function() {
+          var osc  = ac.createOscillator();
+          var gain = ac.createGain();
+          osc.connect(gain);
+          gain.connect(ac.destination);
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, ac.currentTime);
+          if (freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, ac.currentTime + dur);
+          gain.gain.setValueAtTime(vol, ac.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + dur);
+          osc.start(ac.currentTime);
+          osc.stop(ac.currentTime + dur + 0.02);
+        };
+        if (ac.state === 'suspended') ac.resume().then(go); else go();
+      } catch(e) {}
+    }
+
+    function playHover()     { tone(900, 0.06, 0.18, 700); }
+    function playNavClick()  { tone(500, 0.10, 0.25, 300); }
+    function playNavSelect() { tone(400, 0.08, 0.20, 260); }
+    function playToggle(light) {
+      if (light) { tone(350, 0.15, 0.20, 700); } else { tone(700, 0.15, 0.20, 300); }
+    }
+    function playAccordion(open) {
+      if (open)  { tone(440, 0.08, 0.18); setTimeout(function(){ tone(660, 0.10, 0.16); }, 70); }
+      else       { tone(550, 0.08, 0.15); setTimeout(function(){ tone(370, 0.10, 0.13); }, 70); }
+    }
+    function playShowCode(open) {
+      if (open) tone(500, 0.12, 0.18, 320); else tone(320, 0.10, 0.15, 240);
+    }
+    function playCopy() {
+      tone(800, 0.07, 0.20); setTimeout(function(){ tone(1100, 0.12, 0.16); }, 60);
+    }
+    function playSwipe() {
+      if (!soundEnabled) return;
+      try {
+        var ac  = getCtx();
+        var len = Math.floor(ac.sampleRate * 0.06);
+        var buf = ac.createBuffer(1, len, ac.sampleRate);
+        var d   = buf.getChannelData(0);
+        for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+        var src  = ac.createBufferSource(); src.buffer = buf;
+        var filt = ac.createBiquadFilter(); filt.type = 'bandpass'; filt.frequency.value = 1600; filt.Q.value = 0.8;
+        var g    = ac.createGain();
+        g.gain.setValueAtTime(0.12, ac.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.06);
         src.connect(filt); filt.connect(g); g.connect(ac.destination);
         src.start();
       } catch(e) {}
     }
 
-    // Throttle hover so rapid mousing doesn't machine-gun
-    let lastHover = 0;
+    var lastHover = 0;
     function hoverThrottled() {
-      const now = Date.now();
-      if (now - lastHover > 90) { playHover(); lastHover = now; }
+      var now = Date.now();
+      if (now - lastHover > 80) { playHover(); lastHover = now; }
     }
-
-    // Throttle swipe sound
     var lastSwipe = 0;
     function swipeThrottled() {
       var now = Date.now();
       if (now - lastSwipe > 120) { playSwipe(); lastSwipe = now; }
     }
 
-    // Hover sound for sidebar nav links
+    // Hover + click on sidebar nav links
     document.querySelectorAll('.nav-link').forEach(function(link) {
       link.addEventListener('mouseenter', hoverThrottled);
+      link.addEventListener('click', playNavSelect);
     });
 
-    // Hover sound for top filter buttons
+    // Hover + click on top filter buttons
     document.querySelectorAll('.filter-btn').forEach(function(btn) {
       btn.addEventListener('mouseenter', hoverThrottled);
       btn.addEventListener('click', playNavClick);
     });
 
-    // Copy buttons use stopPropagation so we need capture phase to hear them
+    // Copy (capture phase bypasses stopPropagation)
     document.addEventListener('click', function(e) {
       if (!soundEnabled) return;
       if (e.target.closest('.copy-btn') || e.target.closest('.code-copy-btn')) playCopy();
     }, true);
 
-    // Accordion and show-code use bubble phase (need post-toggle class state)
+    // Accordion + show-code (bubble phase — reads post-toggle class)
     document.addEventListener('click', function(e) {
       if (!soundEnabled) return;
-      var accBtn = e.target.closest('.gl-acc-btn');
-      if (accBtn) { playAccordion(accBtn.classList.contains('open')); return; }
-      var codeBtn = e.target.closest('.code-toggle-btn');
-      if (codeBtn) { playShowCode(codeBtn.classList.contains('open')); return; }
+      var acc  = e.target.closest('.gl-acc-btn');
+      if (acc)  { playAccordion(acc.classList.contains('open')); return; }
+      var code = e.target.closest('.code-toggle-btn');
+      if (code) { playShowCode(code.classList.contains('open')); return; }
     });
 
     // Horizontal scroll sound on swipe strips

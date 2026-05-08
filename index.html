@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HYKU v3 — Synthesising Code &amp; Craft</title>
+<meta name="description" content="A comprehensive reference for design engineering — skills, glossary, systems, and craft for teams building at the intersection of code and design.">
+<meta property="og:title" content="HYKU — Synthesising Code &amp; Craft">
+<meta property="og:description" content="A comprehensive reference for design engineering — skills, glossary, systems, and craft for teams building at the intersection of code and design.">
+<meta property="og:url" content="https://hyku.co.uk">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HYKU — Synthesising Code &amp; Craft">
+<meta name="twitter:description" content="A comprehensive reference for design engineering — skills, glossary, systems, and craft for teams building at the intersection of code and design.">
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Special+Gothic+Expanded+One&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap');
@@ -130,6 +138,7 @@ h1 span { color: var(--accent); }
   transition: border-color 0.2s;
 }
 #search::placeholder { color: var(--text-dim); }
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 #search:focus { border-color: var(--accent); }
 .filter-group {
   display: flex;
@@ -1511,7 +1520,7 @@ h1 span { color: var(--accent); }
 </style>
 
   <!-- Google Material Symbols weight 100, outlined -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
 </head>
 <body>
 <header id="hero-header">
@@ -1544,24 +1553,25 @@ h1 span { color: var(--accent); }
   </div>
   </div>
   <div class="filter-group" id="filter-group">
-    <button class="filter-btn active" data-filter="all">All</button>
-    <button class="filter-btn" data-filter="glossary">Glossary</button>
-    <button class="filter-btn" data-filter="ui-quality">UI Quality</button>
-    <button class="filter-btn" data-filter="design">Design</button>
-    <button class="filter-btn" data-filter="motion">Motion</button>
-    <button class="filter-btn" data-filter="a11y">A11y</button>
-    <button class="filter-btn" data-filter="layout">Layout</button>
-    <button class="filter-btn" data-filter="systems">Systems</button>
-    <button class="filter-btn" data-filter="intelligence">Intelligence</button>
-    <button class="filter-btn" data-filter="ux">UX</button>
-    <button class="filter-btn" data-filter="brand">Brand</button>
-    <button class="filter-btn" data-filter="platform">Platform</button>
+    <button class="filter-btn active" data-filter="all" aria-label="Filter by All">All</button>
+    <button class="filter-btn" data-filter="glossary" aria-label="Filter by Glossary">Glossary</button>
+    <button class="filter-btn" data-filter="ui-quality" aria-label="Filter by UI Quality">UI Quality</button>
+    <button class="filter-btn" data-filter="design" aria-label="Filter by Design">Design</button>
+    <button class="filter-btn" data-filter="motion" aria-label="Filter by Motion">Motion</button>
+    <button class="filter-btn" data-filter="a11y" aria-label="Filter by A11y">A11y</button>
+    <button class="filter-btn" data-filter="layout" aria-label="Filter by Layout">Layout</button>
+    <button class="filter-btn" data-filter="systems" aria-label="Filter by Systems">Systems</button>
+    <button class="filter-btn" data-filter="intelligence" aria-label="Filter by Intelligence">Intelligence</button>
+    <button class="filter-btn" data-filter="ux" aria-label="Filter by UX">UX</button>
+    <button class="filter-btn" data-filter="brand" aria-label="Filter by Brand">Brand</button>
+    <button class="filter-btn" data-filter="platform" aria-label="Filter by Platform">Platform</button>
   </div>
   <div class="search-wrap">
+    <label for="search" class="sr-only">Search skills</label>
     <span class="search-icon">⌕</span>
-    <input type="text" id="search" placeholder="Search…" autocomplete="off">
+    <input type="text" id="search" placeholder="Search… (press /)" autocomplete="off">
   </div>
-  <button class="theme-btn" id="theme-btn" aria-label="Toggle light/dark mode">
+  <button class="theme-btn" id="theme-btn" aria-label="Toggle light/dark mode" title="Toggle light/dark mode">
     <span class="material-symbols-outlined" id="theme-icon" style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">light_mode</span>
   </button>
   <button class="hamburger" id="hamburger" aria-label="Open navigation">
@@ -3246,7 +3256,7 @@ decision frameworks all valid.</code></div>
   <polygon class="st0" points="414.1 98.6 375 39.6 401.2 0 373.6 0 332.4 62.1 332.4 0 308.2 0 308.2 98.6 332.4 98.6 335.8 98.6 361.2 60.4 386.5 98.6 414.1 98.6"/>
 </svg>
     </div>
-    <span>© Copyright 2026 HYKU</span>
+    <span>© Copyright 2026 HYKU &nbsp;·&nbsp; Last updated May 2026</span>
   </div>
   <div class="footer-text" style="display:flex;align-items:center;gap:12px;">
     <a href="https://www.hypaspace.co.uk" target="_blank" style="color:var(--text-dim);text-decoration:none;transition:color 0.15s;display:flex;align-items:center;gap:8px" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-dim)'">
@@ -3783,6 +3793,14 @@ decision frameworks all valid.</code></div>
   resize();
   let rt;
   window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(resize,120);});
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      cancelAnimationFrame(raf);
+    } else {
+      raf = requestAnimationFrame(frame);
+    }
+  });
 })();
 
 

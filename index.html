@@ -1571,6 +1571,9 @@ h1 span { color: var(--accent); }
     <span class="search-icon">⌕</span>
     <input type="text" id="search" placeholder="Search… (press /)" autocomplete="off">
   </div>
+  <button class="theme-btn" id="sound-btn" aria-label="Mute sounds" title="Mute sounds">
+    <span class="material-symbols-outlined" id="sound-icon" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">volume_up</span>
+  </button>
   <button class="theme-btn" id="theme-btn" aria-label="Toggle light/dark mode" title="Toggle light/dark mode">
     <span class="material-symbols-outlined" id="theme-icon" style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">light_mode</span>
   </button>
@@ -3887,6 +3890,98 @@ decision frameworks all valid.</code></div>
     });
   });
 
+
+  // ── SOUND SYSTEM ──
+  (function() {
+    let actx = null;
+    let soundEnabled = true;
+    try { soundEnabled = localStorage.getItem('hyku-sound') !== 'off'; } catch(e) {}
+
+    function getCtx() {
+      if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === 'suspended') actx.resume();
+      return actx;
+    }
+
+    function tone(freq, dur, gainVal, freqEnd, waveType) {
+      if (!soundEnabled) return;
+      try {
+        const ac = getCtx();
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.connect(gain);
+        gain.connect(ac.destination);
+        osc.type = waveType || 'sine';
+        osc.frequency.setValueAtTime(freq, ac.currentTime);
+        if (freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, ac.currentTime + dur);
+        gain.gain.setValueAtTime(gainVal, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + dur);
+        osc.start(ac.currentTime);
+        osc.stop(ac.currentTime + dur + 0.01);
+      } catch(e) {}
+    }
+
+    // Soft tick for nav link hover
+    function playHover() { tone(1100, 0.045, 0.04, 900); }
+
+    // Satisfying click for filter buttons
+    function playNavClick() { tone(380, 0.09, 0.1, 180); }
+
+    // Ascending sweep → light mode, descending → dark mode
+    function playToggle(goingLight) {
+      if (goingLight) { tone(320, 0.18, 0.09, 680); }
+      else { tone(680, 0.18, 0.09, 260); }
+    }
+
+    // Throttle hover so rapid mousing doesn't machine-gun
+    let lastHover = 0;
+    function hoverThrottled() {
+      const now = Date.now();
+      if (now - lastHover > 90) { playHover(); lastHover = now; }
+    }
+
+    // Attach hover to sidebar nav links
+    document.querySelectorAll('.nav-link').forEach(function(link) {
+      link.addEventListener('mouseenter', hoverThrottled);
+    });
+
+    // Attach click to filter buttons
+    document.querySelectorAll('.filter-btn').forEach(function(btn) {
+      btn.addEventListener('click', playNavClick);
+    });
+
+    // Attach to theme toggle — read new state after toggle runs
+    var themeBtn = document.getElementById('theme-btn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', function() {
+        setTimeout(function() {
+          playToggle(document.documentElement.classList.contains('light'));
+        }, 0);
+      });
+    }
+
+    // Sound toggle button
+    function updateSoundBtn() {
+      var icon = document.getElementById('sound-icon');
+      var btn  = document.getElementById('sound-btn');
+      if (!icon || !btn) return;
+      icon.textContent = soundEnabled ? 'volume_up' : 'volume_off';
+      btn.setAttribute('title', soundEnabled ? 'Mute sounds' : 'Enable sounds');
+      btn.setAttribute('aria-label', soundEnabled ? 'Mute sounds' : 'Enable sounds');
+    }
+
+    updateSoundBtn();
+
+    var soundBtn = document.getElementById('sound-btn');
+    if (soundBtn) {
+      soundBtn.addEventListener('click', function() {
+        soundEnabled = !soundEnabled;
+        try { localStorage.setItem('hyku-sound', soundEnabled ? 'on' : 'off'); } catch(e) {}
+        updateSoundBtn();
+        if (soundEnabled) playNavClick();
+      });
+    }
+  })();
 
   // ── SET CONTROLS HEIGHT VAR ──
   function setControlsH() {

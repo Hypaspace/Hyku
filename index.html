@@ -3937,7 +3937,6 @@ decision frameworks all valid.</code></div>
 
     function getCtx() {
       if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
-      if (actx.state === 'suspended') actx.resume();
       return actx;
     }
 
@@ -3945,17 +3944,20 @@ decision frameworks all valid.</code></div>
       if (!soundEnabled) return;
       try {
         const ac = getCtx();
-        const osc = ac.createOscillator();
-        const gain = ac.createGain();
-        osc.connect(gain);
-        gain.connect(ac.destination);
-        osc.type = waveType || 'sine';
-        osc.frequency.setValueAtTime(freq, ac.currentTime);
-        if (freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, ac.currentTime + dur);
-        gain.gain.setValueAtTime(gainVal, ac.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + dur);
-        osc.start(ac.currentTime);
-        osc.stop(ac.currentTime + dur + 0.01);
+        const play = function() {
+          const osc = ac.createOscillator();
+          const gain = ac.createGain();
+          osc.connect(gain);
+          gain.connect(ac.destination);
+          osc.type = waveType || 'sine';
+          osc.frequency.setValueAtTime(freq, ac.currentTime);
+          if (freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, ac.currentTime + dur);
+          gain.gain.setValueAtTime(gainVal, ac.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + dur);
+          osc.start(ac.currentTime);
+          osc.stop(ac.currentTime + dur + 0.01);
+        };
+        if (ac.state === 'suspended') { ac.resume().then(play); } else { play(); }
       } catch(e) {}
     }
 
@@ -4033,19 +4035,19 @@ decision frameworks all valid.</code></div>
       btn.addEventListener('click', playNavClick);
     });
 
-    // Event delegation for accordion, show-code, copy
+    // Copy buttons use stopPropagation so we need capture phase to hear them
     document.addEventListener('click', function(e) {
       if (!soundEnabled) return;
-      // Accordion toggle
+      if (e.target.closest('.copy-btn') || e.target.closest('.code-copy-btn')) playCopy();
+    }, true);
+
+    // Accordion and show-code use bubble phase (need post-toggle class state)
+    document.addEventListener('click', function(e) {
+      if (!soundEnabled) return;
       var accBtn = e.target.closest('.gl-acc-btn');
       if (accBtn) { playAccordion(accBtn.classList.contains('open')); return; }
-      // Show/hide code toggle
       var codeBtn = e.target.closest('.code-toggle-btn');
       if (codeBtn) { playShowCode(codeBtn.classList.contains('open')); return; }
-      // Copy skill command
-      if (e.target.closest('.copy-btn')) { playCopy(); return; }
-      // Copy code block
-      if (e.target.closest('.code-copy-btn')) { playCopy(); return; }
     });
 
     // Horizontal scroll sound on swipe strips

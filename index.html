@@ -852,6 +852,32 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 }
 .back-to-top.visible { opacity: 1; pointer-events: auto; }
 .back-to-top:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+.hyku-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 999;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+.hyku-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
 
 
 
@@ -4037,6 +4063,17 @@ decision frameworks all valid.</code></div>
       });
     }
 
+    // Toast
+    var toastEl = document.getElementById('hyku-toast');
+    var toastTimer;
+    function showToast(msg) {
+      if (!toastEl) return;
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function() { toastEl.classList.remove('show'); }, 2000);
+    }
+
     // Sound toggle button
     function updateSoundBtn() {
       var icon = document.getElementById('sound-icon');
@@ -4055,7 +4092,8 @@ decision frameworks all valid.</code></div>
         soundEnabled = !soundEnabled;
         try { localStorage.setItem('hyku-sound', soundEnabled ? 'on' : 'off'); } catch(e) {}
         updateSoundBtn();
-        if (soundEnabled) playNavClick();
+        if (soundEnabled) { playNavClick(); showToast('Sound on'); }
+        else { showToast('Sound off'); }
       });
     }
   })();
@@ -4075,6 +4113,7 @@ decision frameworks all valid.</code></div>
 
 </script>
 
+<div class="hyku-toast" id="hyku-toast"></div>
 <button class="back-to-top" id="back-to-top" aria-label="Back to top" title="Back to top">
   <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">arrow_upward</span>
 </button>

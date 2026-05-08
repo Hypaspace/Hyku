@@ -3970,21 +3970,21 @@ decision frameworks all valid.</code></div>
       } catch(e) {}
     }
 
-    function playHover()     { tone(900, 0.06, 0.18, 700); }
-    function playNavClick()  { tone(500, 0.10, 0.25, 300); }
-    function playNavSelect() { tone(400, 0.08, 0.20, 260); }
+    function playHover()     { tone(900, 0.06, 0.12, 700); }
+    function playNavClick()  { tone(500, 0.10, 0.17, 300); }
+    function playNavSelect() { tone(400, 0.08, 0.13, 260); }
     function playToggle(light) {
-      if (light) { tone(350, 0.15, 0.20, 700); } else { tone(700, 0.15, 0.20, 300); }
+      if (light) { tone(350, 0.15, 0.13, 700); } else { tone(700, 0.15, 0.13, 300); }
     }
     function playAccordion(open) {
-      if (open)  { tone(440, 0.08, 0.18); setTimeout(function(){ tone(660, 0.10, 0.16); }, 70); }
-      else       { tone(550, 0.08, 0.15); setTimeout(function(){ tone(370, 0.10, 0.13); }, 70); }
+      if (open)  { tone(440, 0.08, 0.12); setTimeout(function(){ tone(660, 0.10, 0.11); }, 70); }
+      else       { tone(550, 0.08, 0.10); setTimeout(function(){ tone(370, 0.10, 0.09); }, 70); }
     }
     function playShowCode(open) {
-      if (open) tone(500, 0.12, 0.18, 320); else tone(320, 0.10, 0.15, 240);
+      if (open) tone(500, 0.12, 0.12, 320); else tone(320, 0.10, 0.10, 240);
     }
     function playCopy() {
-      tone(800, 0.07, 0.20); setTimeout(function(){ tone(1100, 0.12, 0.16); }, 60);
+      tone(800, 0.07, 0.13); setTimeout(function(){ tone(1100, 0.12, 0.11); }, 60);
     }
     function playSwipe() {
       if (!soundEnabled) return;
@@ -3997,7 +3997,7 @@ decision frameworks all valid.</code></div>
         var src  = ac.createBufferSource(); src.buffer = buf;
         var filt = ac.createBiquadFilter(); filt.type = 'bandpass'; filt.frequency.value = 1600; filt.Q.value = 0.8;
         var g    = ac.createGain();
-        g.gain.setValueAtTime(0.12, ac.currentTime);
+        g.gain.setValueAtTime(0.08, ac.currentTime);
         g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.06);
         src.connect(filt); filt.connect(g); g.connect(ac.destination);
         src.start();

@@ -3940,6 +3940,18 @@ decision frameworks all valid.</code></div>
       return actx;
     }
 
+    // Warm up AudioContext on first real user gesture so hover sounds work immediately after
+    function warmUp() {
+      var ac = getCtx();
+      if (ac.state === 'suspended') ac.resume();
+    }
+    ['click','keydown','touchstart','pointerdown'].forEach(function(evt) {
+      document.addEventListener(evt, function warm() {
+        warmUp();
+        document.removeEventListener(evt, warm);
+      }, { once: true, passive: true });
+    });
+
     function tone(freq, dur, gainVal, freqEnd, waveType) {
       if (!soundEnabled) return;
       try {

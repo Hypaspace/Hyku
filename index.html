@@ -3306,7 +3306,8 @@ decision frameworks all valid.</code></div>
     sections.forEach(section => {
       let sectionVisible = false;
 
-      section.querySelectorAll('.skill-card').forEach(card => {
+      // Query both skill cards AND glossary rows so glossary sections stay visible
+      section.querySelectorAll('.skill-card, .gl-row').forEach(card => {
         const cmd = (card.dataset.cmd || '').toLowerCase();
         const trigger = (card.querySelector('.skill-trigger') || card.querySelector('.gl-term') || {textContent:''}).textContent.toLowerCase();
         const desc = (card.querySelector('.skill-desc') || card.querySelector('.gl-def') || {textContent:''}).textContent.toLowerCase();
@@ -3333,24 +3334,24 @@ decision frameworks all valid.</code></div>
       section.classList.toggle('hidden', !sectionVisible);
     });
 
-    // Hide non-skill sections when filtering or searching
+    // Hide intro sections when filtering or searching
     const hiddenWhenFiltering = ['getting-started', 'connectors', 'context-files', 'what-are-skills', 'tips'];
     hiddenWhenFiltering.forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = (activeFilter !== 'all' || searchQuery) ? 'none' : '';
     });
 
-    emptyState.classList.toggle('visible', visible === 0);
-    resultsCount.textContent = visible + ' results';
-
-    // Scroll to first visible section when filtering
-    if (activeFilter !== 'all' || searchQuery) {
-      const first = Array.from(sections).find(s => !s.classList.contains('hidden'));
-      if (first) first.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else if (!searchQuery) {
-      // Scroll back to top when clearing filter
-      document.querySelector('.content').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Hide the glossary wrapper when no glossary sections are visible
+    const glossaryWrapper = document.getElementById('glossary');
+    if (glossaryWrapper) {
+      const anyGlossaryVisible = Array.from(sections).some(s =>
+        s.id && s.id.startsWith('glossary-') && !s.classList.contains('hidden')
+      );
+      glossaryWrapper.style.display = anyGlossaryVisible ? '' : 'none';
     }
+
+    if (emptyState) emptyState.classList.toggle('visible', visible === 0);
+    if (resultsCount) resultsCount.textContent = visible + ' results';
   }
 
   search.addEventListener('input', e => {
@@ -3364,10 +3365,20 @@ decision frameworks all valid.</code></div>
       btn.classList.add('active');
       activeFilter = btn.dataset.filter;
       update();
+      // Scroll explicitly after filter change — not inside update() so nav links still work
+      if (activeFilter === 'all') {
+        document.querySelector('.content')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (activeFilter === 'glossary') {
+        const gw = document.getElementById('glossary');
+        if (gw) gw.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        const first = Array.from(sections).find(s => !s.classList.contains('hidden'));
+        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     });
   });
 
-  // Nav highlighting
+  // Nav links scroll directly — never re-runs update() so glossary stays intact
   navLinks.forEach(link => {
     link.addEventListener('click', () => {
       const target = link.dataset.target;
@@ -3933,11 +3944,56 @@ decision frameworks all valid.</code></div>
       else { tone(680, 0.18, 0.09, 260); }
     }
 
+    // Accordion: two-note chime open, reverse close
+    function playAccordion(opening) {
+      if (opening) { tone(440, 0.07, 0.06); setTimeout(function(){ tone(660, 0.09, 0.06); }, 65); }
+      else { tone(550, 0.07, 0.05); setTimeout(function(){ tone(370, 0.09, 0.05); }, 65); }
+    }
+
+    // Show/hide code: soft pop open, softer click close
+    function playShowCode(opening) {
+      if (opening) { tone(520, 0.11, 0.07, 340); }
+      else { tone(340, 0.09, 0.05, 260); }
+    }
+
+    // Copy: bright success ping
+    function playCopy() { tone(900, 0.06, 0.07); setTimeout(function(){ tone(1200, 0.12, 0.06); }, 55); }
+
+    // Horizontal scroll: short filtered noise swipe
+    function playSwipe() {
+      if (!soundEnabled) return;
+      try {
+        var ac = getCtx();
+        var bufLen = Math.floor(ac.sampleRate * 0.055);
+        var buf = ac.createBuffer(1, bufLen, ac.sampleRate);
+        var data = buf.getChannelData(0);
+        for (var i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
+        var src = ac.createBufferSource();
+        src.buffer = buf;
+        var filt = ac.createBiquadFilter();
+        filt.type = 'bandpass';
+        filt.frequency.value = 1800;
+        filt.Q.value = 0.7;
+        var g = ac.createGain();
+        g.gain.setValueAtTime(0.055, ac.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.055);
+        src.connect(filt); filt.connect(g); g.connect(ac.destination);
+        src.start();
+      } catch(e) {}
+    }
+
     // Throttle hover so rapid mousing doesn't machine-gun
     let lastHover = 0;
     function hoverThrottled() {
       const now = Date.now();
       if (now - lastHover > 90) { playHover(); lastHover = now; }
+    }
+
+    // Throttle swipe sound
+    var lastSwipe = 0;
+    function swipeThrottled() {
+      var now = Date.now();
+      if (now - lastSwipe > 120) { playSwipe(); lastSwipe = now; }
     }
 
     // Attach hover to sidebar nav links
@@ -3948,6 +4004,26 @@ decision frameworks all valid.</code></div>
     // Attach click to filter buttons
     document.querySelectorAll('.filter-btn').forEach(function(btn) {
       btn.addEventListener('click', playNavClick);
+    });
+
+    // Event delegation for accordion, show-code, copy
+    document.addEventListener('click', function(e) {
+      if (!soundEnabled) return;
+      // Accordion toggle
+      var accBtn = e.target.closest('.gl-acc-btn');
+      if (accBtn) { playAccordion(accBtn.classList.contains('open')); return; }
+      // Show/hide code toggle
+      var codeBtn = e.target.closest('.code-toggle-btn');
+      if (codeBtn) { playShowCode(codeBtn.classList.contains('open')); return; }
+      // Copy skill command
+      if (e.target.closest('.copy-btn')) { playCopy(); return; }
+      // Copy code block
+      if (e.target.closest('.code-copy-btn')) { playCopy(); return; }
+    });
+
+    // Horizontal scroll sound on swipe strips
+    document.querySelectorAll('.skills-grid, .connector-grid, .context-grid, .explainer-grid, .tips-grid').forEach(function(el) {
+      el.addEventListener('scroll', swipeThrottled, { passive: true });
     });
 
     // Attach to theme toggle — read new state after toggle runs

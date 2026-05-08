@@ -138,6 +138,42 @@ h1 span { color: var(--accent); }
   transition: border-color 0.2s;
 }
 #search::placeholder { color: var(--text-dim); }
+#search-suggestions {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0; right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 200;
+  list-style: none;
+  margin: 0; padding: 4px 0;
+}
+#search-suggestions.open { display: block; }
+#search-suggestions li {
+  padding: 8px 12px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+#search-suggestions li:last-child { border-bottom: none; }
+#search-suggestions li:hover,
+#search-suggestions li[aria-selected="true"] { background: var(--surface2); }
+#search-suggestions li .sg-badge {
+  font-size: 10px; padding: 1px 6px; border-radius: 4px;
+  background: rgba(111,106,248,0.12); color: var(--accent);
+  white-space: nowrap; flex-shrink: 0; margin-left: auto;
+}
+#search-suggestions li mark { background: transparent; color: var(--accent); font-weight: 700; }
 .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 #search:hover { border-color: var(--text-muted); }
 #search:focus { border-color: var(--accent); }
@@ -1596,7 +1632,8 @@ h1 span { color: var(--accent); }
   <div class="search-wrap">
     <label for="search" class="sr-only">Search skills</label>
     <span class="search-icon">⌕</span>
-    <input type="text" id="search" placeholder="Search… (press /)" autocomplete="off">
+    <input type="text" id="search" placeholder="Search… (press /)" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="search-suggestions">
+    <ul id="search-suggestions" role="listbox" aria-label="Search suggestions"></ul>
   </div>
   <button class="theme-btn" id="sound-btn" aria-label="Mute sounds" title="Mute sounds">
     <span class="material-symbols-outlined" id="sound-icon" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">volume_up</span>
@@ -3381,10 +3418,78 @@ decision frameworks all valid.</code></div>
     if (resultsCount) resultsCount.textContent = visible + ' results';
   }
 
+  // ── TYPEAHEAD SUGGESTIONS ──
+  const suggestions = document.getElementById('search-suggestions');
+  let suggestionIndex = -1;
+
+  const allTerms = Array.from(document.querySelectorAll('.skill-card[data-cmd], .gl-row[data-cmd]')).map(el => ({
+    label: el.dataset.cmd,
+    badge: (el.dataset.category || '').replace('glossary-', '').replace(/-/g, ' ')
+  }));
+
+  function escRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+  function renderSuggestions(q) {
+    if (!q) { closeSuggestions(); return; }
+    const re = new RegExp(escRe(q), 'i');
+    const hits = allTerms.filter(t => re.test(t.label)).slice(0, 8);
+    if (!hits.length) { closeSuggestions(); return; }
+    suggestionIndex = -1;
+    suggestions.innerHTML = hits.map((t, i) => {
+      const hl = t.label.replace(new RegExp(escRe(q), 'gi'), m => `<mark>${m}</mark>`);
+      return `<li role="option" aria-selected="false" data-value="${t.label.replace(/"/g,'&quot;')}" data-idx="${i}"><span>${hl}</span><span class="sg-badge">${t.badge}</span></li>`;
+    }).join('');
+    suggestions.classList.add('open');
+    search.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeSuggestions() {
+    suggestions.classList.remove('open');
+    search.setAttribute('aria-expanded', 'false');
+    suggestionIndex = -1;
+  }
+
+  function pickSuggestion(value) {
+    search.value = value;
+    searchQuery = value.toLowerCase().trim();
+    closeSuggestions();
+    update();
+  }
+
+  suggestions.addEventListener('mousedown', e => {
+    const li = e.target.closest('li');
+    if (li) { e.preventDefault(); pickSuggestion(li.dataset.value); }
+  });
+
   search.addEventListener('input', e => {
     searchQuery = e.target.value.toLowerCase().trim();
     update();
+    renderSuggestions(e.target.value.trim());
   });
+
+  search.addEventListener('keydown', e => {
+    const items = suggestions.querySelectorAll('li');
+    if (!items.length) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      items[suggestionIndex]?.setAttribute('aria-selected', 'false');
+      suggestionIndex = Math.min(suggestionIndex + 1, items.length - 1);
+      items[suggestionIndex].setAttribute('aria-selected', 'true');
+      items[suggestionIndex].scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      items[suggestionIndex]?.setAttribute('aria-selected', 'false');
+      suggestionIndex = Math.max(suggestionIndex - 1, 0);
+      items[suggestionIndex].setAttribute('aria-selected', 'true');
+      items[suggestionIndex].scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'Enter' && suggestionIndex >= 0) {
+      e.preventDefault();
+      pickSuggestion(items[suggestionIndex].dataset.value);
+    }
+  });
+
+  search.addEventListener('blur', () => setTimeout(closeSuggestions, 150));
+  search.addEventListener('focus', e => { if (e.target.value.trim()) renderSuggestions(e.target.value.trim()); });
 
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -3585,6 +3690,7 @@ decision frameworks all valid.</code></div>
       e.target.value = '';
       e.target.blur();
       searchQuery = '';
+      closeSuggestions();
       update();
     }
   });

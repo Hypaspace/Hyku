@@ -19,16 +19,16 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #0b0b0f;
-  --surface: #111117;
-  --surface2: #18181f;
-  --border: #222230;
-  --accent: #6f6af8;
-  --accent2: #f8a96f;
-  --accent3: #6ff8c0;
-  --text: #e8e8f0;
-  --text-muted: #6b6b80;
-  --text-dim: #3a3a50;
+  --bg: #050808;
+  --surface: #080F0F;
+  --surface2: #0C1818;
+  --border: #0E2A2A;
+  --accent: #00FDCF;
+  --accent2: #FFB020;
+  --accent3: #4AF2A1;
+  --text: #8EEBD8;
+  --text-muted: #489898;
+  --text-dim: #2E7070;
 }
 
 html { scroll-behavior: smooth; }
@@ -74,7 +74,7 @@ body {
 
 /* ── H1 ── */
 h1 {
-  font-family: 'Special Gothic Expanded One', sans-serif;
+  font-family: 'Rajdhani', sans-serif;
   font-size: clamp(2.6rem, 5.5vw, 5rem);
   font-weight: 400;
   line-height: 1;
@@ -99,7 +99,7 @@ h1 span { color: var(--accent); }
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(11,11,15,0.96);
+  background: rgba(5,8,8,0.97);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
 }
@@ -170,7 +170,7 @@ h1 span { color: var(--accent); }
 #search-suggestions li[aria-selected="true"] { background: var(--surface2); }
 #search-suggestions li .sg-badge {
   font-size: 10px; padding: 1px 6px; border-radius: 4px;
-  background: rgba(111,106,248,0.12); color: var(--accent);
+  background: rgba(0,253,207,0.12); color: var(--accent);
   white-space: nowrap; flex-shrink: 0; margin-left: auto;
 }
 #search-suggestions li mark { background: transparent; color: var(--accent); font-weight: 700; }
@@ -255,7 +255,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   border-left: 2px solid transparent;
 }
 .nav-link:hover { color: var(--text); background: var(--surface); }
-.nav-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(111,106,248,0.06); }
+.nav-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(0,253,207,0.06); }
 .nav-dot {
   width: 6px; height: 6px;
   border-radius: 50%;
@@ -285,7 +285,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   border-bottom: 1px solid var(--border);
 }
 .category-title {
-  font-family: 'Special Gothic Expanded One', sans-serif;
+  font-family: 'Rajdhani', sans-serif;
   font-size: 11px;
   font-weight: 400;
   letter-spacing: 0.06em;
@@ -328,7 +328,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   opacity: 0;
   transition: opacity 0.2s;
 }
-.skill-card:hover { border-color: rgba(111,106,248,0.3); background: var(--surface2); transform: translateY(-1px); }
+.skill-card:hover { border-color: rgba(0,253,207,0.3); background: var(--surface2); transform: translateY(-1px); }
 .skill-card:hover::before { opacity: 1; }
 .skill-card.hidden { display: none; }
 .skill-cmd {
@@ -363,12 +363,12 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   font-size: 10px;
   padding: 3px 8px;
   border-radius: 4px;
-  background: rgba(111,106,248,0.08);
+  background: rgba(0,253,207,0.08);
   color: var(--accent);
-  border: 1px solid rgba(111,106,248,0.15);
+  border: 1px solid rgba(0,253,207,0.15);
 }
 .skill-tag.warn { background: rgba(248,169,111,0.08); color: var(--accent2); border-color: rgba(248,169,111,0.15); }
-.skill-tag.go { background: rgba(111,248,192,0.08); color: var(--accent3); border-color: rgba(111,248,192,0.15); }
+.skill-tag.go { background: rgba(74,242,161,0.08); color: var(--accent3); border-color: rgba(74,242,161,0.15); }
 
 /* ── COPY BUTTON ── */
 .copy-btn {
@@ -391,7 +391,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   text-align: center;
 }
 .copy-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
-.copy-btn.copied { background: rgba(111,248,192,0.12); border-color: var(--accent3); color: var(--accent3); }
+.copy-btn.copied { background: rgba(74,242,161,0.12); border-color: var(--accent3); color: var(--accent3); }
 
 /* ── CODE COPY ── */
 .code-copy-wrap { position: relative; margin-top: 8px; }
@@ -412,7 +412,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   white-space: nowrap;
 }
 .code-copy-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
-.code-copy-btn.copied { background: rgba(111,248,192,0.12); border-color: var(--accent3); color: var(--accent3); }
+.code-copy-btn.copied { background: rgba(74,242,161,0.12); border-color: var(--accent3); color: var(--accent3); }
 
 /* ── PIPELINES ── */
 .pipelines {
@@ -428,7 +428,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   user-select: none;
 }
 .pipelines-toggle h2 {
-  font-family: 'Special Gothic Expanded One', sans-serif;
+  font-family: 'Rajdhani', sans-serif;
   font-size: 10px;
   font-weight: 400;
   letter-spacing: 0.10em;
@@ -455,12 +455,13 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   padding: 28px;
 }
 .pipeline-name {
-  font-family: 'Special Gothic Expanded One', sans-serif;
-  font-size: 13px;
-  font-weight: 400;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--text);
   margin-bottom: 6px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 .pipeline-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
 .pipeline-steps { display: flex; flex-direction: column; }
@@ -501,7 +502,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 }
 .gs-header { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
 .gs-title {
-  font-family: 'Special Gothic Expanded One', sans-serif;
+  font-family: 'Rajdhani', sans-serif;
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -525,7 +526,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   gap: 8px;
   transition: border-color 0.2s, transform 0.2s;
 }
-.gs-source-card:hover { border-color: rgba(111,248,192,0.25); transform: translateY(-1px); }
+.gs-source-card:hover { border-color: rgba(74,242,161,0.25); transform: translateY(-1px); }
 .gs-source-header { display: flex; flex-direction: column; gap: 0; }
 .gs-source-eyebrow {
   font-family: 'JetBrains Mono', monospace;
@@ -544,9 +545,9 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   font-size: 10px;
   padding: 3px 8px;
   border-radius: 4px;
-  background: rgba(111,248,192,0.07);
+  background: rgba(74,242,161,0.07);
   color: var(--accent3);
-  border: 1px solid rgba(111,248,192,0.12);
+  border: 1px solid rgba(74,242,161,0.12);
 }
 .gs-source-link {
   display: inline-flex;
@@ -569,7 +570,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   overflow: hidden;
 }
 .gs-install-title {
-  font-family: 'Special Gothic Expanded One', sans-serif;
+  font-family: 'Rajdhani', sans-serif;
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -703,8 +704,8 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
 /* ── HOW TO USE ── */
 .how-to-use {
-  background: rgba(111,106,248,0.06);
-  border: 1px solid rgba(111,106,248,0.18);
+  background: rgba(0,253,207,0.06);
+  border: 1px solid rgba(0,253,207,0.18);
   border-radius: 10px;
   padding: 16px 20px;
   margin-bottom: 28px;
@@ -729,7 +730,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   color: var(--accent);
-  background: rgba(111,106,248,0.1);
+  background: rgba(0,253,207,0.1);
   padding: 1px 5px;
   border-radius: 3px;
 }
@@ -765,7 +766,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
 
 .pipelines-heading {
-  font-family: 'Special Gothic Expanded One', sans-serif;
+  font-family: 'Rajdhani', sans-serif;
   font-size: 11px;
   font-weight: 400;
   letter-spacing: 0.10em;
@@ -1064,26 +1065,26 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
    LIGHT MODE
    ══════════════════════════════════════ */
 :root.light {
-  --bg:         #f0f0f5;
-  --surface:    #ffffff;
-  --surface2:   #e6e6ef;
-  --border:     #d0d0de;
-  --accent:     #5550cc;
-  --accent2:    #c86000;
-  --accent3:    #0a8a5c;
-  --text:       #0b0b0f;
-  --text-muted: #50506a;
-  --text-dim:   #8888a4;
+  --bg:         #E0F8F4;
+  --surface:    #F0FFFD;
+  --surface2:   #C8EDE8;
+  --border:     #70C8B8;
+  --accent:     #007860;
+  --accent2:    #A06010;
+  --accent3:    #008060;
+  --text:       #030E0C;
+  --text-muted: #206050;
+  --text-dim:   #80B8A8;
 }
 :root.light 
 :root.light nav           { background: var(--bg); border-color: var(--border); }
-:root.light .controls     { background: rgba(240,240,245,0.96); }
+:root.light .controls     { background: rgba(224,248,244,0.97); }
 :root.light footer        { background: var(--bg); }
 :root.light .skill-card   { background: var(--surface); }
 :root.light .tip-card     { background: var(--surface); }
 :root.light .gl-acc-btn   { background: var(--surface); }
 :root.light .gl-acc-def   { background: var(--bg); }
-:root.light .how-to-use   { background: rgba(85,80,204,0.06); }
+:root.light .how-to-use   { background: rgba(0,120,96,0.06); }
 :root.light .filter-btn   { background: transparent; }
 :root.light .filter-btn.active { background: var(--accent); color: #fff; }
 :root.light #search       { background: var(--surface); color: var(--text); }
@@ -1092,28 +1093,28 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 :root.light .nav-link     { color: var(--text-muted); }
 :root.light .nav-link.active { color: var(--accent); }
 :root.light .nav-label    { color: var(--text-muted); }
-:root.light .gs-code      { background: #f8f8fc; color: var(--accent3); border-color: var(--border); }
-:root.light pre           { background: #f8f8fc; }
+:root.light .gs-code      { background: #F0EED8; color: var(--accent3); border-color: var(--border); }
+:root.light pre           { background: #F0EED8; }
 :root.light .connector-card,
 :root.light .context-card,
 :root.light .explainer-card { background: var(--surface); }
 /* HYKU + Hypaspace logos */
 :root.light .hyku-logo .st0 { fill: #0b0b0f; }
-:root.light .hyku-logo .st1 { fill: #5550cc; }
+:root.light .hyku-logo .st1 { fill: #007860; }
 :root.light .hypaspace-logo * { fill: #8888a4 !important; }
 /* Hero in light mode */
-:root.light #hero-header { background: #dcdcee; }
+:root.light #hero-header { background: #B0F0E8; }
 :root.light #hero-header canvas { opacity: 1; filter: invert(1) brightness(0.35) contrast(1.3); }
 :root.light #hero-header .vig {
   background: radial-gradient(ellipse 60% 50% at 50% 50%,
-    rgba(220,220,238,0.65) 0%, rgba(220,220,238,0.1) 65%, transparent 100%);
+    rgba(180,220,224,0.65) 0%, rgba(180,220,224,0.1) 65%, transparent 100%);
 }
 :root.light #hero-header .header-eyebrow { color: var(--accent); }
 :root.light #hero-header h1 .h1-static { color: var(--text); }
 :root.light #hero-header .header-desc { color: var(--text-muted); }
 :root.light #hero-header .meta-pill { background: var(--surface); color: var(--text-muted); border-color: var(--border); }
 :root.light #hero-header .hyku-logo .st0 { fill: #0b0b0f; }
-:root.light #hero-header .hyku-logo .st1 { fill: #5550cc; }
+:root.light #hero-header .hyku-logo .st1 { fill: #007860; }
 
 /* Light mode mobile drawer */
 :root.light .mobile-nav-drawer { background: var(--bg); border-color: var(--border); }
@@ -1167,7 +1168,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 }
 .extra-header { margin-bottom: 32px; }
 .extra-title {
-  font-family: 'Special Gothic Expanded One', sans-serif;
+  font-family: 'Rajdhani', sans-serif;
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1207,8 +1208,8 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 .connector-card:hover { border-color: rgba(248,169,111,0.2); transform: translateY(-1px); }
 .connector-featured {
   grid-column: 1 / -1;
-  border-color: rgba(248,169,111,0.2);
-  background: linear-gradient(135deg, var(--surface) 0%, rgba(248,169,111,0.03) 100%);
+  border-color: var(--border);
+  background: var(--surface);
 }
 .connector-top { display: flex; align-items: center; gap: 10px; }
 .connector-name { font-size: 15px; font-weight: 700; color: var(--text); }
@@ -1221,7 +1222,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   color: var(--accent2);
   border: 1px solid rgba(248,169,111,0.2);
 }
-.connector-badge-neutral { background: rgba(111,106,248,0.08); color: var(--accent); border-color: rgba(111,106,248,0.15); }
+.connector-badge-neutral { background: rgba(0,253,207,0.08); color: var(--accent); border-color: rgba(0,253,207,0.15); }
 .connector-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
 .connector-caps { display: flex; flex-direction: column; gap: 4px; }
 .connector-cap {
@@ -1281,7 +1282,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   transition: opacity 0.2s;
 }
 .context-card:hover {
-  border-color: rgba(111,106,248,0.3);
+  border-color: rgba(0,253,207,0.3);
   background: var(--surface2);
   transform: translateY(-1px);
 }
@@ -1345,8 +1346,12 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 .tip-card:hover::before { opacity: 1; }
 .tip-warn::before { background: linear-gradient(90deg, var(--accent2), transparent); }
 .tip-go::before   { background: linear-gradient(90deg, var(--accent3), transparent); }
-.tip-warn:hover { border-color: rgba(248,169,111,0.3); }
-.tip-go:hover   { border-color: rgba(111,248,192,0.3); }
+.tip-warn {
+  border-color: rgba(255,108,14,0.5) !important;
+  background: rgba(255,108,14,0.06) !important;
+}
+.tip-warn:hover { border-color: rgba(255,108,14,0.8) !important; background: rgba(255,108,14,0.1) !important; }
+.tip-go:hover   { border-color: rgba(74,242,161,0.5) !important; }
 .tip-icon { font-size: 14px; color: var(--text-dim); }
 .tip-warn .tip-icon { color: var(--accent2); }
 .tip-go   .tip-icon { color: var(--accent3); }
@@ -1510,7 +1515,7 @@ footer {
   border-radius: 100px;
   border: 1px solid var(--border);
   color: var(--text-muted);
-  background: rgba(17,17,23,0.75);
+  background: rgba(5,10,10,0.78);
   backdrop-filter: blur(6px);
 }
 .meta-pill strong { color: var(--text); }
@@ -1536,7 +1541,7 @@ footer {
   pointer-events: none;
   z-index: 1;
   background: radial-gradient(ellipse 60% 50% at 50% 50%,
-    rgba(11,11,15,.65) 0%, rgba(11,11,15,.05) 65%, transparent 100%);
+    rgba(5,8,8,.65) 0%, rgba(5,8,8,.05) 65%, transparent 100%);
 }
 .header-content {
   position: relative;
@@ -1580,14 +1585,871 @@ h1 span { color: var(--accent); }
 @media (min-width: 901px) {
   h1 { white-space: nowrap; }
 }
+
+/* ════════════════════════════════════════════════════════
+   BLADE RUNNER TERMINAL EFFECTS — DO NOT PUSH TO GITHUB
+   ════════════════════════════════════════════════════════ */
+
+/* ── SCANLINES (cathode-ray interlacing) ────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9997;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0,0,0,0.10) 2px,
+    rgba(0,0,0,0.10) 3px
+  );
+}
+
+/* ── FILM GRAIN (constant low-opacity noise) ────────────── */
+.grain-overlay {
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  animation: grain-shift 0.35s steps(1) infinite;
+}
+@keyframes grain-shift {
+  0%  { transform: translate(0,0); }
+  12% { transform: translate(-5%,-10%); }
+  24% { transform: translate(-15%,5%); }
+  36% { transform: translate(7%,-25%); }
+  48% { transform: translate(-5%,25%); }
+  60% { transform: translate(-15%,10%); }
+  72% { transform: translate(15%,0%); }
+  84% { transform: translate(0%,15%); }
+  96% { transform: translate(3%,35%); }
+}
+
+/* ── CHROMATIC ABERRATION (red/blue fringing at edges) ──── */
+.ca-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9996;
+  background:
+    radial-gradient(ellipse 120% 120% at 0%   50%, rgba(255,0,60,0.06)  0%, transparent 42%),
+    radial-gradient(ellipse 120% 120% at 100% 50%, rgba(0,60,255,0.06)  0%, transparent 42%),
+    radial-gradient(ellipse 120% 120% at 50% 0%,   rgba(255,0,60,0.04)  0%, transparent 38%),
+    radial-gradient(ellipse 120% 120% at 50% 100%, rgba(0,60,255,0.04)  0%, transparent 38%);
+}
+
+/* ── PHOSPHOR BLOOM on text & UI ────────────────────────── */
+.header-eyebrow {
+  text-shadow: 0 0 10px rgba(0,253,207,0.75), 0 0 28px rgba(0,253,207,0.3);
+  font-family: 'Share Tech Mono', 'JetBrains Mono', monospace;
+}
+h1 .h1-static { text-shadow: 0 0 24px rgba(0,253,207,0.18); }
+@keyframes nav-border-blink {
+  0%, 68% { border-left-color: var(--accent); }
+  69%, 100% { border-left-color: transparent; }
+}
+.nav-link.active {
+  text-shadow: 0 0 8px rgba(0,253,207,0.5);
+  animation: nav-border-blink 2.2s infinite;
+}
+.nav-link.active .nav-dot {
+  box-shadow: 0 0 8px rgba(0,253,207,0.9);
+}
+.filter-btn.active {
+  box-shadow: 0 0 16px rgba(0,253,207,0.35), inset 0 0 8px rgba(0,253,207,0.08);
+  text-shadow: 0 0 8px rgba(0,253,207,0.7);
+}
+.skill-card:hover {
+  box-shadow: 0 0 0 1px rgba(0,253,207,0.3), 0 0 20px rgba(0,253,207,0.07);
+}
+#search:focus {
+  box-shadow: 0 0 0 1px var(--accent), 0 0 14px rgba(0,253,207,0.2);
+}
+#hero-header {
+  box-shadow: 0 1px 0 0 rgba(0,253,207,0.25), 0 4px 30px rgba(0,253,207,0.04);
+}
+
+/* ── HEADER HASH-MARK RULER at bottom of hero ───────────── */
+#hero-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to right,
+    rgba(0,253,207,0.55) 0px,
+    rgba(0,253,207,0.55) 1px,
+    transparent 1px,
+    transparent 8px
+  );
+  z-index: 5;
+}
+
+/* ── TECHNICAL BRACKET CORNERS on cards ─────────────────── */
+.skill-card { position: relative; }
+.skill-card::before,
+.skill-card::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: rgba(0,253,207,0.45);
+  border-style: solid;
+  pointer-events: none;
+}
+.skill-card::before { top: -1px;    left: -1px;  border-width: 1px 0 0 1px; }
+.skill-card::after  { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+
+/* ── SCAN INDICATOR (pulsing live indicator in hero) ─────── */
+.scan-indicator {
+  position: absolute;
+  top: 14px;
+  right: 20px;
+  font-family: 'Share Tech Mono', 'JetBrains Mono', monospace;
+  font-size: 8px;
+  color: var(--accent);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.7;
+  text-shadow: 0 0 8px rgba(0,253,207,0.6);
+}
+.scan-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent), 0 0 16px rgba(0,253,207,0.4);
+  animation: scan-pulse 1.6s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes scan-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.15; transform: scale(0.6); }
+}
+
+/* ── CORNER SCAN BRACKETS in hero (IBM 5150 style) ─────── */
+.hero-bracket {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-color: rgba(0,253,207,0.5);
+  border-style: solid;
+  pointer-events: none;
+  z-index: 10;
+}
+.hero-bracket.tl { top: 12px;    left: 12px;  border-width: 1px 0 0 1px; }
+.hero-bracket.tr { top: 12px;    right: 12px; border-width: 1px 1px 0 0; }
+.hero-bracket.bl { bottom: 16px; left: 12px;  border-width: 0 0 1px 1px; }
+.hero-bracket.br { bottom: 16px; right: 12px; border-width: 0 1px 1px 0; }
+
+/* ── MONOSPACE font stack ───────────────────────────────── */
+.skill-cmd, .skill-name, .gl-term,
+.nav-label, .section-title, .header-desc {
+  font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+}
+.filter-btn { font-family: 'Share Tech Mono', 'JetBrains Mono', monospace; letter-spacing: 0.08em; }
+
+/* ── SHARP INDUSTRIAL edges (no web 2.0 rounding) ──────── */
+.filter-btn  { border-radius: 1px; }
+#search      { border-radius: 1px; }
+.skill-card  { border-radius: 2px; }
+.copy-btn, .code-copy-btn { border-radius: 1px; }
+.back-to-top { border-radius: 2px; }
+
+/* ── OPACITY DEPTH LAYERS ───────────────────────────────── */
+.nav-link            { opacity: 0.55; transition: opacity 0.15s; }
+.nav-link:hover      { opacity: 0.82; }
+.nav-link.active     { opacity: 1; }
+.skill-desc          { opacity: 0.72; }
+
+/* ── GLITCH ANIMATION ───────────────────────────────────── */
+@keyframes br-glitch {
+  0%   { transform: translateX(0);    clip-path: none; }
+  20%  { transform: translateX(-2px) skewX(-0.8deg); clip-path: inset(5% 0 80% 0); opacity: 0.8; }
+  40%  { transform: translateX(3px);  clip-path: inset(70% 0 10% 0); opacity: 0.9; }
+  60%  { transform: translateX(-1px); clip-path: none; opacity: 0.95; }
+  80%  { transform: translateX(1px);  }
+  100% { transform: translateX(0);    clip-path: none; opacity: 1; }
+}
+.br-glitch { animation: br-glitch 0.22s linear !important; }
+
+/* ── DATA FLICKER on search ─────────────────────────────── */
+@keyframes data-flicker {
+  0%, 100% { opacity: 1; }
+  25%       { opacity: 0.6; }
+  50%       { opacity: 0.9; }
+  75%       { opacity: 0.5; }
+}
+.data-flickering { animation: data-flicker 0.12s steps(1) 4; }
+
+/* ── BORDER GLOW on active elements ─────────────────────── */
+.filter-btn.active { border-color: var(--accent); }
+.skill-card:hover  { border-color: rgba(0,253,207,0.3); }
+
+
+/* ── BORDER-RADIUS CONSISTENCY — hard terminal edges everywhere ── */
+#search,
+#search-suggestions,
+#search-suggestions .sg-badge,
+.category-badge,
+.skill-card,
+.skill-tag, .skill-tag.warn, .skill-tag.go,
+pre, code,
+.gs-code,
+.connector-code,
+.copy-btn,
+.code-copy-btn,
+.theme-btn,
+.hamburger,
+.pipeline-card,
+.gs-source-card,
+.connector-card,
+.connector-badge,
+.connector-badge-neutral,
+.connector-req,
+.tip-card,
+.tip-body code,
+.meta-pill,
+.how-to-use,
+.how-to-use-inner,
+.context-card,
+.explainer-card,
+.hyku-toast,
+.gl-row,
+.gl-term-wrap,
+.gs-step-wrap,
+.gs-tab,
+.filter-btn,
+.back-to-top,
+.mobile-nav-drawer,
+.nav-collapsible-body,
+.search-wrap,
+[style*="border-radius"] { border-radius: 0 !important; }
+
+/* Preserve genuine circles (dots and indicators) */
+.nav-dot,
+.scan-dot,
+.step-dot { border-radius: 50% !important; }
+
+/* Search dropdown — no rounding, tight border */
+#search-suggestions {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5) !important;
+  border-top: none !important;
+}
+
+/* Meta pills — flat tag style */
+.meta-pill {
+  border: 1px solid var(--border) !important;
+  padding: 5px 12px !important;
+}
+
+/* Connector-featured: no permanent highlight, just normal card */
+.connector-featured { border-color: var(--border) !important; background: var(--surface) !important; }
+.connector-featured::before { opacity: 0 !important; }
+
+/* Nav count badges — more legible */
+.nav-count {
+  color: var(--text-dim) !important;
+  border: 1px solid var(--border) !important;
+  padding: 1px 5px !important;
+  font-size: 9px !important;
+}
+
+/* Nav labels — section headers more readable */
+.nav-label { color: var(--text-muted) !important; }
+
+/* Nav links default state — readable against dark bg */
+.nav-link { color: var(--text-muted) !important; }
+.nav-link:hover { color: var(--text) !important; }
+.nav-link.active { color: var(--accent) !important; }
+
+/* Skill tags — sharp, monospace, terminal-style */
+.skill-tag {
+  font-family: 'Share Tech Mono', 'JetBrains Mono', monospace !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Search badge inside suggestions */
+.sg-badge { border-radius: 0 !important; border: 1px solid rgba(0,253,207,0.2) !important; }
+
+/* Code blocks — hard edge */
+pre { border-radius: 0 !important; }
+.gs-code { border-radius: 0 !important; }
+
+
+/* ── MISSING RADIUS OVERRIDES (Installation Guide + Glossary) ── */
+.gs-install,
+.gs-tab-group,
+.gl-list,
+.context-card,
+.explainer-card,
+.code-toggle-btn,
+.how-to-use,
+.hamburger,
+.theme-btn,
+.hyku-toast,
+.mobile-nav-close { border-radius: 0 !important; }
+
+/* gl-list has overflow:hidden which clips corners — reset it */
+.gl-list { overflow: visible !important; }
+/* but keep individual row clipping clean with a border instead */
+.gl-list { border: 1px solid var(--border) !important; }
+.gl-row:first-child .gl-term,
+.gl-row:first-child .gl-def { /* no top-corner rounding needed */ }
+
+/* gs-tab-group overflow:hidden also causes rounding illusion */
+.gs-tab-group { overflow: visible !important; border: 1px solid var(--border) !important; }
+.gs-tab:first-child { border-left: none !important; }
+
+/* inline border-radius in HTML attributes (code snippets) */
+code[style*="border-radius"] { border-radius: 0 !important; }
+
+
+.scan-dot { width: 6px !important; height: 6px !important; }
+
+
+/* ══════════════════════════════════════════════════════
+   RAJDHANI FONT SYSTEM — Blade Runner UI
+   H1 + body + nav = Rajdhani
+   Labels/eyebrow  = Share Tech Mono (terminal data)
+   Code/commands   = JetBrains Mono  (unchanged)
+   ══════════════════════════════════════════════════════ */
+
+/* ── BODY base ─────────────────────────────────────── */
+body {
+  font-family: 'Rajdhani', 'Share Tech Mono', sans-serif !important;
+  letter-spacing: 0.02em !important;
+}
+
+/* ── H1 — bold condensed display ───────────────────── */
+h1, h1 .h1-static, h1 span {
+  font-family: 'Rajdhani', sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  font-size: clamp(36px, 6vw, 72px) !important;
+  line-height: 1.05 !important;
+}
+
+/* ── H1 PERIODIC GLITCH ─────────────────────────────── */
+@keyframes h1-glitch {
+  0%   { transform: none; clip-path: none; text-shadow: none; color: var(--text); }
+  8%   { transform: translateX(-4px) skewX(-1.5deg); clip-path: inset(8% 0 72% 0); color: var(--accent); text-shadow: 3px 0 rgba(255,80,80,0.5), -3px 0 rgba(0,253,207,0.5); }
+  16%  { transform: translateX(5px); clip-path: inset(55% 0 15% 0); color: var(--text); text-shadow: none; }
+  24%  { transform: translateX(-2px); clip-path: inset(25% 0 58% 0); opacity: 0.7; }
+  32%  { transform: none; clip-path: none; opacity: 1; }
+  40%  { transform: translateX(3px) skewX(0.8deg); clip-path: inset(0% 0 88% 0); color: var(--accent2); }
+  52%  { transform: none; clip-path: none; color: var(--text); }
+  100% { transform: none; clip-path: none; color: var(--text); opacity: 1; }
+}
+.h1-glitching { animation: h1-glitch 0.45s steps(2) 1 forwards !important; }
+
+/* ── H2, H3 section headings ────────────────────────── */
+h2, h3 {
+  font-family: 'Rajdhani', sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* ── Nav links & labels ─────────────────────────────── */
+.nav-link {
+  font-family: 'Rajdhani', sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  letter-spacing: 0.04em !important;
+}
+.nav-label {
+  font-family: 'Share Tech Mono', monospace !important;
+  font-size: 9px !important;
+  letter-spacing: 0.18em !important;
+}
+
+/* ── Skill card text ─────────────────────────────────── */
+.skill-name {
+  font-family: 'Rajdhani', sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.03em !important;
+}
+.skill-desc {
+  font-family: 'Rajdhani', sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+}
+
+/* ── Section / category titles ───────────────────────── */
+.section-title,
+.category-title,
+.pipeline-title,
+.category-label,
+.gs-install-title,
+.connector-name,
+.context-title,
+.explainer-label,
+.tip-title {
+  font-family: 'Rajdhani', sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+}
+
+/* ── Body paragraphs & descriptions ─────────────────── */
+p, .skill-card p, .pipeline-desc,
+.connector-desc, .context-desc,
+.tip-body, .header-desc,
+.gs-intro, .gs-step-desc,
+.gl-def, .step-note {
+  font-family: 'Rajdhani', sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 14px !important;
+  line-height: 1.65 !important;
+}
+
+/* ── Filter buttons ──────────────────────────────────── */
+.filter-btn {
+  font-family: 'Rajdhani', sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+
+/* ── Eyebrow / technical labels — keep Share Tech Mono ─ */
+.header-eyebrow,
+.nav-label,
+.skill-cmd,
+.skill-tag,
+.category-badge,
+.step-number,
+.meta-pill,
+.nav-count,
+.connector-badge,
+.connector-req,
+.gs-code,
+.connector-code,
+.scan-indicator {
+  font-family: 'Share Tech Mono', monospace !important;
+}
+
+/* ── Glossary terms — monospace for data display feel ─── */
+.gl-term {
+  font-family: 'Share Tech Mono', monospace !important;
+  font-size: 11px !important;
+  letter-spacing: 0.04em !important;
+}
+
+/* ── CODE stays JetBrains Mono ────────────────────────── */
+code, pre, .gs-code, .connector-code,
+.copy-btn, .code-copy-btn,
+.skill-cmd { font-family: 'JetBrains Mono', monospace !important; }
+
+/* ── Skill tags — Share Tech Mono for the terminal data feel */
+.skill-tag {
+  font-family: 'Share Tech Mono', monospace !important;
+  font-size: 10px !important;
+}
+
+
+/* ── CHAMFERED CORNERS: punch-card / data-slide aesthetic ── */
+/* clip-path replaces the L-bracket pseudo-elements */
+
+/* Remove old L-brackets (clip-path covers this) */
+.skill-card::before,
+.skill-card::after { display: none !important; }
+
+/* Sharp 1px outlined cards — no chamfer */
+.skill-card,
+.connector-card,
+.context-card,
+.explainer-card,
+.tip-card,
+.gs-install,
+.gs-source-card,
+.pipeline-card {
+  clip-path: none !important;
+  border-radius: 0 !important;
+  border: 1px solid var(--border) !important;
+  filter: none;
+}
+
+/* Hover: brighten border + subtle glow */
+.skill-card:hover {
+  border-color: var(--text-dim) !important;
+  box-shadow: 0 0 10px rgba(0,253,207,0.07) !important;
+  transform: translateY(-1px);
+  filter: none;
+}
+.connector-card:hover,
+.context-card:hover,
+.tip-card:hover,
+.explainer-card:hover,
+.gs-source-card:hover {
+  border-color: var(--text-dim) !important;
+  box-shadow: 0 0 8px rgba(0,253,207,0.06) !important;
+  filter: none;
+}
+
+/* Active filter button glow */
+.filter-btn.active {
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 6px rgba(0,253,207,0.4));
+}
+
+/* ── WORKSPACE BRACKETS: nav column — removed ── */
+nav#sidebar-nav::before,
+nav#sidebar-nav::after { content: none; }
+
+/* Hash-mark ruler replacing the right border of nav */
+nav#sidebar-nav {
+  border-right: none !important;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0,253,207,0.35) 0px,
+    rgba(0,253,207,0.35) 1px,
+    transparent 1px,
+    transparent 8px
+  ) !important;
+  background-repeat: repeat-y !important;
+  background-position: right 0 top 0 !important;
+  background-size: 1px 100% !important;
+}
+
+/* Content area brackets removed */
+.content { position: relative; }
+.content::before, .content::after { content: none; }
+
+/* ── DNA DATA TICKER ─────────────────────────────────────── */
+.data-ticker {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  overflow: hidden;
+  z-index: 4;
+  border-top: 1px solid rgba(0,253,207,0.18);
+  display: flex;
+  align-items: center;
+  background: rgba(5,8,8,0.6);
+}
+.data-ticker-track {
+  display: inline-flex;
+  white-space: nowrap;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: rgba(0,253,207,0.45);
+  letter-spacing: 0.12em;
+  animation: ticker-scroll 40s linear infinite;
+  gap: 0;
+}
+.data-ticker-track span { color: rgba(0,253,207,0.22); margin: 0 2px; }
+@keyframes ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+
+/* ── MOBILE: hide code blocks, keep copy buttons only ─── */
+@media (max-width: 900px) {
+  /* Hide all code display text */
+  .gs-code,
+  .connector-code,
+  pre { display: none !important; }
+
+  /* Hide the show/hide toggle (nothing to toggle) */
+  .code-toggle-btn { display: none !important; }
+
+  /* Always show collapsible code wrappers so copy btn is accessible */
+  .collapsible-code { display: block !important; }
+
+  /* Copy buttons: full-width, tappable */
+  .copy-btn,
+  .code-copy-btn {
+    display: flex !important;
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 10px 16px !important;
+    font-size: 12px !important;
+    box-sizing: border-box !important;
+    margin-top: 4px !important;
+  }
+
+  /* Keep code-copy-wrap layout sensible */
+  .code-copy-wrap { display: block !important; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   HERO BRACKETS — removed
+   ══════════════════════════════════════════════════════════════ */
+.hero-bracket { display: none !important; }
+
+/* ══════════════════════════════════════════════════════════════
+   ACCORDION DESCRIPTION — animate in on open
+   ══════════════════════════════════════════════════════════════ */
+.gl-acc-def.open {
+  animation: br-content-in 0.28s ease-out both;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CAUTION CARDS — override with orange 1px border to match
+   ══════════════════════════════════════════════════════════════ */
+.tip-warn.br-in .skill-desc,
+.tip-warn .tip-label { color: var(--accent2); }
+
+/* ══════════════════════════════════════════════════════════════
+   LOGO TEAL — override purple .st1 fill
+   ══════════════════════════════════════════════════════════════ */
+.hyku-logo .st1 { fill: #00FDCF !important; }
+:root.light .hyku-logo .st1 { fill: #007860 !important; }
+#hero-header .hyku-logo .st1 { fill: #00FDCF !important; }
+:root.light #hero-header .hyku-logo .st1 { fill: #007860 !important; }
+
+/* ══════════════════════════════════════════════════════════════
+   LOGO GLITCH — periodic on controls-logo
+   ══════════════════════════════════════════════════════════════ */
+@keyframes logo-glitch {
+  0%,100% { transform: none; filter: none; opacity: 1; }
+  15% { transform: translateX(-3px) skewX(-2deg); filter: hue-rotate(60deg) brightness(1.4); clip-path: inset(15% 0 65% 0); }
+  30% { transform: translateX(3px); clip-path: inset(60% 0 10% 0); filter: none; }
+  45% { transform: none; clip-path: none; opacity: 0.7; }
+  60% { transform: translateX(2px); clip-path: inset(30% 0 55% 0); filter: hue-rotate(-30deg); opacity: 1; }
+  75% { transform: none; clip-path: none; filter: none; }
+}
+.logo-glitching { animation: logo-glitch 0.35s steps(2) 1 forwards !important; }
+
+/* ══════════════════════════════════════════════════════════════
+   SOUND EQUALIZER POPUP
+   ══════════════════════════════════════════════════════════════ */
+.sound-popup-wrap { position: relative; display: inline-flex; }
+.sound-popup {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 10px 5px 8px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 300;
+  width: 34px;
+  box-sizing: border-box;
+  min-width: 0;
+}
+.sound-popup.open { display: flex; }
+/* Animated EQ bars inside the sound button */
+.btn-eq-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+  padding: 0 1px;
+  pointer-events: none;
+}
+.btn-eq-bars span {
+  width: 3px;
+  background: currentColor;
+  transform-origin: bottom;
+  animation: eq-dance var(--eq-dur, 0.55s) ease-in-out infinite alternate;
+}
+.btn-eq-bars span:nth-child(1) { height: 45%; --eq-dur: 0.42s; }
+.btn-eq-bars span:nth-child(2) { height: 100%; --eq-dur: 0.61s; }
+.btn-eq-bars span:nth-child(3) { height: 65%;  --eq-dur: 0.38s; }
+.btn-eq-bars span:nth-child(4) { height: 80%;  --eq-dur: 0.72s; }
+@keyframes eq-dance {
+  from { transform: scaleY(0.15); }
+  to   { transform: scaleY(1); }
+}
+.btn-eq-bars.muted span { animation: none; transform: scaleY(0.15); opacity: 0.35; }
+
+/* Volume slider in popup */
+.vol-slider-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 72px;
+}
+.vol-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 2px;
+  height: 64px;
+  background: var(--border);
+  outline: none;
+  cursor: inherit;
+  padding: 0;
+  margin: 0;
+}
+.vol-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 2px;
+  background: var(--accent);
+  border: none;
+  border-radius: 0;
+  cursor: inherit;
+}
+.vol-slider::-moz-range-thumb {
+  width: 14px;
+  height: 2px;
+  background: var(--accent);
+  border: none;
+  border-radius: 0;
+  cursor: inherit;
+  box-sizing: border-box;
+}
+.vol-slider::-moz-range-track {
+  width: 2px;
+  background: var(--border);
+  border-radius: 0;
+}
+.eq-mute-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  padding: 2px;
+  cursor: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s;
+}
+.eq-mute-btn:hover { color: var(--accent); }
+
+/* Collapse-all button */
+.gl-collapse-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  cursor: inherit;
+  transition: color 0.15s, border-color 0.15s;
+  margin-left: auto;
+}
+.gl-collapse-all:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ══════════════════════════════════════════════════════════════
+   CUSTOM SCROLLBAR — BLADE RUNNER THIN TECH
+   ══════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar              { -webkit-appearance: none; width: 5px; height: 5px; }
+::-webkit-scrollbar-track        { background: var(--bg); }
+::-webkit-scrollbar-thumb        { background: var(--text-dim); border-radius: 0 !important; border: none; }
+::-webkit-scrollbar-thumb:hover  { background: var(--accent); }
+::-webkit-scrollbar-thumb:active { background: var(--accent); }
+::-webkit-scrollbar-corner       { background: var(--bg); }
+html { scrollbar-width: thin; scrollbar-color: var(--text-dim) var(--bg); }
+
+/* ══════════════════════════════════════════════════════════════
+   CUSTOM CURSOR — teal crosshair default, solid square on hover
+   ══════════════════════════════════════════════════════════════ */
+html, body, * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cline x1='10' y1='1' x2='10' y2='19' stroke='%2300FDCF' stroke-width='1' opacity='0.75'/%3E%3Cline x1='1' y1='10' x2='19' y2='10' stroke='%2300FDCF' stroke-width='1' opacity='0.75'/%3E%3Ccircle cx='10' cy='10' r='1.5' fill='%2300FDCF'/%3E%3C/svg%3E") 10 10, crosshair;
+}
+a, button, label, select,
+.nav-link, .filter-btn, .copy-btn, .code-copy-btn, .code-toggle-btn,
+.gl-acc-btn, .skill-card, .connector-card, .context-card,
+.tip-card, .explainer-card, .gs-source-card,
+.back-to-top, #sound-btn, #theme-btn,
+#search, .nav-label-collapsible {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Crect width='10' height='10' fill='white'/%3E%3C/svg%3E") 5 5, pointer;
+}
+/* Light mode — dark cursors for visibility on pale background */
+:root.light html, :root.light body, :root.light * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cline x1='10' y1='1' x2='10' y2='19' stroke='%23007860' stroke-width='1' opacity='0.85'/%3E%3Cline x1='1' y1='10' x2='19' y2='10' stroke='%23007860' stroke-width='1' opacity='0.85'/%3E%3Ccircle cx='10' cy='10' r='1.5' fill='%23007860'/%3E%3C/svg%3E") 10 10, crosshair;
+}
+:root.light a, :root.light button, :root.light label, :root.light select,
+:root.light .nav-link, :root.light .filter-btn, :root.light .copy-btn,
+:root.light .code-copy-btn, :root.light .code-toggle-btn,
+:root.light .gl-acc-btn, :root.light .skill-card, :root.light .connector-card,
+:root.light .context-card, :root.light .tip-card, :root.light .explainer-card,
+:root.light .gs-source-card, :root.light .back-to-top,
+:root.light #sound-btn, :root.light #theme-btn,
+:root.light #search, :root.light .nav-label-collapsible {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Crect width='10' height='10' fill='%23323E48'/%3E%3C/svg%3E") 5 5, pointer;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CARD CONTENT BUILD-IN — elements within cards stagger in
+   ══════════════════════════════════════════════════════════════ */
+@keyframes br-content-in {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.br-in .skill-desc,
+.br-in .skill-tags,
+.br-in .skill-meta,
+.br-in .connector-meta,
+.br-in .connector-desc,
+.br-in .connector-badge,
+.br-in .context-body,
+.br-in .tip-body,
+.br-in .explainer-body,
+.br-in .category-badge,
+.br-in .how-to-use,
+.br-in .gs-step-content { animation: br-content-in 0.35s ease-out 0.22s both; }
+
+.br-in .skill-cmd,
+.br-in .skill-name,
+.br-in .connector-name { animation: br-content-in 0.3s ease-out 0.1s both; }
+
+/* Glossary accordion items — left-to-right clip wipe as they enter view */
+@keyframes br-gl-scan {
+  from { clip-path: inset(0 100% 0 0); opacity: 0.3; }
+  to   { clip-path: inset(0 0% 0 0);   opacity: 1; }
+}
+.gl-acc-btn.br-acc-in { animation: br-gl-scan 0.3s ease-out both; }
+
+/* ══════════════════════════════════════════════════════════════
+   SCROLL-IN REVEAL — cards & section headers build in on scroll
+   ══════════════════════════════════════════════════════════════ */
+.br-reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.38s ease, transform 0.38s ease;
+}
+.br-reveal.br-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 </style>
 
   <!-- Google Material Symbols weight 100, outlined -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
 </head>
 <body>
+<div class="grain-overlay" aria-hidden="true"></div>
+<div class="ca-overlay" aria-hidden="true"></div>
 <header id="hero-header">
   <canvas id="c"></canvas>
+  <div class="data-ticker" aria-hidden="true"><div class="data-ticker-track">AGC·ATG·TTA·CGG·ACC·GGT·TAC·GAT · REF:NX6-7714 · SEQ:0091FF4A · AGT·CCA·TGG·AAT·GCC·ACT · ID:NEXUS-6 · SCAN:+0.003 · VER:2049.R · ATT·GCC·TAA·CGG·TTC·AGC · LOCUS:07-BR · AUTH:TYRELL-CORP · CGA·TAC·GTT·ACC·GGA·TTC · SIG:00FD·CF4A·F201·B020 · AGC·ATG·TTA·CGG · STATUS:ACTIVE · REPLICANT:TRUE · MODEL:NEXUS-6 · AGT·CCA·TGG·AAT · EMPATHY:NULL · INCEPT:2049.01.17 · AGC·ATG·TTA·CGG·ACC·GGT·TAC·GAT · REF:NX6-7714 · SEQ:0091FF4A · AGT·CCA·TGG·AAT·GCC·ACT · ID:NEXUS-6 · SCAN:+0.003 · VER:2049.R · ATT·GCC·TAA·CGG·TTC·AGC · LOCUS:07-BR · AUTH:TYRELL-CORP · CGA·TAC·GTT·ACC·GGA·TTC · SIG:00FD·CF4A·F201·B020 · AGC·ATG·TTA·CGG · STATUS:ACTIVE · REPLICANT:TRUE · MODEL:NEXUS-6 · AGT·CCA·TGG·AAT · EMPATHY:NULL · INCEPT:2049.01.17 · </div></div>
+  <div class="scan-indicator"><span class="scan-dot"></span></div>
+  <div class="hero-bracket tl"></div><div class="hero-bracket tr"></div><div class="hero-bracket bl"></div><div class="hero-bracket br"></div>
   <div class="vig"></div>
   <div class="header-content">
     <div class="header-eyebrow">Hyku by Hypaspace</div>
@@ -1635,9 +2497,19 @@ h1 span { color: var(--accent); }
     <input type="text" id="search" placeholder="Search… (press /)" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="search-suggestions">
     <ul id="search-suggestions" role="listbox" aria-label="Search suggestions"></ul>
   </div>
-  <button class="theme-btn" id="sound-btn" aria-label="Mute sounds" title="Mute sounds">
-    <span class="material-symbols-outlined" id="sound-icon" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">volume_up</span>
-  </button>
+  <div class="sound-popup-wrap">
+    <button class="theme-btn" id="sound-btn" aria-label="Sound controls" title="Sound controls">
+      <span class="btn-eq-bars" id="btn-eq-bars"><span></span><span></span><span></span><span></span></span>
+    </button>
+    <div class="sound-popup" id="sound-popup" role="dialog" aria-label="Sound controls">
+      <div class="vol-slider-wrap">
+        <input type="range" id="vol-slider" class="vol-slider" min="0" max="100" value="80" aria-label="Volume" orient="vertical">
+      </div>
+      <button class="eq-mute-btn" id="eq-mute-btn" title="Toggle sound">
+        <span class="material-symbols-outlined" id="sound-icon" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">volume_up</span>
+      </button>
+    </div>
+  </div>
   <button class="theme-btn" id="theme-btn" aria-label="Toggle light/dark mode" title="Toggle light/dark mode">
     <span class="material-symbols-outlined" id="theme-icon" style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">light_mode</span>
   </button>
@@ -2309,9 +3181,15 @@ claude
 
     <!-- GLOSSARY -->
     <div class="extra-section" id="glossary">
-      <div class="extra-header">
-        <div class="extra-title">Glossary</div>
-        <div class="extra-desc">Core design and UX/UI terms organised by discipline. Searchable alongside skills.</div>
+      <div class="extra-header" style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+        <div>
+          <div class="extra-title">Glossary</div>
+          <div class="extra-desc">Core design and UX/UI terms organised by discipline. Searchable alongside skills.</div>
+        </div>
+        <button class="gl-collapse-all" id="gl-collapse-all" title="Collapse all open glossary items">
+          <span class="material-symbols-outlined" style="font-size:12px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">unfold_less</span>
+          Collapse All
+        </button>
       </div>
 
       <div class="category-section" id="glossary-strategy" data-category="glossary-strategy" style="margin-bottom:48px">
@@ -3436,11 +4314,36 @@ decision frameworks all valid.</code></div>
     if (!hits.length) { closeSuggestions(); return; }
     suggestionIndex = -1;
     suggestions.innerHTML = hits.map((t, i) => {
-      const hl = t.label.replace(new RegExp(escRe(q), 'gi'), m => `<mark>${m}</mark>`);
-      return `<li role="option" aria-selected="false" data-value="${t.label.replace(/"/g,'&quot;')}" data-idx="${i}"><span>${hl}</span><span class="sg-badge">${t.badge}</span></li>`;
+      return `<li role="option" aria-selected="false" data-value="${t.label.replace(/"/g,'&quot;')}" data-idx="${i}"><span class="sg-label" data-final="${t.label.replace(/"/g,'&quot;')}" data-q="${q.replace(/"/g,'&quot;')}">${t.label}</span><span class="sg-badge">${t.badge}</span></li>`;
     }).join('');
     suggestions.classList.add('open');
     search.setAttribute('aria-expanded', 'true');
+    // Lock-on: cycle random chars then snap to real value
+    var CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789▓░·-';
+    suggestions.querySelectorAll('.sg-label').forEach(function(el, delay) {
+      var final = el.dataset.final;
+      var qStr  = el.dataset.q;
+      var dur   = 220;
+      var t0    = null;
+      setTimeout(function() {
+        function step(ts) {
+          if (!t0) t0 = ts;
+          var p = Math.min((ts - t0) / dur, 1);
+          var revealed = Math.floor(p * final.length);
+          var out = '';
+          for (var i = 0; i < final.length; i++) {
+            if (i < revealed || final[i] === ' ' || final[i] === '-') out += final[i];
+            else out += CHARS[Math.floor(Math.random() * CHARS.length)];
+          }
+          el.textContent = out;
+          if (p < 1) { requestAnimationFrame(step); }
+          else {
+            el.innerHTML = final.replace(new RegExp(escRe(qStr), 'gi'), function(m){ return '<mark>' + m + '</mark>'; });
+          }
+        }
+        requestAnimationFrame(step);
+      }, delay * 40);
+    });
   }
 
   function closeSuggestions() {
@@ -3769,7 +4672,7 @@ decision frameworks all valid.</code></div>
   const canvas = document.getElementById('c');
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
-  const W_COLOR = '#ffffff';
+  const W_COLOR = '#00FDCF';
 
   let W=0, H=0, pts=[], raf=0, tick=0;
   let gridCols=0, gridRows=0, gridCount=0;
@@ -4035,101 +4938,172 @@ decision frameworks all valid.</code></div>
   });
 
 
-  // ── SOUND SYSTEM ──
+  // ── SOUND SYSTEM — BLADE RUNNER / 80s SCI-FI ──
   (function() {
     var actx = null;
     var soundEnabled = true;
     try { soundEnabled = localStorage.getItem('hyku-sound') !== 'off'; } catch(e) {}
+    var masterVolume = 0.8;
+    try { var sv = parseFloat(localStorage.getItem('hyku-vol')); if (!isNaN(sv)) masterVolume = sv; } catch(e) {}
+
+    var _unlocked = false;
 
     function getCtx() {
-      if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+      if (!actx) {
+        actx = new (window.AudioContext || window.webkitAudioContext)();
+        // If browser suspends the context (tab switch etc), re-lock so next gesture re-unlocks
+        actx.onstatechange = function() {
+          if (actx.state !== 'running') _unlocked = false;
+        };
+      }
       return actx;
     }
 
-    // Unlock AudioContext on first user gesture (browsers block audio until interaction)
     function unlock() {
       var ac = getCtx();
-      if (ac.state === 'suspended') ac.resume();
-    }
-    document.addEventListener('click',       unlock, { once: true });
-    document.addEventListener('keydown',     unlock, { once: true });
-    document.addEventListener('pointerdown', unlock, { once: true });
-
-    function tone(freq, dur, vol, freqEnd) {
-      if (!soundEnabled) return;
+      if (ac.state === 'running') { _unlocked = true; return; }
+      // Safari: play a real (silent) buffer during the gesture — resume() alone isn't enough
       try {
-        var ac = getCtx();
-        var go = function() {
-          var osc  = ac.createOscillator();
-          var gain = ac.createGain();
-          osc.connect(gain);
-          gain.connect(ac.destination);
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, ac.currentTime);
-          if (freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, ac.currentTime + dur);
-          gain.gain.setValueAtTime(vol, ac.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + dur);
-          osc.start(ac.currentTime);
-          osc.stop(ac.currentTime + dur + 0.02);
-        };
-        if (ac.state === 'suspended') ac.resume().then(go); else go();
+        var buf = ac.createBuffer(1, 1, ac.sampleRate);
+        var src = ac.createBufferSource();
+        src.buffer = buf;
+        src.connect(ac.destination);
+        src.start(0);
+      } catch(e) {}
+      // Only mark ready after resume() actually resolves
+      ac.resume().then(function() {
+        if (actx && actx.state === 'running') _unlocked = true;
+      });
+    }
+    // mousedown fires before click and is a guaranteed user gesture in Safari
+    document.addEventListener('mousedown',  unlock);
+    document.addEventListener('keydown',    unlock);
+    document.addEventListener('touchstart', unlock, { passive: true });
+
+    // Core tone — only runs when context is confirmed running (_unlocked)
+    function tone(freq, dur, vol, freqEnd, wave) {
+      if (!soundEnabled || !actx || !_unlocked) return;
+      try {
+        var ac   = actx;
+        var osc  = ac.createOscillator();
+        var gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = wave || 'square';
+        osc.frequency.setValueAtTime(freq, ac.currentTime);
+        if (freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, ac.currentTime + dur);
+        var v = Math.max(0.0001, vol * masterVolume);
+        gain.gain.setValueAtTime(v, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + dur);
+        osc.start(ac.currentTime);
+        osc.stop(ac.currentTime + dur + 0.02);
       } catch(e) {}
     }
 
-    function playHover()     { tone(900, 0.06, 0.12, 700); }
-    function playNavClick()  { tone(500, 0.10, 0.17, 300); }
-    function playNavSelect() { tone(400, 0.08, 0.13, 260); }
-    function playToggle(light) {
-      if (light) { tone(350, 0.15, 0.13, 700); } else { tone(700, 0.15, 0.13, 300); }
-    }
-    function playAccordion(open) {
-      if (open)  { tone(440, 0.08, 0.12); setTimeout(function(){ tone(660, 0.10, 0.11); }, 70); }
-      else       { tone(550, 0.08, 0.10); setTimeout(function(){ tone(370, 0.10, 0.09); }, 70); }
-    }
-    function playShowCode(open) {
-      if (open) tone(500, 0.12, 0.12, 320); else tone(320, 0.10, 0.10, 240);
-    }
-    function playCopy() {
-      tone(800, 0.07, 0.13); setTimeout(function(){ tone(1100, 0.12, 0.11); }, 60);
-    }
-    function playSwipe() {
-      if (!soundEnabled) return;
+    // Noise burst with filter sweep — only runs when context is confirmed running (_unlocked)
+    function noiseSweep(dur, vol, freqStart, freqEnd, filterType) {
+      if (!soundEnabled || !actx || !_unlocked) return;
       try {
-        var ac  = getCtx();
-        var len = Math.floor(ac.sampleRate * 0.06);
-        var buf = ac.createBuffer(1, len, ac.sampleRate);
-        var d   = buf.getChannelData(0);
+        var ac   = actx;
+        var len  = Math.floor(ac.sampleRate * dur);
+        var buf  = ac.createBuffer(1, len, ac.sampleRate);
+        var d    = buf.getChannelData(0);
         for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
         var src  = ac.createBufferSource(); src.buffer = buf;
-        var filt = ac.createBiquadFilter(); filt.type = 'bandpass'; filt.frequency.value = 1600; filt.Q.value = 0.8;
-        var g    = ac.createGain();
-        g.gain.setValueAtTime(0.08, ac.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.06);
+        var filt = ac.createBiquadFilter();
+        filt.type = filterType || 'bandpass';
+        filt.frequency.setValueAtTime(freqStart, ac.currentTime);
+        filt.frequency.exponentialRampToValueAtTime(freqEnd, ac.currentTime + dur);
+        filt.Q.value = 1.2;
+        var g = ac.createGain();
+        var nv = Math.max(0.0001, vol * masterVolume);
+        g.gain.setValueAtTime(nv, ac.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + dur);
         src.connect(filt); filt.connect(g); g.connect(ac.destination);
         src.start();
       } catch(e) {}
     }
 
-    var lastHover = 0;
-    function hoverThrottled() {
-      var now = Date.now();
-      if (now - lastHover > 80) { playHover(); lastHover = now; }
-    }
-    var lastSwipe = 0;
-    function swipeThrottled() {
-      var now = Date.now();
-      if (now - lastSwipe > 120) { playSwipe(); lastSwipe = now; }
+    // ── SOUND DEFINITIONS ──
+
+    // Hover: sharp CRT terminal cursor tick — square wave, very short
+    function playHover() { tone(2200, 0.018, 0.035, 1800); }
+    window._brHover = playHover;
+
+    // Filter button hover: slightly lower terminal blip
+    function playFilterHover() { tone(1600, 0.022, 0.035, 1200); }
+
+    // Nav filter click: mechanical key thud — low sawtooth thump + high tick
+    function playNavClick() {
+      tone(90, 0.14, 0.08, 45, 'sawtooth');
+      setTimeout(function(){ tone(1400, 0.025, 0.04); }, 15);
     }
 
-    // Hover + click on sidebar nav links
+    // Sidebar nav select: MUTHR-style two-step terminal confirm
+    function playNavSelect() {
+      tone(880, 0.035, 0.05);
+      setTimeout(function(){ tone(1100, 0.045, 0.04); }, 55);
+    }
+
+    // Theme toggle: short matched blip pair
+    function playToggle(light) {
+      if (light) {
+        tone(800, 0.035, 0.04, 1100, 'sine');
+        setTimeout(function(){ tone(1300, 0.03, 0.035); }, 50);
+      } else {
+        tone(1100, 0.03, 0.035, 700, 'sine');
+        setTimeout(function(){ tone(500, 0.035, 0.03); }, 50);
+      }
+    }
+
+    // Accordion / nav section open: two-step beep
+    function playAccordion(open) {
+      if (open) {
+        tone(440, 0.04, 0.045);
+        setTimeout(function(){ tone(660, 0.06, 0.04); }, 75);
+      } else {
+        tone(660, 0.04, 0.04);
+        setTimeout(function(){ tone(440, 0.06, 0.035); }, 75);
+      }
+    }
+
+    // Show code: disk drive whirr — noise sweep + blip
+    function playShowCode(open) {
+      if (open) {
+        noiseSweep(0.14, 0.055, 300, 2400, 'bandpass');
+        setTimeout(function(){ tone(1200, 0.035, 0.035); }, 110);
+      } else {
+        noiseSweep(0.12, 0.04, 2400, 300, 'bandpass');
+      }
+    }
+
+    // Copy: terminal ACCESS GRANTED — two crisp beeps
+    function playCopy() {
+      tone(1100, 0.04, 0.055);
+      setTimeout(function(){ tone(1400, 0.06, 0.055); }, 65);
+    }
+
+    // Horizontal scroll: data stream blip
+    function playSwipe() {
+      if (!soundEnabled) return;
+      noiseSweep(0.05, 0.035, 800, 2000, 'bandpass');
+    }
+
+    // ── ATTACH LISTENERS ──
+
+    var lastHover = 0;
+    function hoverThrottled()       { var n=Date.now(); if(n-lastHover>70){playHover();lastHover=n;} }
+    var lastFilterHover = 0;
+    function filterHoverThrottled() { var n=Date.now(); if(n-lastFilterHover>70){playFilterHover();lastFilterHover=n;} }
+    var lastSwipe = 0;
+    function swipeThrottled()       { var n=Date.now(); if(n-lastSwipe>110){playSwipe();lastSwipe=n;} }
+
     document.querySelectorAll('.nav-link').forEach(function(link) {
       link.addEventListener('mouseenter', hoverThrottled);
       link.addEventListener('click', playNavSelect);
     });
 
-    // Hover + click on top filter buttons
     document.querySelectorAll('.filter-btn').forEach(function(btn) {
-      btn.addEventListener('mouseenter', hoverThrottled);
+      btn.addEventListener('mouseenter', filterHoverThrottled);
       btn.addEventListener('click', playNavClick);
     });
 
@@ -4139,22 +5113,50 @@ decision frameworks all valid.</code></div>
       if (e.target.closest('.copy-btn') || e.target.closest('.code-copy-btn')) playCopy();
     }, true);
 
-    // Accordion + show-code + collapsible nav sections (bubble phase — reads post-toggle class)
+    // Accordion + show-code + collapsible nav (bubble phase — reads post-toggle class)
     document.addEventListener('click', function(e) {
       if (!soundEnabled) return;
-      var acc  = e.target.closest('.gl-acc-btn');
-      if (acc)  { playAccordion(acc.classList.contains('open')); return; }
+      var acc = e.target.closest('.gl-acc-btn');
+      if (acc) { if (!window._brCollapseAll) playAccordion(acc.classList.contains('open')); return; }
       var code = e.target.closest('.code-toggle-btn');
       if (code) { playShowCode(code.classList.contains('open')); return; }
       var navLabel = e.target.closest('.nav-label-collapsible');
       if (navLabel) {
-        var sectionId = navLabel.dataset.section;
-        var body = document.getElementById(sectionId);
-        var isCollapsed = body && body.classList.contains('collapsed');
-        playAccordion(!isCollapsed);
+        var body = document.getElementById(navLabel.dataset.section);
+        playAccordion(body && !body.classList.contains('collapsed'));
         return;
       }
     });
+
+    // Card + button hover — only fires on ENTER (relatedTarget not inside same element)
+    var lastCardH = 0;
+    document.addEventListener('mouseover', function(e) {
+      if (!soundEnabled || !_unlocked) return;
+      var n = Date.now();
+      if (n - lastCardH < 80) return;
+      var target = e.target.closest('.skill-card, .connector-card, .context-card, .tip-card, .explainer-card, .gs-source-card, .gl-acc-btn, #search-suggestions li');
+      if (!target) return;
+      // Suppress if moving between children within the same target (token hover etc.)
+      if (e.relatedTarget && target.contains(e.relatedTarget)) return;
+      lastCardH = n;
+      playHover();
+    });
+
+    // Glossary scroll — soft tick as rows enter the viewport while scrolling
+    (function() {
+      var lastGlTick = 0;
+      var glScrollObs = new IntersectionObserver(function(entries) {
+        var any = entries.some(function(e) { return e.isIntersecting; });
+        if (!any) return;
+        var n = Date.now();
+        if (n - lastGlTick < 110) return;
+        lastGlTick = n;
+        tone(1800, 0.012, 0.04, 1400); // very quiet soft tick
+      }, { threshold: 0.5, rootMargin: '0px 0px -10% 0px' });
+      document.querySelectorAll('.gl-acc-btn').forEach(function(btn) {
+        glScrollObs.observe(btn);
+      });
+    })();
 
     // Horizontal scroll sound on swipe strips
     document.querySelectorAll('.skills-grid, .connector-grid, .context-grid, .explainer-grid, .tips-grid').forEach(function(el) {
@@ -4182,24 +5184,63 @@ decision frameworks all valid.</code></div>
       toastTimer = setTimeout(function() { toastEl.classList.remove('show'); }, 2000);
     }
 
-    // Sound toggle button
-    function updateSoundBtn() {
-      var icon = document.getElementById('sound-icon');
-      var btn  = document.getElementById('sound-btn');
-      if (!icon || !btn) return;
-      icon.textContent = soundEnabled ? 'volume_up' : 'volume_off';
-      btn.setAttribute('title', soundEnabled ? 'Mute sounds' : 'Enable sounds');
-      btn.setAttribute('aria-label', soundEnabled ? 'Mute sounds' : 'Enable sounds');
+    // Equalizer popup — open/close on sound-btn click
+    var soundPopup  = document.getElementById('sound-popup');
+    var btnEqBars   = document.getElementById('btn-eq-bars');
+    var soundIcon   = document.getElementById('sound-icon');
+    var eqMuteBtn   = document.getElementById('eq-mute-btn');
+    var soundBtn    = document.getElementById('sound-btn');
+    var volSlider   = document.getElementById('vol-slider');
+
+    // Sync slider to persisted volume
+    if (volSlider) volSlider.value = Math.round(masterVolume * 100);
+
+    function updateEqState() {
+      if (!soundIcon) return;
+      if (soundEnabled) {
+        if (btnEqBars) btnEqBars.classList.remove('muted');
+        soundIcon.textContent = 'volume_up';
+      } else {
+        if (btnEqBars) btnEqBars.classList.add('muted');
+        soundIcon.textContent = 'volume_off';
+      }
+    }
+    updateEqState();
+
+    // Toggle popup visibility
+    if (soundBtn && soundPopup) {
+      soundBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        soundPopup.classList.toggle('open');
+      });
+      // Close on outside click
+      document.addEventListener('click', function(e) {
+        if (soundPopup.classList.contains('open') && !soundPopup.contains(e.target) && e.target !== soundBtn) {
+          soundPopup.classList.remove('open');
+        }
+      });
     }
 
-    updateSoundBtn();
+    // Volume slider
+    if (volSlider) {
+      volSlider.addEventListener('input', function() {
+        masterVolume = parseInt(this.value, 10) / 100;
+        try { localStorage.setItem('hyku-vol', masterVolume); } catch(err) {}
+        if (masterVolume > 0 && !soundEnabled) {
+          soundEnabled = true;
+          try { localStorage.setItem('hyku-sound', 'on'); } catch(err) {}
+          updateEqState();
+        }
+      });
+    }
 
-    var soundBtn = document.getElementById('sound-btn');
-    if (soundBtn) {
-      soundBtn.addEventListener('click', function() {
+    // Mute toggle inside popup
+    if (eqMuteBtn) {
+      eqMuteBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
         soundEnabled = !soundEnabled;
-        try { localStorage.setItem('hyku-sound', soundEnabled ? 'on' : 'off'); } catch(e) {}
-        updateSoundBtn();
+        try { localStorage.setItem('hyku-sound', soundEnabled ? 'on' : 'off'); } catch(err) {}
+        updateEqState();
         if (soundEnabled) { playNavClick(); showToast('Sound on'); }
         else { showToast('Sound off'); }
       });
@@ -4219,12 +5260,459 @@ decision frameworks all valid.</code></div>
   setControlsH();
   window.addEventListener('resize', setControlsH);
 
+
+  // ── BLADE RUNNER: occasional element glitch ────────────────────────────
+  (function(){
+    function scheduleGlitch(){
+      var delay = 2800 + Math.random() * 5500;
+      setTimeout(function(){
+        var pool = document.querySelectorAll('.skill-card, .nav-link, .filter-btn');
+        if(pool.length){
+          var el = pool[Math.floor(Math.random() * pool.length)];
+          el.classList.add('br-glitch');
+          setTimeout(function(){ el.classList.remove('br-glitch'); }, 260);
+        }
+        scheduleGlitch();
+      }, delay);
+    }
+    scheduleGlitch();
+
+    // Search flicker — rapid value cycling before settling
+    var searchEl = document.getElementById('search');
+    if(searchEl){
+      searchEl.addEventListener('input', function(){
+        searchEl.classList.add('data-flickering');
+        setTimeout(function(){ searchEl.classList.remove('data-flickering'); }, 500);
+      });
+    }
+  })();
+
 </script>
 
 <div class="hyku-toast" id="hyku-toast"></div>
 <button class="back-to-top" id="back-to-top" aria-label="Back to top" title="Back to top">
   <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">arrow_upward</span>
 </button>
+
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   BLADE RUNNER — UNIVERSAL LOCK-ON SYSTEM
+   ══════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+
+  var CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789▓░▒·-';
+  var SKIP  = ' -/:·.&>'; // chars that reveal instantly (structural)
+
+  /* ── Core: lock-on an element's textContent ─────────────── */
+  function lockOn(el, finalText, dur, onDone) {
+    if (!el || !finalText) return;
+    dur = dur || 260;
+    var start = null;
+    function step(ts) {
+      if (start === null) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      var rev = Math.floor(p * finalText.length);
+      var out = '';
+      for (var i = 0; i < finalText.length; i++) {
+        var ch = finalText[i];
+        if (i < rev || SKIP.indexOf(ch) !== -1) out += ch;
+        else out += CHARS[Math.floor(Math.random() * CHARS.length)];
+      }
+      el.textContent = out;
+      if (p < 1) requestAnimationFrame(step);
+      else { el.textContent = finalText; if (onDone) onDone(); }
+    }
+    requestAnimationFrame(step);
+  }
+
+  /* ── Core: lock-on a raw DOM text node (safe for mixed HTML) */
+  function lockOnNode(node, dur) {
+    if (!node || node.nodeType !== 3) return;
+    var final = node.nodeValue;
+    if (!final.trim()) return;
+    dur = dur || 240;
+    var start = null;
+    function step(ts) {
+      if (start === null) start = ts;
+      var p  = Math.min((ts - start) / dur, 1);
+      var rev = Math.floor(p * final.length);
+      var out = '';
+      for (var i = 0; i < final.length; i++) {
+        var ch = final[i];
+        if (i < rev || SKIP.indexOf(ch) !== -1) out += ch;
+        else out += CHARS[Math.floor(Math.random() * CHARS.length)];
+      }
+      node.nodeValue = out;
+      if (p < 1) requestAnimationFrame(step);
+      else node.nodeValue = final;
+    }
+    requestAnimationFrame(step);
+  }
+
+  /* helper: get the plain text node inside an element (skips child elements) */
+  function textNode(el) {
+    return Array.from(el.childNodes).find(function(n) {
+      return n.nodeType === 3 && n.nodeValue.trim().length > 0;
+    });
+  }
+  // Expose for use in other scripts
+  window._brLockOn     = lockOn;
+  window._brLockOnNode = lockOnNode;
+  window._brTextNode   = textNode;
+
+  /* ══════════════════════════════════════════════════════════
+     1. PAGE LOAD — eyebrow → H1 → meta pills boot sequence
+     ══════════════════════════════════════════════════════════ */
+  function bootSequence() {
+    var eyebrow = document.querySelector('.header-eyebrow');
+    var h1el    = document.querySelector('.h1-static');
+    var pills   = document.querySelectorAll('.meta-pill');
+
+    if (eyebrow) {
+      lockOn(eyebrow, eyebrow.textContent, 320, function () {
+        if (h1el) {
+          lockOn(h1el, h1el.textContent, 680, function () {
+            pills.forEach(function (pill, i) {
+              setTimeout(function () {
+                var savedHTML = pill.innerHTML;
+                var savedText = pill.textContent;
+                lockOn(pill, savedText, 380, function () {
+                  pill.innerHTML = savedHTML; // restore <strong> tags
+                });
+              }, i * 130);
+            });
+          });
+        }
+      });
+    }
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { setTimeout(bootSequence, 120); });
+  } else {
+    setTimeout(bootSequence, 500);
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     2. SKILL CMD STRINGS — lock-on when card scrolls into view
+     ══════════════════════════════════════════════════════════ */
+  var cmdObs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting && !entry.target.dataset.brLocked) {
+        entry.target.dataset.brLocked = '1';
+        lockOn(entry.target, entry.target.dataset.brFinal, 260);
+      }
+    });
+  }, { threshold: 0.4 });
+
+  document.querySelectorAll('.skill-cmd').forEach(function (cmd) {
+    cmd.dataset.brFinal = cmd.textContent;
+    cmdObs.observe(cmd);
+  });
+
+  /* ══════════════════════════════════════════════════════════
+     3. GLOSSARY TERMS — lock-on as rows scroll into view
+     ══════════════════════════════════════════════════════════ */
+  var glossObs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting && !entry.target.dataset.brLocked) {
+        entry.target.dataset.brLocked = '1';
+        lockOn(entry.target, entry.target.dataset.brFinal, 210);
+      }
+    });
+  }, { threshold: 0.55 });
+
+  document.querySelectorAll('.gl-term').forEach(function (term) {
+    term.dataset.brFinal = term.textContent;
+    glossObs.observe(term);
+  });
+
+  /* ══════════════════════════════════════════════════════════
+     4. CATEGORY TITLES — lock-on when filter reveals a section
+     ══════════════════════════════════════════════════════════ */
+  document.querySelectorAll('.filter-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      setTimeout(function () {
+        var visible = document.querySelectorAll('section:not(.hidden) .category-title');
+        visible.forEach(function (title, i) {
+          var node = textNode(title);
+          if (!node) return;
+          var key = node.nodeValue.trim();
+          if (title.dataset.filterKey === key) return; // already locked this value
+          title.dataset.filterKey = key;
+          setTimeout(function () { lockOnNode(node, 280); }, i * 55);
+        });
+      }, 70);
+    });
+  });
+
+  /* ══════════════════════════════════════════════════════════
+     5. NAV ITEMS — lock-on when collapsible section expands
+     ══════════════════════════════════════════════════════════ */
+  document.querySelectorAll('.nav-label-collapsible').forEach(function (label) {
+    label.addEventListener('click', function () {
+      var body = document.getElementById(label.dataset.section);
+      if (!body) return;
+      setTimeout(function () {
+        var isOpen = !body.classList.contains('collapsed');
+        if (isOpen) {
+          body.querySelectorAll('.nav-link').forEach(function (link, i) {
+            var node = textNode(link);
+            if (!node || link.dataset.brNavLocked) return;
+            link.dataset.brNavLocked = '1';
+            setTimeout(function () { lockOnNode(node, 230); }, i * 45);
+          });
+        } else {
+          // Reset so re-expand triggers again
+          body.querySelectorAll('.nav-link').forEach(function (link) {
+            delete link.dataset.brNavLocked;
+          });
+        }
+      }, 90);
+    });
+  });
+
+  /* ══════════════════════════════════════════════════════════
+     6. COPY BUTTONS — lock-on "Copied ✓" then revert
+     ══════════════════════════════════════════════════════════ */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.copy-btn, .code-copy-btn');
+    if (!btn) return;
+    setTimeout(function () {
+      if (btn.classList.contains('copied')) {
+        lockOn(btn, btn.textContent, 180);
+        // Also animate when it reverts to original
+        setTimeout(function () { lockOn(btn, btn.textContent, 160); }, 1840);
+      }
+    }, 60);
+  }, true);
+
+  /* ══════════════════════════════════════════════════════════
+     7. SHOW/HIDE CODE TOGGLE — lock-on the label span on click
+     ══════════════════════════════════════════════════════════ */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.code-toggle-btn');
+    if (!btn) return;
+    var labelSpan = btn.querySelector('span:not(.ct-icon)');
+    if (labelSpan) {
+      setTimeout(function () { lockOn(labelSpan, labelSpan.textContent, 200); }, 20);
+    }
+  }, true);
+
+  /* ══════════════════════════════════════════════════════════
+     8. TOAST NOTIFICATION — lock-on text as toast appears
+     ══════════════════════════════════════════════════════════ */
+  var toastEl = document.getElementById('hyku-toast');
+  if (toastEl) {
+    var _tObs = new MutationObserver(function () {
+      var text = toastEl.textContent.trim();
+      if (!text) return;
+      _tObs.disconnect(); // stop watching while lock-on rewrites text
+      lockOn(toastEl, text, 170, function () {
+        _tObs.observe(toastEl, { childList: true, characterData: true, subtree: true });
+      });
+    });
+    _tObs.observe(toastEl, { childList: true, characterData: true, subtree: true });
+  }
+
+})();
+</script>
+
+
+<script>
+/* ── CARD + SEARCH RESULT HOVER SOUNDS ───────────────────────── */
+(function () {
+  var lastCardHover = 0;
+  function cardHoverSound() {
+    var n = Date.now();
+    if (n - lastCardHover < 80) return;
+    lastCardHover = n;
+    if (typeof window._brHover === 'function') window._brHover();
+  }
+
+  /* Skill / connector / context / tip / explainer cards */
+  document.querySelectorAll(
+    '.skill-card, .connector-card, .context-card, .tip-card, .explainer-card, .gs-source-card'
+  ).forEach(function (card) {
+    card.addEventListener('mouseenter', cardHoverSound);
+  });
+
+  /* Glossary rows — handled inside sound IIFE for in-scope access to playHover */
+
+  /* Search suggestions — delegated (dynamically rendered) */
+  var sugg = document.getElementById('search-suggestions');
+  if (sugg) {
+    sugg.addEventListener('mouseenter', function (e) {
+      if (e.target.closest('li')) cardHoverSound();
+    }, true);
+  }
+})();
+</script>
+
+
+<script>
+/* ── SCROLL-IN REVEAL — cards & section headers build in on scroll ── */
+(function () {
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      var el = entry.target;
+      // Stagger cards within their grid by index
+      var siblings = el.parentElement ? Array.from(el.parentElement.children) : [];
+      var idx = siblings.indexOf(el);
+      el.style.transitionDelay = (idx * 45) + 'ms';
+      el.classList.add('br-in');
+      obs.unobserve(el);
+    });
+  }, { threshold: 0.12 });
+
+  var SEL = [
+    '.skill-card', '.connector-card', '.context-card',
+    '.tip-card', '.explainer-card', '.gs-source-card',
+    '.pipeline-card', '.gs-install', '.category-header'
+  ].join(', ');
+
+  document.querySelectorAll(SEL).forEach(function (el) {
+    el.classList.add('br-reveal');
+    obs.observe(el);
+  });
+})();
+</script>
+
+
+<script>
+/* ── NAV LINK CLICK → RELOAD ALL LOCK-ON ANIMATIONS IN SECTION ── */
+(function () {
+  var TITLE_SEL = '.category-title, .gs-title, .pipelines-heading, .glossary-section-title, .gs-section-title';
+
+  function replaySection(section) {
+    var lockOn     = window._brLockOn;
+    var lockOnNode = window._brLockOnNode;
+    var textNode   = window._brTextNode;
+    if (!lockOn || !lockOnNode || !textNode) return;
+
+    // ── Section title ───────────────────────────────────────────
+    var titleEl = section.querySelector(TITLE_SEL);
+    if (titleEl) {
+      titleEl.dataset.filterKey = ''; // allow re-lock
+      var node = textNode(titleEl);
+      if (node) lockOnNode(node, 300);
+    }
+
+    // ── Skill cmd strings (staggered) ───────────────────────────
+    var cmds = section.querySelectorAll('.skill-cmd');
+    cmds.forEach(function (cmd, i) {
+      cmd.dataset.brLocked = ''; // clear lock so it re-fires
+      setTimeout(function () {
+        lockOn(cmd, cmd.dataset.brFinal || cmd.textContent, 240);
+      }, 60 + i * 35);
+    });
+
+    // ── Glossary terms (staggered, capped at 30 to avoid rAF storm) ─
+    var terms = Array.from(section.querySelectorAll('.gl-term')).slice(0, 30);
+    terms.forEach(function (term, i) {
+      term.dataset.brLocked = '';
+      setTimeout(function () {
+        lockOn(term, term.dataset.brFinal || term.textContent, 200);
+      }, 80 + i * 22);
+    });
+
+    // ── Copy button labels ──────────────────────────────────────
+    var copyBtns = section.querySelectorAll('.copy-btn, .code-copy-btn');
+    copyBtns.forEach(function (btn, i) {
+      var label = btn.textContent.trim();
+      if (label) setTimeout(function () { lockOn(btn, label, 180); }, 120 + i * 50);
+    });
+  }
+
+  document.querySelectorAll('.nav-link[data-target]').forEach(function (link) {
+    link.addEventListener('click', function () {
+      var section = document.getElementById(link.dataset.target);
+      if (!section) return;
+      setTimeout(function () { replaySection(section); }, 90);
+    });
+  });
+})();
+</script>
+
+<script>
+/* ── H1 PERIODIC GLITCH ───────────────────────────────────── */
+(function () {
+  var h1 = document.querySelector('.h1-static');
+  if (!h1) return;
+  function trigger() {
+    h1.classList.add('h1-glitching');
+    h1.addEventListener('animationend', function () {
+      h1.classList.remove('h1-glitching');
+    }, { once: true });
+  }
+  function loop() {
+    setTimeout(function () { trigger(); loop(); }, 7000 + Math.random() * 6000);
+  }
+  setTimeout(function () { trigger(); loop(); }, 5000);
+})();
+
+/* ── NAV LOGO PERIODIC GLITCH ────────────────────────────── */
+(function () {
+  var logo = document.querySelector('.controls-logo');
+  if (!logo) return;
+  function trigger() {
+    logo.classList.add('logo-glitching');
+    logo.addEventListener('animationend', function () {
+      logo.classList.remove('logo-glitching');
+    }, { once: true });
+  }
+  function loop() {
+    setTimeout(function () { trigger(); loop(); }, 9000 + Math.random() * 8000);
+  }
+  setTimeout(function () { trigger(); loop(); }, 3500);
+})();
+
+/* ── COLLAPSE ALL GLOSSARY ACCORDIONS ────────────────────── */
+(function () {
+  var btn = document.getElementById('gl-collapse-all');
+  if (!btn) return;
+  btn.addEventListener('click', function () {
+    window._brCollapseAll = true;
+    document.querySelectorAll('.gl-acc-btn.open').forEach(function (openBtn) {
+      openBtn.click();
+    });
+    window._brCollapseAll = false;
+  });
+})();
+
+/* ── GLOSSARY ACCORDION — left-to-right scan + lock-on as rows enter view ── */
+(function () {
+  function setup() {
+    var btns = document.querySelectorAll('.gl-acc-btn');
+    if (!btns.length) return;
+
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting || entry.target.dataset.brAccIn) return;
+        entry.target.dataset.brAccIn = '1';
+        entry.target.classList.add('br-acc-in');
+        // Also lock-on the term text
+        var termEl = entry.target.querySelector('.gl-acc-term');
+        if (termEl && window._brLockOn) {
+          window._brLockOn(termEl, termEl.textContent, 220);
+        }
+      });
+    }, { threshold: 0.4 });
+
+    btns.forEach(function (btn) { obs.observe(btn); });
+  }
+
+  // Accordion is built synchronously on page load; short delay ensures DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { setTimeout(setup, 100); });
+  } else {
+    setTimeout(setup, 100);
+  }
+})();
+</script>
 
 </body>
 </html>

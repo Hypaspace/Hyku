@@ -4033,13 +4033,21 @@ decision frameworks all valid.</code></div>
       if (e.target.closest('.copy-btn') || e.target.closest('.code-copy-btn')) playCopy();
     }, true);
 
-    // Accordion + show-code (bubble phase — reads post-toggle class)
+    // Accordion + show-code + collapsible nav sections (bubble phase — reads post-toggle class)
     document.addEventListener('click', function(e) {
       if (!soundEnabled) return;
       var acc  = e.target.closest('.gl-acc-btn');
       if (acc)  { playAccordion(acc.classList.contains('open')); return; }
       var code = e.target.closest('.code-toggle-btn');
       if (code) { playShowCode(code.classList.contains('open')); return; }
+      var navLabel = e.target.closest('.nav-label-collapsible');
+      if (navLabel) {
+        var sectionId = navLabel.dataset.section;
+        var body = document.getElementById(sectionId);
+        var isCollapsed = body && body.classList.contains('collapsed');
+        playAccordion(!isCollapsed);
+        return;
+      }
     });
 
     // Horizontal scroll sound on swipe strips

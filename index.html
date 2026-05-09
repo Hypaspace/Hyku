@@ -1755,6 +1755,42 @@ h1 .h1-static { text-shadow: 0 0 24px rgba(0,253,207,0.18); }
 .hero-bracket.tr { top: 12px;    right: 12px; border-width: 1px 1px 0 0; }
 .hero-bracket.bl { bottom: 16px; left: 12px;  border-width: 0 0 1px 1px; }
 .hero-bracket.br { bottom: 16px; right: 12px; border-width: 0 1px 1px 0; }
+.hero-reboot-zone {
+  position: absolute;
+  top: 0; right: 0;
+  width: 80px; height: 80px;
+  z-index: 10;
+}
+.hero-reboot-link {
+  position: absolute;
+  top: 18px; right: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(0,253,207,0.45);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.3s ease, color 0.2s;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.hero-reboot-zone:hover .hero-reboot-link {
+  opacity: 1;
+  pointer-events: auto;
+}
+.hero-reboot-link:hover { color: #00FDCF; }
+.reboot-dot {
+  display: inline-block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #00FDCF;
+  box-shadow: 0 0 6px #00FDCF;
+  margin-right: 7px;
+  vertical-align: middle;
+  animation: reboot-blink 1.1s ease infinite;
+}
+@keyframes reboot-blink { 0%,100% { opacity: 1; } 50% { opacity: 0.15; } }
 
 /* ── MONOSPACE font stack ───────────────────────────────── */
 .skill-cmd, .skill-name, .gl-term,
@@ -2448,8 +2484,10 @@ a, button, label, select,
 <header id="hero-header">
   <canvas id="c"></canvas>
   <div class="data-ticker" aria-hidden="true"><div class="data-ticker-track">AGC·ATG·TTA·CGG·ACC·GGT·TAC·GAT · REF:NX6-7714 · SEQ:0091FF4A · AGT·CCA·TGG·AAT·GCC·ACT · ID:NEXUS-6 · SCAN:+0.003 · VER:2049.R · ATT·GCC·TAA·CGG·TTC·AGC · LOCUS:07-BR · AUTH:TYRELL-CORP · CGA·TAC·GTT·ACC·GGA·TTC · SIG:00FD·CF4A·F201·B020 · AGC·ATG·TTA·CGG · STATUS:ACTIVE · REPLICANT:TRUE · MODEL:NEXUS-6 · AGT·CCA·TGG·AAT · EMPATHY:NULL · INCEPT:2049.01.17 · AGC·ATG·TTA·CGG·ACC·GGT·TAC·GAT · REF:NX6-7714 · SEQ:0091FF4A · AGT·CCA·TGG·AAT·GCC·ACT · ID:NEXUS-6 · SCAN:+0.003 · VER:2049.R · ATT·GCC·TAA·CGG·TTC·AGC · LOCUS:07-BR · AUTH:TYRELL-CORP · CGA·TAC·GTT·ACC·GGA·TTC · SIG:00FD·CF4A·F201·B020 · AGC·ATG·TTA·CGG · STATUS:ACTIVE · REPLICANT:TRUE · MODEL:NEXUS-6 · AGT·CCA·TGG·AAT · EMPATHY:NULL · INCEPT:2049.01.17 · </div></div>
-  <div class="scan-indicator"><span class="scan-dot"></span></div>
   <div class="hero-bracket tl"></div><div class="hero-bracket tr"></div><div class="hero-bracket bl"></div><div class="hero-bracket br"></div>
+  <div class="hero-reboot-zone">
+    <a class="hero-reboot-link" href="boot.html"><span class="reboot-dot"></span>REBOOT</a>
+  </div>
   <div class="vig"></div>
   <div class="header-content">
     <div class="header-eyebrow">Hyku by Hypaspace</div>

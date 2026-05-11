@@ -315,6 +315,8 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   transition: border-color 0.2s, background 0.2s, transform 0.2s;
   cursor: default;
   position: relative;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -339,11 +341,11 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   margin-bottom: 10px;
 }
 .skill-trigger {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   color: var(--text);
   margin-bottom: 8px;
-  line-height: 1.4;
+  line-height: 1.3;
 }
 .skill-desc {
   font-size: 13px;
@@ -554,6 +556,8 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 22px 24px;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -569,7 +573,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   color: var(--text-dim);
   margin-bottom: 4px;
 }
-.gs-source-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.gs-source-name { font-size: 15px; font-weight: 700; color: var(--text); }
 
 .gs-source-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
 .gs-source-skills { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
@@ -855,9 +859,9 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 .mobile-nav-drawer {
   position: fixed;
   top: 0; left: 0; bottom: 0;
-  width: 280px;
+  width: 100%;
   background: var(--bg);
-  border-right: 1px solid var(--border);
+  border-right: none;
   z-index: 400;
   transform: translateX(-100%);
   transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1220,6 +1224,8 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 24px;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -1297,6 +1303,8 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 24px;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1309,7 +1317,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   border-color: rgba(0,253,207,0.3);
   background: var(--surface2);
 }
-.context-file { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 500; color: var(--accent); }
+.context-file { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 600; color: var(--accent); }
 .context-purpose { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
 .context-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
 .context-example { margin-top: 4px; }
@@ -1328,12 +1336,14 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 24px;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 .explainer-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); }
-.explainer-label { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.explainer-label { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.3; }
 .explainer-.gl-def-acc-x { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
 
 /* ── TIPS ── */
@@ -1348,6 +1358,8 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   border-radius: 12px;
   padding: 24px;
   display: flex;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
   flex-direction: column;
   gap: 8px;
   position: relative;
@@ -1366,7 +1378,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 .tip-icon { font-size: 14px; color: var(--text-dim); }
 .tip-warn .tip-icon { color: var(--accent2); }
 .tip-go   .tip-icon { color: var(--accent3); }
-.tip-label { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.tip-label { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.3; }
 .tip-.tip-.tip-body-fix  { font-size: 13px; color: var(--text-muted); line-height: 1.65; flex: 1; }
 .tip-body code { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); background: var(--surface2); padding: 1px 5px; border-radius: 3px; }
 
@@ -2038,8 +2050,8 @@ h2, h3 {
 .skill-desc {
   font-family: 'Rajdhani', sans-serif !important;
   font-weight: 400 !important;
-  font-size: 14px !important;
-  line-height: 1.55 !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
 }
 
 /* ── Section / category titles ───────────────────────── */
@@ -2067,6 +2079,41 @@ p, .skill-card p, .pipeline-desc,
   font-weight: 400 !important;
   font-size: 14px !important;
   line-height: 1.65 !important;
+}
+
+/* ── Card body text — 13px so headings have breathing room ── */
+.skill-desc,
+.gs-source-desc,
+.connector-desc,
+.context-desc,
+.tip-body,
+.explainer-desc {
+  font-size: 13px !important;
+  line-height: 1.65 !important;
+}
+
+/* ── Card headings — enforce sizes over any conflicting rules ── */
+.skill-trigger  { font-size: 16px !important; font-weight: 700 !important; }
+.gs-source-name { font-size: 15px !important; font-weight: 700 !important; }
+.connector-name { font-size: 16px !important; font-weight: 700 !important; }
+.context-file   { font-size: 15px !important; font-weight: 600 !important; }
+.explainer-label { font-size: 15px !important; font-weight: 700 !important; }
+.tip-label      { font-size: 15px !important; font-weight: 700 !important; }
+
+/* ── Mobile: step headings down one notch ── */
+@media (max-width: 600px) {
+  .skill-trigger  { font-size: 15px !important; }
+  .connector-name { font-size: 15px !important; }
+  .gs-source-name,
+  .context-file,
+  .explainer-label,
+  .tip-label      { font-size: 14px !important; }
+  .skill-desc,
+  .gs-source-desc,
+  .connector-desc,
+  .context-desc,
+  .tip-body,
+  .explainer-desc { font-size: 12px !important; }
 }
 
 /* ── Filter buttons ──────────────────────────────────── */
@@ -2461,11 +2508,22 @@ a, button, label, select,
 .br-in .explainer-body,
 .br-in .category-badge,
 .br-in .how-to-use,
-.br-in .gs-step-content { animation: br-content-in 0.35s ease-out 0.22s both; }
+.br-in .gs-step-content,
+.br-in .gs-source-desc,
+.br-in .gs-source-skills,
+.br-in .gs-source-link { animation: br-content-in 0.35s ease-out 0.22s both; }
 
 .br-in .skill-cmd,
 .br-in .skill-name,
-.br-in .connector-name { animation: br-content-in 0.3s ease-out 0.1s both; }
+.br-in .connector-name,
+.br-in .skill-trigger,
+.br-in .tip-label,
+.br-in .explainer-label,
+.br-in .explainer-num,
+.br-in .gs-source-name,
+.br-in .gs-source-eyebrow,
+.br-in .context-file,
+.br-in .context-purpose { animation: br-content-in 0.3s ease-out 0.1s both; }
 
 /* Glossary accordion items — left-to-right clip wipe as they enter view */
 @keyframes br-gl-scan {
@@ -2485,6 +2543,32 @@ a, button, label, select,
 .br-reveal.br-in {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ── MOBILE SWIPE INDICATOR — right-edge fade on scroll strips ── */
+@media (max-width: 900px) {
+  .category-section,
+  .getting-started { position: relative; }
+  .category-section::after,
+  .getting-started::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 48px;
+    background: linear-gradient(to right, transparent, var(--bg));
+    pointer-events: none;
+    z-index: 5;
+  }
+  /* Scroll strips: horizontal pan only, no vertical interference */
+  .category-section .skills-grid,
+  .extra-section .skills-grid,
+  .connector-grid, .context-grid,
+  .explainer-grid, .tips-grid,
+  .gs-sources { touch-action: pan-x; }
+
+  /* New-user callout: stack vertically on mobile */
+  .new-user-callout { flex-direction: column; gap: 12px; }
+  .nuc-link { align-self: stretch; text-align: center; }
 }
 
 /* ── TARGET CURSOR CORNERS ── */
@@ -5587,6 +5671,7 @@ decision frameworks all valid.</code></div>
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('.copy-btn, .code-copy-btn');
     if (!btn) return;
+    if (window.innerWidth <= 900) return; // skip scramble on mobile — clean text only
     setTimeout(function () {
       if (btn.classList.contains('copied')) {
         lockOn(btn, btn.textContent, 180);
@@ -5666,22 +5751,31 @@ decision frameworks all valid.</code></div>
     entries.forEach(function (entry) {
       if (!entry.isIntersecting) return;
       var el = entry.target;
-      // Stagger cards within their grid by index
+      // Stagger siblings within their parent — cards stagger faster, text blocks slower
       var siblings = el.parentElement ? Array.from(el.parentElement.children) : [];
       var idx = siblings.indexOf(el);
-      el.style.transitionDelay = (idx * 45) + 'ms';
+      var isCard = el.matches('.skill-card,.connector-card,.context-card,.tip-card,.explainer-card,.gs-source-card,.pipeline-card,.gs-install');
+      el.style.transitionDelay = (idx * (isCard ? 45 : 60)) + 'ms';
       el.classList.add('br-in');
       obs.unobserve(el);
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.08 });
 
-  var SEL = [
+  // Cards + section headers (existing)
+  var CARDS = [
     '.skill-card', '.connector-card', '.context-card',
     '.tip-card', '.explainer-card', '.gs-source-card',
     '.pipeline-card', '.gs-install', '.category-header'
   ].join(', ');
 
-  document.querySelectorAll(SEL).forEach(function (el) {
+  // Text blocks that previously had no animation
+  var TEXT = [
+    '.how-to-use', '.new-user-callout', '.gs-intro',
+    '.extra-title', '.extra-desc',
+    '.pipelines-heading'
+  ].join(', ');
+
+  document.querySelectorAll(CARDS + ', ' + TEXT).forEach(function (el) {
     el.classList.add('br-reveal');
     obs.observe(el);
   });
@@ -5906,40 +6000,45 @@ decision frameworks all valid.</code></div>
 <script>
 /* ── HAPTIC FEEDBACK — Android (Vibration API) + iOS (hidden checkbox trick) ── */
 (function() {
-  var isAndroid = navigator.vibrate && /android/i.test(navigator.userAgent);
+  var isAndroid = !!navigator.vibrate && /android/i.test(navigator.userAgent);
   var isIOS     = /iphone|ipad|ipod/i.test(navigator.userAgent);
   if (!isAndroid && !isIOS) return;
 
-  // iOS: hidden checkbox with native appearance — each .click() fires one Taptic Engine pulse
-  var hapticBox = null;
+  // iOS: label wrapping a switch-type checkbox — .click() on the label fires Taptic Engine
+  var hapticLabel = null;
   if (isIOS) {
-    var lbl = document.createElement('label');
-    lbl.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;pointer-events:none;';
-    hapticBox = document.createElement('input');
+    hapticLabel = document.createElement('label');
+    // Visible enough for iOS to process but off-screen — opacity:0 can cause iOS to skip haptics
+    hapticLabel.style.cssText = 'position:fixed;top:-80px;left:0;width:1px;height:1px;opacity:0.01;overflow:hidden;z-index:-1;';
+    var hapticBox = document.createElement('input');
     hapticBox.type = 'checkbox';
-    hapticBox.setAttribute('switch', '');
-    hapticBox.style.cssText = 'all:initial;appearance:auto;-webkit-appearance:checkbox;';
-    lbl.appendChild(hapticBox);
-    document.body.appendChild(lbl);
+    hapticBox.setAttribute('switch', ''); // iOS 17.4+ switch — Taptic Engine trigger
+    hapticLabel.appendChild(hapticBox);
+    document.body.appendChild(hapticLabel);
   }
 
   // tick() = one haptic pulse on either platform
   function tick() {
     if (isAndroid) { try { navigator.vibrate(10); } catch(e) {} }
-    else if (hapticBox) { try { hapticBox.click(); } catch(e) {} }
+    else if (hapticLabel) { try { hapticLabel.click(); } catch(e) {} }
   }
 
   // double-pulse for accordion open/close
   function doubleTick() {
     tick();
-    setTimeout(tick, 50);
+    setTimeout(tick, 55);
   }
 
   // very short single for scroll
   function softTick() {
     if (isAndroid) { try { navigator.vibrate(4); } catch(e) {} }
-    else if (hapticBox) { try { hapticBox.click(); } catch(e) {} }
+    else if (hapticLabel) { try { hapticLabel.click(); } catch(e) {} }
   }
+
+  // Set draggable=false on all cards to block native browser drag-on-hold
+  document.querySelectorAll('.skill-card, .gs-source-card, .connector-card, .context-card, .tip-card, .explainer-card').forEach(function(c) {
+    c.setAttribute('draggable', 'false');
+  });
 
   var BTN_SELECTOR = [
     'button', '.filter-btn', '.nuc-link', '.copy-btn', '.code-copy-btn',

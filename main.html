@@ -2588,6 +2588,117 @@ a, button, label, select,
 .tc-corner.tc-on { opacity: 1; }
 :root.light .tc-corner { border-color: var(--charcoal, #323E48); }
 
+/* ── EXPLAINER STEPPER ── */
+.explainer-stepper-tabs {
+  display: flex;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  width: 100%;
+}
+.explainer-stepper-tab {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--border);
+  padding: 11px 8px 9px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+  transition: background 0.15s;
+}
+.explainer-stepper-tab:last-child { border-right: none; }
+.explainer-stepper-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0; height: 2px;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.explainer-stepper-tab.active::after { opacity: 1; }
+.explainer-stepper-tab.active { background: var(--surface); }
+.explainer-stepper-tab:hover:not(.active) { background: var(--surface); }
+.st-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text-dim);
+  transition: color 0.15s;
+  letter-spacing: 0.04em;
+}
+.explainer-stepper-tab.active .st-num { color: var(--accent); }
+.explainer-stepper-tab:hover:not(.active) .st-num { color: var(--text-muted); }
+.st-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  line-height: 1.3;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.explainer-stepper-tab.active .st-label { color: var(--text-muted); }
+.explainer-grid.stepper-mode {
+  display: grid !important;
+  grid-template-columns: 1fr;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+/* All cards occupy the same cell — tallest card sets container height */
+.explainer-grid.stepper-mode .explainer-card {
+  grid-column: 1;
+  grid-row: 1;
+  display: grid !important;
+  grid-template-columns: 72px 1fr;
+  grid-template-rows: auto 1fr;
+  column-gap: 40px;
+  row-gap: 8px;
+  padding: 40px 44px;
+  border: none !important;
+  background: transparent !important;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(5px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.explainer-grid.stepper-mode .explainer-card.stepper-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.stepper-mode .explainer-num {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  font-size: 48px;
+  line-height: 1;
+  color: var(--accent);
+  opacity: 0.15;
+  align-self: center;
+  font-family: 'JetBrains Mono', monospace;
+}
+.stepper-mode .explainer-label {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+.stepper-mode .explainer-body {
+  grid-column: 2;
+  grid-row: 2;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.75;
+}
+
 </style>
 
   <!-- Google Material Symbols weight 100, outlined -->
@@ -6116,6 +6227,102 @@ decision frameworks all valid.</code></div>
   });
 })();
 </script>
+
+<script>
+/* ── EXPLAINER STEPPER — How Skills Work ── */
+(function () {
+  var BREAKPOINT = 700;
+  var grid = document.querySelector('#what-are-skills .explainer-grid');
+  if (!grid) return;
+  var cards = Array.from(grid.querySelectorAll(':scope > .explainer-card'));
+  if (cards.length < 2) return;
+
+  var tabRow = null;
+  var tabs = [];
+
+  function buildStepper() {
+    if (tabRow) return;
+
+    // Ensure all cards are revealed (br-reveal opacity:0 guard)
+    cards.forEach(function (c) { c.classList.add('br-in'); });
+
+    tabRow = document.createElement('div');
+    tabRow.className = 'explainer-stepper-tabs';
+
+    var lastTabHover = 0;
+
+    tabs = cards.map(function (card, i) {
+      var numEl   = card.querySelector('.explainer-num');
+      var labelEl = card.querySelector('.explainer-label');
+      var btn = document.createElement('button');
+      btn.className = 'explainer-stepper-tab' + (i === 0 ? ' active' : '');
+      btn.setAttribute('aria-label', labelEl ? labelEl.textContent.trim() : '');
+      btn.innerHTML =
+        '<span class="st-num">'   + (numEl   ? numEl.textContent.trim()   : ('0' + (i + 1))) + '</span>' +
+        '<span class="st-label">' + (labelEl ? labelEl.textContent.trim() : '')               + '</span>';
+      tabRow.appendChild(btn);
+      return btn;
+    });
+
+    grid.parentNode.insertBefore(tabRow, grid);
+    grid.classList.add('stepper-mode');
+    cards[0].classList.add('stepper-active');
+
+    tabs.forEach(function (tab, i) {
+      tab.addEventListener('mouseenter', function () {
+        var n = Date.now();
+        if (n - lastTabHover < 70) return;
+        lastTabHover = n;
+        if (typeof window._brHover === 'function') window._brHover();
+      });
+      tab.addEventListener('click', function () {
+        tabs.forEach(function (t) { t.classList.remove('active'); });
+        cards.forEach(function (c) { c.classList.remove('stepper-active'); });
+        tab.classList.add('active');
+        cards[i].classList.add('stepper-active');
+        if (typeof window._brPlayAccordion === 'function') window._brPlayAccordion(true);
+      });
+    });
+
+    tabRow.addEventListener('keydown', function (e) {
+      var idx = tabs.findIndex(function (t) { return t.classList.contains('active'); });
+      if (e.key === 'ArrowRight') {
+        var next = (idx + 1) % tabs.length;
+        tabs[next].click(); tabs[next].focus(); e.preventDefault();
+      } else if (e.key === 'ArrowLeft') {
+        var prev = (idx - 1 + tabs.length) % tabs.length;
+        tabs[prev].click(); tabs[prev].focus(); e.preventDefault();
+      }
+    });
+  }
+
+  function destroyStepper() {
+    if (!tabRow) return;
+    tabRow.parentNode && tabRow.parentNode.removeChild(tabRow);
+    tabRow = null; tabs = [];
+    grid.classList.remove('stepper-mode');
+    cards.forEach(function (c) { c.classList.remove('stepper-active'); });
+  }
+
+  function check() {
+    if (window.innerWidth > BREAKPOINT) buildStepper();
+    else destroyStepper();
+  }
+
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(check, 150);
+  });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', check);
+  } else {
+    check();
+  }
+})();
+</script>
+
 
 </body>
 </html>

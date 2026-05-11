@@ -328,7 +328,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   opacity: 0;
   transition: opacity 0.2s;
 }
-.skill-card:hover { border-color: rgba(0,253,207,0.3); background: var(--surface2); transform: translateY(-1px); }
+.skill-card:hover { border-color: rgba(0,253,207,0.3); background: var(--surface2); }
 .skill-card:hover::before { opacity: 1; }
 .skill-card.hidden { display: none; }
 .skill-cmd {
@@ -510,6 +510,39 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 }
 .gs-intro { font-size: 14px; color: var(--text-muted); line-height: 1.75; max-width: 680px; margin-bottom: 40px; }
 .gs-intro strong { color: var(--text); font-weight: 600; }
+.new-user-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: rgba(74,242,161,0.05);
+  border: 1px solid rgba(74,242,161,0.18);
+  padding: 18px 20px;
+  margin-bottom: 32px;
+}
+.nuc-icon { color: var(--accent3); flex-shrink: 0; margin-top: 2px; }
+.nuc-body { flex: 1; }
+.nuc-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent3);
+  margin-bottom: 4px;
+  letter-spacing: 0.02em;
+}
+.nuc-text { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+.nuc-text strong { color: var(--text); font-weight: 600; }
+.nuc-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent3);
+  text-decoration: none;
+  border: 1px solid rgba(74,242,161,0.25);
+  padding: 6px 12px;
+  white-space: nowrap;
+  align-self: center;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+.nuc-link:hover { background: rgba(74,242,161,0.08); border-color: var(--accent3); }
 .gs-sources {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -526,7 +559,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   gap: 8px;
   transition: border-color 0.2s, transform 0.2s;
 }
-.gs-source-card:hover { border-color: rgba(74,242,161,0.25); transform: translateY(-1px); }
+.gs-source-card:hover { border-color: rgba(74,242,161,0.25); }
 .gs-source-header { display: flex; flex-direction: column; gap: 0; }
 .gs-source-eyebrow {
   font-family: 'JetBrains Mono', monospace;
@@ -544,7 +577,6 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
   padding: 3px 8px;
-  border-radius: 4px;
   background: rgba(74,242,161,0.07);
   color: var(--accent3);
   border: 1px solid rgba(74,242,161,0.12);
@@ -1205,7 +1237,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   transition: opacity 0.2s;
 }
 .connector-card:hover::before { opacity: 1; }
-.connector-card:hover { border-color: rgba(248,169,111,0.2); transform: translateY(-1px); }
+.connector-card:hover { border-color: rgba(248,169,111,0.2); }
 .connector-featured {
   grid-column: 1 / -1;
   border-color: var(--border);
@@ -1272,21 +1304,11 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   overflow: hidden;
   transition: border-color 0.2s, background 0.2s, transform 0.2s;
 }
-.context-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--accent), transparent);
-  opacity: 0;
-  transition: opacity 0.2s;
-}
+.context-card::before { display: none; }
 .context-card:hover {
   border-color: rgba(0,253,207,0.3);
   background: var(--surface2);
-  transform: translateY(-1px);
 }
-.context-card:hover::before { opacity: 1; }
 .context-file { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 500; color: var(--accent); }
 .context-purpose { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
 .context-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
@@ -1333,19 +1355,8 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   transition: border-color 0.2s, background 0.2s, transform 0.2s;
   cursor: default;
 }
-.tip-card:hover { background: var(--surface2); transform: translateY(-1px); }
-.tip-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  opacity: 0;
-  transition: opacity 0.2s;
-  background: linear-gradient(90deg, var(--accent), transparent);
-}
-.tip-card:hover::before { opacity: 1; }
-.tip-warn::before { background: linear-gradient(90deg, var(--accent2), transparent); }
-.tip-go::before   { background: linear-gradient(90deg, var(--accent3), transparent); }
+.tip-card:hover { background: var(--surface2); }
+.tip-card::before { display: none; }
 .tip-warn {
   border-color: rgba(255,108,14,0.5) !important;
   background: rgba(255,108,14,0.06) !important;
@@ -1572,6 +1583,10 @@ h1 span { color: var(--accent); }
   line-height: 1.75;
   margin-bottom: 28px;
   text-align: center;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .header-meta {
   display: flex;
@@ -2125,7 +2140,7 @@ code, pre, .gs-code, .connector-code,
 .skill-card:hover {
   border-color: var(--text-dim) !important;
   box-shadow: 0 0 10px rgba(0,253,207,0.07) !important;
-  transform: translateY(-1px);
+  transform: none !important;
   filter: none;
 }
 .connector-card:hover,
@@ -2472,6 +2487,27 @@ a, button, label, select,
   transform: translateY(0);
 }
 
+/* ── TARGET CURSOR CORNERS ── */
+.tc-corner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid var(--accent);
+  pointer-events: none;
+  z-index: 10001;
+  opacity: 0;
+  transition: transform 0.13s ease, opacity 0.13s ease;
+  will-change: transform, opacity;
+}
+.tc-corner.tc-tl { border-right: none; border-bottom: none; }
+.tc-corner.tc-tr { border-left:  none; border-bottom: none; }
+.tc-corner.tc-br { border-left:  none; border-top:    none; }
+.tc-corner.tc-bl { border-right: none; border-top:    none; }
+.tc-corner.tc-on { opacity: 1; }
+:root.light .tc-corner { border-color: var(--charcoal, #323E48); }
+
 </style>
 
   <!-- Google Material Symbols weight 100, outlined -->
@@ -2490,12 +2526,13 @@ a, button, label, select,
   </div>
   <div class="vig"></div>
   <div class="header-content">
-    <div class="header-eyebrow">Hyku by Hypaspace</div>
+    <div class="header-eyebrow">Claude Code · Skills Directory</div>
     <h1><span class="h1-static">Synthesising Code &amp; Craft</span></h1>
-    <p class="header-desc">A comprehensive reference for every skill available when designing and building interfaces with Claude from first concept to production ship.</p>
+    <p class="header-desc">Skills are open-source plugins for Claude Code that give it specialised design and UI capabilities. This directory covers 47 of them — what they do, when to reach for them, and how to install them.</p>
     <div class="header-meta">
       <div class="meta-pill"><strong>47</strong> Skills documented</div>
       <div class="meta-pill"><strong>10</strong> skill groups</div>
+      <div class="meta-pill">Requires <strong>Claude Code</strong></div>
     </div>
   </div>
 </header>
@@ -2637,12 +2674,22 @@ a, button, label, select,
           <span class="material-symbols-outlined" style="font-size:15px;margin-right:6px;vertical-align:middle;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">info</span>
           How to use this guide
         </div>
-        <p class="how-to-use-body">Skills are Claude Code plugins they live in your <code>~/.claude/skills/</code> folder and activate automatically when you start a session. Browse the categories to understand what each skill does and when to reach for it. Use the search bar to find skills by name, use-case, or keyword. Once a skill is installed, invoke it by describing your task naturally or by referencing the command name directly in Claude Code.</p>
+        <p class="how-to-use-body"><strong>Claude Code</strong> is Anthropic's AI coding agent that runs in your terminal. Skills are plugins for it — they live in your <code>~/.claude/skills/</code> folder and load automatically when you start a session. Browse the categories to understand what each skill does and when to reach for it. Use the search bar to find skills by name, use-case, or keyword. Once installed, invoke a skill by typing its command name directly in Claude Code.</p>
       </div>
 
       <p class="gs-intro">
         These skills are <strong>open-source Claude Code plugins</strong> structured instruction sets that load into Claude and unlock specialised design capabilities. They come from a handful of well-maintained GitHub repos. Download the ones you need, drop them into your <code style="font-family:'JetBrains Mono',monospace;font-size:12px;colour:var(--accent);background:var(--surface);padding:2px 6px;border-radius:4px">~/.claude/skills/</code> folder, and they're available in every Claude Code session.
       </p>
+
+      <!-- NEW USER CALLOUT -->
+      <div class="new-user-callout">
+        <div class="nuc-icon"><span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">rocket_launch</span></div>
+        <div class="nuc-body">
+          <div class="nuc-label">New to Claude Code skills?</div>
+          <div class="nuc-text">Install <strong>Impeccable</strong> first — it's the most complete design quality toolkit and the best single starting point. From there, add skills as you need them.</div>
+        </div>
+        <a class="nuc-link" href="#getting-started">Jump to install steps</a>
+      </div>
 
       <!-- SOURCE CARDS -->
       <div class="gs-sources">
@@ -4486,12 +4533,12 @@ decision frameworks all valid.</code></div>
     if (!cmd) return;
     const btn = document.createElement('button');
     btn.className = 'copy-btn';
-    btn.textContent = 'Copy code';
+    btn.textContent = 'Copy';
     btn.setAttribute('aria-label', `Copy ${cmd}`);
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       navigator.clipboard.writeText(cmd).then(() => {
-        btn.textContent = 'Copied ✓';
+        btn.textContent = 'Copied';
         btn.classList.add('copied');
         setTimeout(() => {
           btn.textContent = 'Copy';
@@ -4517,7 +4564,7 @@ decision frameworks all valid.</code></div>
     btn.addEventListener('click', () => {
       const text = block.textContent.trim();
       navigator.clipboard.writeText(text).then(() => {
-        btn.textContent = 'Copied ✓';
+        btn.textContent = 'Copied';
         btn.classList.add('copied');
         setTimeout(() => {
           btn.textContent = 'Copy';
@@ -5104,13 +5151,14 @@ decision frameworks all valid.</code></div>
       }
     }
 
-    // Show code: disk drive whirr — noise sweep + blip
+    // Show code: terminal expand/collapse blip pair
     function playShowCode(open) {
       if (open) {
-        noiseSweep(0.14, 0.055, 300, 2400, 'bandpass');
-        setTimeout(function(){ tone(1200, 0.035, 0.035); }, 110);
+        tone(900, 0.04, 0.04, 1400);
+        setTimeout(function(){ tone(1600, 0.03, 0.03, 1800); }, 65);
       } else {
-        noiseSweep(0.12, 0.04, 2400, 300, 'bandpass');
+        tone(1400, 0.04, 0.04, 800);
+        setTimeout(function(){ tone(700, 0.03, 0.03, 500); }, 60);
       }
     }
 
@@ -5120,10 +5168,10 @@ decision frameworks all valid.</code></div>
       setTimeout(function(){ tone(1400, 0.06, 0.055); }, 65);
     }
 
-    // Horizontal scroll: data stream blip
+    // Horizontal scroll: soft terminal tick
     function playSwipe() {
       if (!soundEnabled) return;
-      noiseSweep(0.05, 0.035, 800, 2000, 'bandpass');
+      tone(1800, 0.022, 0.025, 1400);
     }
 
     // ── ATTACH LISTENERS ──
@@ -5143,6 +5191,12 @@ decision frameworks all valid.</code></div>
     document.querySelectorAll('.filter-btn').forEach(function(btn) {
       btn.addEventListener('mouseenter', filterHoverThrottled);
       btn.addEventListener('click', playNavClick);
+    });
+
+    // Jump to install button
+    document.querySelectorAll('.nuc-link').forEach(function(btn) {
+      btn.addEventListener('mouseenter', hoverThrottled);
+      btn.addEventListener('click', function() { if (soundEnabled) playNavClick(); });
     });
 
     // Copy (capture phase bypasses stopPropagation)
@@ -5260,6 +5314,7 @@ decision frameworks all valid.</code></div>
     }
 
     // Volume slider
+    var lastVolTick = 0;
     if (volSlider) {
       volSlider.addEventListener('input', function() {
         masterVolume = parseInt(this.value, 10) / 100;
@@ -5269,6 +5324,20 @@ decision frameworks all valid.</code></div>
           try { localStorage.setItem('hyku-sound', 'on'); } catch(err) {}
           updateEqState();
         }
+        // Pitch-shifted tick — higher pitch = louder volume
+        var now = Date.now();
+        if (now - lastVolTick > 60) {
+          lastVolTick = now;
+          var freq = 400 + masterVolume * 1400; // 400 Hz at 0%, 1800 Hz at 100%
+          tone(freq, 0.04, 0.04 + masterVolume * 0.02, freq * 1.1);
+        }
+      });
+    }
+
+    // Sound popup open click
+    if (soundBtn) {
+      soundBtn.addEventListener('click', function() {
+        if (soundEnabled) playHover();
       });
     }
 
@@ -5749,6 +5818,88 @@ decision frameworks all valid.</code></div>
   } else {
     setTimeout(setup, 100);
   }
+})();
+</script>
+
+<script>
+/* ── TARGET CURSOR CORNERS ── */
+(function() {
+  var C = 10, PAD = 5;
+  var SELECTOR = [
+    'button',
+    '.filter-btn',
+    '.nuc-link',
+    '.copy-btn',
+    '.code-copy-btn',
+    '.code-toggle-btn',
+    '.back-to-top',
+    '#sound-btn',
+    '#theme-btn',
+    '.hamburger',
+    '.mobile-nav-close',
+    '.eq-mute-btn',
+    '.tab-btn',
+    '.hero-reboot-link'
+  ].join(',');
+
+  function makeCorner(cls) {
+    var el = document.createElement('div');
+    el.className = 'tc-corner ' + cls;
+    document.body.appendChild(el);
+    return el;
+  }
+
+  var corners = [
+    makeCorner('tc-tl'),
+    makeCorner('tc-tr'),
+    makeCorner('tc-br'),
+    makeCorner('tc-bl')
+  ];
+
+  var activeTarget = null;
+  var rafId = null;
+
+  function place(rect) {
+    var positions = [
+      { x: rect.left  - PAD,         y: rect.top    - PAD },
+      { x: rect.right + PAD - C,     y: rect.top    - PAD },
+      { x: rect.right + PAD - C,     y: rect.bottom + PAD - C },
+      { x: rect.left  - PAD,         y: rect.bottom + PAD - C }
+    ];
+    corners.forEach(function(el, i) {
+      el.style.transform = 'translate(' + positions[i].x + 'px,' + positions[i].y + 'px)';
+    });
+  }
+
+  function show(target) {
+    place(target.getBoundingClientRect());
+    corners.forEach(function(el) { el.classList.add('tc-on'); });
+  }
+
+  function hide() {
+    corners.forEach(function(el) { el.classList.remove('tc-on'); });
+    activeTarget = null;
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+  }
+
+  function trackScroll() {
+    if (!activeTarget) return;
+    place(activeTarget.getBoundingClientRect());
+    rafId = requestAnimationFrame(trackScroll);
+  }
+
+  document.addEventListener('mouseover', function(e) {
+    var target = e.target.closest(SELECTOR);
+    if (!target) return;
+    if (target === activeTarget) return;
+    activeTarget = target;
+    show(target);
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(trackScroll);
+    target.addEventListener('mouseleave', function() {
+      hide();
+    }, { once: true });
+  });
 })();
 </script>
 

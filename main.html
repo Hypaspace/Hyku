@@ -6013,15 +6013,22 @@ decision frameworks all valid.</code></div>
   var isIOS     = /iphone|ipad|ipod/i.test(navigator.userAgent);
   if (!isAndroid && !isIOS) return;
 
-  // iOS: label wrapping a switch-type checkbox — .click() on the label fires Taptic Engine
+  // iOS: faithful port of web-haptics ensureDOM() by Lochie Axon (MIT)
+  // label.click() → checkbox state change → Taptic Engine fires (iOS 17.4+)
   var hapticLabel = null;
   if (isIOS) {
+    var hId = 'hyku-haptic';
     hapticLabel = document.createElement('label');
-    // Visible enough for iOS to process but off-screen — opacity:0 can cause iOS to skip haptics
-    hapticLabel.style.cssText = 'position:fixed;top:-80px;left:0;width:1px;height:1px;opacity:0.01;overflow:hidden;z-index:-1;';
+    hapticLabel.setAttribute('for', hId);
+    hapticLabel.textContent = 'Haptic feedback';
+    hapticLabel.style.cssText = 'position:fixed;bottom:10px;left:10px;padding:5px 10px;background:rgba(0,0,0,0.7);color:white;font-size:14px;z-index:9999;user-select:none;display:none;';
     var hapticBox = document.createElement('input');
     hapticBox.type = 'checkbox';
-    hapticBox.setAttribute('switch', ''); // iOS 17.4+ switch — Taptic Engine trigger
+    hapticBox.setAttribute('switch', '');
+    hapticBox.id = hId;
+    hapticBox.style.all = 'initial';       // reset all inherited styles
+    hapticBox.style.appearance = 'auto';   // native iOS switch appearance
+    hapticBox.style.display = 'none';
     hapticLabel.appendChild(hapticBox);
     document.body.appendChild(hapticLabel);
   }

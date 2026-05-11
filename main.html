@@ -1216,7 +1216,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 /* ── CONNECTORS ── */
 .connector-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(5, 1fr);
   gap: 16px;
 }
 .connector-card {
@@ -1233,19 +1233,9 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   overflow: hidden;
   transition: border-color 0.2s, background 0.2s, transform 0.2s;
 }
-.connector-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--accent2), transparent);
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-.connector-card:hover::before { opacity: 1; }
+.connector-card::before { display: none; }
 .connector-card:hover { border-color: rgba(248,169,111,0.2); }
 .connector-featured {
-  grid-column: 1 / -1;
   border-color: var(--border);
   background: var(--surface);
 }
@@ -1421,7 +1411,7 @@ footer {
   /* Grids */
   .skills-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
   .connector-grid, .context-grid, .explainer-grid, .tips-grid { grid-template-columns: 1fr; }
-  .connector-featured { grid-column: 1; }
+  .connector-featured { grid-column: auto; }
   .gs-sources { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
   .pipeline-grid { grid-template-columns: 1fr; }
   #glossary .skills-grid { grid-template-columns: repeat(2, 1fr); }
@@ -2545,6 +2535,11 @@ a, button, label, select,
   transform: translateY(0);
 }
 
+/* ── CONNECTOR GRID — responsive collapse from 5 cols ── */
+@media (max-width: 1200px) {
+  .connector-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
 /* ── MOBILE SWIPE INDICATOR — right-edge fade on scroll strips ── */
 @media (max-width: 900px) {
   .category-section,
@@ -2738,7 +2733,7 @@ a, button, label, select,
     </div>
     <div class="nav-section">
       <div class="nav-label"><span class="material-symbols-outlined" style="font-size:18px;margin-right:6px;opacity:0.7;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">more_horiz</span>More</div>
-      <a class="nav-link" data-target="connectors"><span class="nav-dot" style="background:var(--accent2)"></span>Connectors</a>
+      <a class="nav-link" data-target="connectors"><span class="nav-dot"></span>Connectors</a>
       <a class="nav-link" data-target="context-files"><span class="nav-dot"></span>Context Files</a>
       <a class="nav-link" data-target="what-are-skills"><span class="nav-dot"></span>How Skills Work</a>
       <a class="nav-link" data-target="tips"><span class="nav-dot"></span>Tips &amp; Gotchas</a>
@@ -5200,12 +5195,24 @@ decision frameworks all valid.</code></div>
     function playHover() { tone(2200, 0.018, 0.035, 1800); }
     window._brHover = playHover;
 
+    // Card hover: softer, lower, quieter than button hover
+    function playCardHover() { tone(1100, 0.014, 0.016, 900); }
+    window._brCardHover = playCardHover;
+
     // No results: quiet descending two-step sine — "nothing here"
     function playNoMatch() {
       tone(320, 0.09, 0.04, 200, 'sine');
       setTimeout(function(){ tone(180, 0.12, 0.035, 120, 'sine'); }, 95);
     }
     window._brNoMatch = playNoMatch;
+
+    // Reboot: descending sweep → pause → sharp tick — system restart signature
+    function playReboot() {
+      tone(1200, 0.08, 0.05, 180, 'sine');
+      setTimeout(function(){ tone(280, 0.06, 0.04, 220, 'sine'); }, 90);
+      setTimeout(function(){ tone(2400, 0.025, 0.04, 1800); }, 200);
+    }
+    window._brReboot = playReboot;
 
     // Filter button hover: slightly lower terminal blip
     function playFilterHover() { tone(1600, 0.022, 0.035, 1200); }
@@ -5281,6 +5288,11 @@ decision frameworks all valid.</code></div>
       link.addEventListener('click', playNavSelect);
     });
 
+    document.querySelectorAll('.hero-reboot-link').forEach(function(el) {
+      el.addEventListener('mouseenter', hoverThrottled);
+      el.addEventListener('click', function() { if (soundEnabled) playReboot(); });
+    });
+
     document.querySelectorAll('.filter-btn').forEach(function(btn) {
       btn.addEventListener('mouseenter', filterHoverThrottled);
       btn.addEventListener('click', playNavClick);
@@ -5324,24 +5336,9 @@ decision frameworks all valid.</code></div>
       // Suppress if moving between children within the same target (token hover etc.)
       if (e.relatedTarget && target.contains(e.relatedTarget)) return;
       lastCardH = n;
-      playHover();
+      playCardHover();
     });
 
-    // Glossary scroll — soft tick as rows enter the viewport while scrolling
-    (function() {
-      var lastGlTick = 0;
-      var glScrollObs = new IntersectionObserver(function(entries) {
-        var any = entries.some(function(e) { return e.isIntersecting; });
-        if (!any) return;
-        var n = Date.now();
-        if (n - lastGlTick < 110) return;
-        lastGlTick = n;
-        tone(1800, 0.012, 0.04, 1400); // very quiet soft tick
-      }, { threshold: 0.5, rootMargin: '0px 0px -10% 0px' });
-      document.querySelectorAll('.gl-acc-btn').forEach(function(btn) {
-        glScrollObs.observe(btn);
-      });
-    })();
 
     // Horizontal scroll sound on swipe strips
     document.querySelectorAll('.skills-grid, .connector-grid, .context-grid, .explainer-grid, .tips-grid').forEach(function(el) {
@@ -5730,7 +5727,8 @@ decision frameworks all valid.</code></div>
     var n = Date.now();
     if (n - lastCardHover < 80) return;
     lastCardHover = n;
-    if (typeof window._brHover === 'function') window._brHover();
+    var fn = window._brCardHover || window._brHover;
+    if (typeof fn === 'function') fn();
   }
 
   /* Skill / connector / context / tip / explainer cards */

@@ -4461,7 +4461,9 @@ decision frameworks all valid.</code></div>
       glossaryWrapper.style.display = anyGlossaryVisible ? '' : 'none';
     }
 
+    var wasEmpty = emptyState && emptyState.classList.contains('visible');
     if (emptyState) emptyState.classList.toggle('visible', visible === 0);
+    if (visible === 0 && !wasEmpty && typeof window._brNoMatch === 'function') window._brNoMatch();
     if (resultsCount) resultsCount.textContent = visible + ' results';
   }
 
@@ -5197,6 +5199,13 @@ decision frameworks all valid.</code></div>
     // Hover: sharp CRT terminal cursor tick — square wave, very short
     function playHover() { tone(2200, 0.018, 0.035, 1800); }
     window._brHover = playHover;
+
+    // No results: quiet descending two-step sine — "nothing here"
+    function playNoMatch() {
+      tone(320, 0.09, 0.04, 200, 'sine');
+      setTimeout(function(){ tone(180, 0.12, 0.035, 120, 'sine'); }, 95);
+    }
+    window._brNoMatch = playNoMatch;
 
     // Filter button hover: slightly lower terminal blip
     function playFilterHover() { tone(1600, 0.022, 0.035, 1200); }

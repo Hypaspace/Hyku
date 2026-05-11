@@ -1216,7 +1216,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 /* ── CONNECTORS ── */
 .connector-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
 }
 .connector-card {
@@ -1236,6 +1236,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 .connector-card::before { display: none; }
 .connector-card:hover { border-color: rgba(248,169,111,0.2); }
 .connector-featured {
+  grid-column: 1 / -1;
   border-color: var(--border);
   background: var(--surface);
 }
@@ -1412,6 +1413,7 @@ footer {
   /* Grids */
   .skills-grid { grid-template-columns: repeat(2, 1fr); }
   .connector-grid { grid-template-columns: repeat(2, 1fr); }
+  .connector-featured { grid-column: 1 / -1; }
   .context-grid, .explainer-grid, .tips-grid { grid-template-columns: 1fr; }
   .connector-featured { grid-column: auto; }
   .gs-sources { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
@@ -2597,7 +2599,7 @@ a, button, label, select,
 <div class="ca-overlay" aria-hidden="true"></div>
 <header id="hero-header">
   <canvas id="c"></canvas>
-  <div class="data-ticker" aria-hidden="true"><div class="data-ticker-track">AGC·ATG·TTA·CGG·ACC·GGT·TAC·GAT · REF:NX6-7714 · SEQ:0091FF4A · AGT·CCA·TGG·AAT·GCC·ACT · ID:NEXUS-6 · SCAN:+0.003 · VER:2049.R · ATT·GCC·TAA·CGG·TTC·AGC · LOCUS:07-BR · AUTH:TYRELL-CORP · CGA·TAC·GTT·ACC·GGA·TTC · SIG:00FD·CF4A·F201·B020 · AGC·ATG·TTA·CGG · STATUS:ACTIVE · REPLICANT:TRUE · MODEL:NEXUS-6 · AGT·CCA·TGG·AAT · EMPATHY:NULL · INCEPT:2049.01.17 · AGC·ATG·TTA·CGG·ACC·GGT·TAC·GAT · REF:NX6-7714 · SEQ:0091FF4A · AGT·CCA·TGG·AAT·GCC·ACT · ID:NEXUS-6 · SCAN:+0.003 · VER:2049.R · ATT·GCC·TAA·CGG·TTC·AGC · LOCUS:07-BR · AUTH:TYRELL-CORP · CGA·TAC·GTT·ACC·GGA·TTC · SIG:00FD·CF4A·F201·B020 · AGC·ATG·TTA·CGG · STATUS:ACTIVE · REPLICANT:TRUE · MODEL:NEXUS-6 · AGT·CCA·TGG·AAT · EMPATHY:NULL · INCEPT:2049.01.17 · </div></div>
+  <div class="data-ticker" aria-hidden="true"><div class="data-ticker-track">REF:NX6-7714 · SEQ:0091FF4A · LOCUS:07-BR · AUTH:HYPASPACE-CORP · STATUS:ACTIVE · OPERATOR:VERIFIED · MODEL:NEXUS-VI · EMPATHY:NULL · INCEPT:2049.01.17 · SIG:00FD·CF4A·F201·B020 · REF:NX6-7714 · SEQ:0091FF4A · LOCUS:07-BR · AUTH:HYPASPACE-CORP · STATUS:ACTIVE · OPERATOR:VERIFIED · MODEL:NEXUS-VI · EMPATHY:NULL · INCEPT:2049.01.17 · SIG:00FD·CF4A·F201·B020 · </div></div>
   <div class="hero-bracket tl"></div><div class="hero-bracket tr"></div><div class="hero-bracket bl"></div><div class="hero-bracket br"></div>
   <div class="hero-reboot-zone">
     <a class="hero-reboot-link" href="index.html"><span class="reboot-dot"></span>REBOOT</a>
@@ -2747,27 +2749,9 @@ a, button, label, select,
         <div class="gs-title">Getting Started</div>
       </div>
 
-      <div class="how-to-use">
-        <div class="how-to-use-label">
-          <span class="material-symbols-outlined" style="font-size:15px;margin-right:6px;vertical-align:middle;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">info</span>
-          How to use this guide
-        </div>
-        <p class="how-to-use-body"><strong>Claude Code</strong> is Anthropic's AI coding agent that runs in your terminal. Skills are plugins for it — they live in your <code>~/.claude/skills/</code> folder and load automatically when you start a session. Browse the categories to understand what each skill does and when to reach for it. Use the search bar to find skills by name, use-case, or keyword. Once installed, invoke a skill by typing its command name directly in Claude Code.</p>
-      </div>
-
       <p class="gs-intro">
         These skills are <strong>open-source Claude Code plugins</strong> structured instruction sets that load into Claude and unlock specialised design capabilities. They come from a handful of well-maintained GitHub repos. Download the ones you need, drop them into your <code style="font-family:'JetBrains Mono',monospace;font-size:12px;colour:var(--accent);background:var(--surface);padding:2px 6px;border-radius:4px">~/.claude/skills/</code> folder, and they're available in every Claude Code session.
       </p>
-
-      <!-- NEW USER CALLOUT -->
-      <div class="new-user-callout">
-        <div class="nuc-icon"><span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">rocket_launch</span></div>
-        <div class="nuc-body">
-          <div class="nuc-label">New to Claude Code skills?</div>
-          <div class="nuc-text">Install <strong>Impeccable</strong> first — it's the most complete design quality toolkit and the best single starting point. From there, add skills as you need them.</div>
-        </div>
-        <a class="nuc-link" href="#getting-started">Jump to install steps</a>
-      </div>
 
       <!-- SOURCE CARDS -->
       <div class="gs-sources">
@@ -2937,6 +2921,25 @@ claude
 
         </div>
       </div>
+
+      <!-- NEW USER CALLOUT -->
+      <div class="new-user-callout">
+        <div class="nuc-icon"><span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">rocket_launch</span></div>
+        <div class="nuc-body">
+          <div class="nuc-label">Where to start?</div>
+          <div class="nuc-text">Install <strong>Impeccable</strong> first — it's the most complete design quality toolkit and the best single starting point. From there, add skills as you need them.</div>
+        </div>
+        <a class="nuc-link" href="https://github.com/pbakaus/impeccable" target="_blank">Grab Impeccable</a>
+      </div>
+
+      <div class="how-to-use">
+        <div class="how-to-use-label">
+          <span class="material-symbols-outlined" style="font-size:15px;margin-right:6px;vertical-align:middle;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">info</span>
+          Using this directory
+        </div>
+        <p class="how-to-use-body">Browse the categories to understand what each skill does and when to reach for it. Use the search bar to find skills by name, use-case, or keyword. Once installed, invoke a skill by typing its <code>/command</code> name directly in Claude Code.</p>
+      </div>
+
     </section>
 
     <!-- UI QUALITY -->
@@ -5240,13 +5243,14 @@ decision frameworks all valid.</code></div>
     // Accordion / nav section open: two-step beep
     function playAccordion(open) {
       if (open) {
-        tone(440, 0.04, 0.045);
-        setTimeout(function(){ tone(660, 0.06, 0.04); }, 75);
+        tone(440, 0.035, 0.022);
+        setTimeout(function(){ tone(660, 0.045, 0.018); }, 75);
       } else {
-        tone(660, 0.04, 0.04);
-        setTimeout(function(){ tone(440, 0.06, 0.035); }, 75);
+        tone(660, 0.035, 0.018);
+        setTimeout(function(){ tone(440, 0.045, 0.016); }, 75);
       }
     }
+    window._brPlayAccordion = function(open) { if (soundEnabled) playAccordion(open); };
 
     // Show code: terminal expand/collapse blip pair
     function playShowCode(open) {
@@ -5342,15 +5346,8 @@ decision frameworks all valid.</code></div>
       el.addEventListener('scroll', swipeThrottled, { passive: true });
     });
 
-    // Attach to theme toggle — read new state after toggle runs
+    // Theme toggle — silent (controls button stays silent)
     var themeBtn = document.getElementById('theme-btn');
-    if (themeBtn) {
-      themeBtn.addEventListener('click', function() {
-        setTimeout(function() {
-          playToggle(document.documentElement.classList.contains('light'));
-        }, 0);
-      });
-    }
 
     // Toast
     var toastEl = document.getElementById('hyku-toast');
@@ -5421,12 +5418,7 @@ decision frameworks all valid.</code></div>
       });
     }
 
-    // Sound popup open click
-    if (soundBtn) {
-      soundBtn.addEventListener('click', function() {
-        if (soundEnabled) playHover();
-      });
-    }
+    // Sound popup open click — no click sound (controls button stays silent)
 
     // Mute toggle inside popup
     if (eqMuteBtn) {
@@ -5915,13 +5907,17 @@ decision frameworks all valid.</code></div>
 
     colBtn.addEventListener('click', function (e) {
       e.stopPropagation();
+      if (typeof window._brPlayAccordion === 'function') window._brPlayAccordion(false);
       window._brCollapseAll = true;
       section.querySelectorAll('.gl-acc-btn.open').forEach(function (b) { b.click(); });
       window._brCollapseAll = false;
     });
     expBtn.addEventListener('click', function (e) {
       e.stopPropagation();
+      if (typeof window._brPlayAccordion === 'function') window._brPlayAccordion(true);
+      window._brCollapseAll = true;
       section.querySelectorAll('.gl-acc-btn:not(.open)').forEach(function (b) { b.click(); });
+      window._brCollapseAll = false;
     });
   });
 })();

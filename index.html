@@ -611,9 +611,6 @@ body.exiting {
       requestAnimationFrame(function () { el.classList.add('in'); });
       if (line.status === 'pend') pendEl = el.querySelector('.ts');
       animFill((i + 1) / LINES.length * 78, 480);
-      /* terminal tick as each line appears */
-      tone(1400 - i * 60, 0.022, 0.022, 1800 - i * 40);
-      setTimeout(function() { tone(2200 - i * 80, 0.012, 0.014, 1600 - i * 40); }, 35);
     }, BASE + line.delay);
   });
 

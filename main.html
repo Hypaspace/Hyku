@@ -304,7 +304,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 /* ── SKILL CARDS ── */
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
 .skill-card {
@@ -1216,7 +1216,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 /* ── CONNECTORS ── */
 .connector-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
 .connector-card {
@@ -1239,7 +1239,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   border-color: var(--border);
   background: var(--surface);
 }
-.connector-top { display: flex; align-items: center; gap: 10px; }
+.connector-top { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
 .connector-name { font-size: 15px; font-weight: 700; color: var(--text); }
 .connector-badge {
   font-family: 'JetBrains Mono', monospace;
@@ -1360,10 +1360,11 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 .tip-card:hover { background: var(--surface2); }
 .tip-card::before { display: none; }
 .tip-warn {
-  border-color: rgba(255,108,14,0.5) !important;
-  background: rgba(255,108,14,0.06) !important;
+  border-color: rgba(255,108,14,0.55) !important;
+  border-left: 3px solid rgba(255,108,14,0.75) !important;
+  background: rgba(255,108,14,0.07) !important;
 }
-.tip-warn:hover { border-color: rgba(255,108,14,0.8) !important; background: rgba(255,108,14,0.1) !important; }
+.tip-warn:hover { border-color: rgba(255,108,14,0.8) !important; border-left-color: rgba(255,108,14,0.95) !important; background: rgba(255,108,14,0.11) !important; }
 .tip-go:hover   { border-color: rgba(74,242,161,0.5) !important; }
 .tip-icon { font-size: 14px; color: var(--text-dim); }
 .tip-warn .tip-icon { color: var(--accent2); }
@@ -1409,8 +1410,9 @@ footer {
   .search-wrap { flex: 1; max-width: 240px; margin-left: auto; }
 
   /* Grids */
-  .skills-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
-  .connector-grid, .context-grid, .explainer-grid, .tips-grid { grid-template-columns: 1fr; }
+  .skills-grid { grid-template-columns: repeat(2, 1fr); }
+  .connector-grid { grid-template-columns: repeat(2, 1fr); }
+  .context-grid, .explainer-grid, .tips-grid { grid-template-columns: 1fr; }
   .connector-featured { grid-column: auto; }
   .gs-sources { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
   .pipeline-grid { grid-template-columns: 1fr; }
@@ -2439,6 +2441,7 @@ nav#sidebar-nav {
   margin-left: auto;
 }
 .gl-collapse-all:hover { color: var(--accent); border-color: var(--accent); }
+.sec-acc-controls { display: flex; gap: 5px; margin-left: auto; margin-right: 8px; }
 
 /* ══════════════════════════════════════════════════════════════
    CUSTOM SCROLLBAR — BLADE RUNNER THIN TECH
@@ -4112,8 +4115,7 @@ claude
           </div>
           <div class="connector-req">Requires Figma desktop app + Dev or Full seat · Free during beta</div>
           <div class="connector-install">
-            <span class="connector-install-label">Remote (recommended):</span>
-            <code class="connector-code">claude mcp add --transport http figma https://mcp.figma.com/mcp</code>
+            <button class="code-toggle-btn" onclick="(function(b){var p=b.nextElementSibling;var open=p.classList.toggle('open');b.classList.toggle('open',open);b.querySelector('.ct-label').textContent=open?'Hide install':'Show install';b.querySelector('.ct-icon').textContent=open?'expand_less':'expand_more';})(this)"><span class="ct-label">Show install</span><span class="material-symbols-outlined ct-icon" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">expand_more</span></button><div class="collapsible-code"><code class="connector-code">claude mcp add --transport http figma https://mcp.figma.com/mcp</code></div>
           </div>
           <a class="gs-source-link" href="https://help.figma.com/hc/en-us/articles/32132100833559" target="_blank"><span class="material-symbols-outlined" style="font-size:14px;margin-right:5px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">arrow_outward</span>Figma MCP setup guide</a>
         </div>
@@ -4130,8 +4132,7 @@ claude
             <div class="connector-cap">Review PRs with design quality context</div>
           </div>
           <div class="connector-install">
-            <span class="connector-install-label">Install:</span>
-            <code class="connector-code">claude mcp add --transport http github https://api.githubcopilot.com/mcp/v1</code>
+            <button class="code-toggle-btn" onclick="(function(b){var p=b.nextElementSibling;var open=p.classList.toggle('open');b.classList.toggle('open',open);b.querySelector('.ct-label').textContent=open?'Hide install':'Show install';b.querySelector('.ct-icon').textContent=open?'expand_less':'expand_more';})(this)"><span class="ct-label">Show install</span><span class="material-symbols-outlined ct-icon" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">expand_more</span></button><div class="collapsible-code"><code class="connector-code">claude mcp add --transport http github https://api.githubcopilot.com/mcp/v1</code></div>
           </div>
         </div>
 
@@ -4337,15 +4338,15 @@ decision frameworks all valid.</code></div>
           <div class="tip-label">Figma MCP requires a restart</div>
           <div class="tip-body">MCP servers initialise at Claude Code startup. If you add the Figma connector mid-session and it doesn't appear, fully restart Claude Code. Also disconnect any duplicate Figma instances the desktop plugin and remote MCP can conflict.</div>
         </div>
-        <div class="tip-card tip-go">
-          <div class="tip-icon"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">arrow_forward</span></div>
-          <div class="tip-label">Prefer skills over MCP for design context</div>
-          <div class="tip-body">If you're tempted to use an MCP server just to provide design context, a DESIGN.md + skill is almost always better lighter, faster, and portable across projects. Reserve MCP for live data that genuinely needs an API.</div>
-        </div>
         <div class="tip-card tip-warn">
           <div class="tip-icon"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">warning</span></div>
           <div class="tip-label">Figma MCP is read-only in some setups</div>
           <div class="tip-body">The write-to-canvas and code-to-canvas features require the <em>remote</em> MCP server, not the desktop version. If you're on desktop MCP and write features aren't working, switch to <code>mcp.figma.com/mcp</code>.</div>
+        </div>
+        <div class="tip-card tip-go">
+          <div class="tip-icon"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">arrow_forward</span></div>
+          <div class="tip-label">Prefer skills over MCP for design context</div>
+          <div class="tip-body">If you're tempted to use an MCP server just to provide design context, a DESIGN.md + skill is almost always better lighter, faster, and portable across projects. Reserve MCP for live data that genuinely needs an API.</div>
         </div>
       </div>
     </div>
@@ -5888,6 +5889,44 @@ decision frameworks all valid.</code></div>
       openBtn.click();
     });
     window._brCollapseAll = false;
+  });
+})();
+
+/* ── PER-SECTION COLLAPSE / EXPAND in glossary ── */
+(function () {
+  document.querySelectorAll('#glossary .category-section').forEach(function (section) {
+    var header = section.querySelector('.category-header');
+    if (!header) return;
+
+    function makeBtn(label, icon) {
+      var b = document.createElement('button');
+      b.className = 'gl-collapse-all';
+      b.innerHTML = '<span class="material-symbols-outlined" style="font-size:12px;margin-right:3px;vertical-align:middle;font-variation-settings:\'FILL\' 0,\'wght\' 200,\'GRAD\' 0,\'opsz\' 20">' + icon + '</span>' + label;
+      return b;
+    }
+
+    var colBtn = makeBtn('Collapse', 'unfold_less');
+    var expBtn = makeBtn('Expand', 'unfold_more');
+
+    var wrap = document.createElement('div');
+    wrap.className = 'sec-acc-controls';
+    wrap.appendChild(colBtn);
+    wrap.appendChild(expBtn);
+
+    var chevron = header.querySelector('.cat-collapse-icon');
+    if (chevron) header.insertBefore(wrap, chevron);
+    else header.appendChild(wrap);
+
+    colBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      window._brCollapseAll = true;
+      section.querySelectorAll('.gl-acc-btn.open').forEach(function (b) { b.click(); });
+      window._brCollapseAll = false;
+    });
+    expBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      section.querySelectorAll('.gl-acc-btn:not(.open)').forEach(function (b) { b.click(); });
+    });
   });
 })();
 

@@ -183,6 +183,9 @@ body::before {
   clip-path: inset(0 0 100% 0);
   animation: scan-in 0.55s steps(22) 0.5s forwards;
 }
+@media (max-width: 480px) {
+  .logo-wrap svg { height: 44px !important; }
+}
 
 .logo-wrap.glitch {
   animation: logo-glitch 0.4s steps(2) forwards !important;
@@ -680,11 +683,12 @@ body.exiting {
 
     function placeOnBtn(btn) {
       var r = btn.getBoundingClientRect();
+      var C = 10;
       var positions = [
-        { x: r.left  - PAD, y: r.top    - PAD },
-        { x: r.right + PAD, y: r.top    - PAD },
-        { x: r.right + PAD, y: r.bottom + PAD },
-        { x: r.left  - PAD, y: r.bottom + PAD }
+        { x: r.left  - PAD,         y: r.top    - PAD },
+        { x: r.right + PAD - C,     y: r.top    - PAD },
+        { x: r.right + PAD - C,     y: r.bottom + PAD - C },
+        { x: r.left  - PAD,         y: r.bottom + PAD - C }
       ];
       corners.forEach(function(c, i) {
         c.style.transform = 'translate(' + positions[i].x + 'px,' + positions[i].y + 'px)';

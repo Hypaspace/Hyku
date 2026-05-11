@@ -5903,5 +5903,75 @@ decision frameworks all valid.</code></div>
 })();
 </script>
 
+<script>
+/* ── HAPTIC FEEDBACK — Android (Vibration API) + iOS (hidden checkbox trick) ── */
+(function() {
+  var isAndroid = navigator.vibrate && /android/i.test(navigator.userAgent);
+  var isIOS     = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  if (!isAndroid && !isIOS) return;
+
+  // iOS: hidden checkbox with native appearance — each .click() fires one Taptic Engine pulse
+  var hapticBox = null;
+  if (isIOS) {
+    var lbl = document.createElement('label');
+    lbl.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;pointer-events:none;';
+    hapticBox = document.createElement('input');
+    hapticBox.type = 'checkbox';
+    hapticBox.setAttribute('switch', '');
+    hapticBox.style.cssText = 'all:initial;appearance:auto;-webkit-appearance:checkbox;';
+    lbl.appendChild(hapticBox);
+    document.body.appendChild(lbl);
+  }
+
+  // tick() = one haptic pulse on either platform
+  function tick() {
+    if (isAndroid) { try { navigator.vibrate(10); } catch(e) {} }
+    else if (hapticBox) { try { hapticBox.click(); } catch(e) {} }
+  }
+
+  // double-pulse for accordion open/close
+  function doubleTick() {
+    tick();
+    setTimeout(tick, 50);
+  }
+
+  // very short single for scroll
+  function softTick() {
+    if (isAndroid) { try { navigator.vibrate(4); } catch(e) {} }
+    else if (hapticBox) { try { hapticBox.click(); } catch(e) {} }
+  }
+
+  var BTN_SELECTOR = [
+    'button', '.filter-btn', '.nuc-link', '.copy-btn', '.code-copy-btn',
+    '.code-toggle-btn', '.back-to-top', '#sound-btn', '#theme-btn',
+    '.hamburger', '.mobile-nav-close', '.eq-mute-btn', '.tab-btn',
+    '.hero-reboot-link', '.gs-source-link', '.nav-link',
+    '.gl-acc-btn', '.nav-label-collapsible', '.category-header.collapsible'
+  ].join(',');
+
+  // Button / interactive element tap
+  document.addEventListener('touchend', function(e) {
+    var target = e.target.closest(BTN_SELECTOR);
+    if (!target) return;
+    if (target.matches('.gl-acc-btn, .nav-label-collapsible, .category-header.collapsible')) {
+      doubleTick();
+    } else {
+      tick();
+    }
+  }, { passive: true });
+
+  // Card swipe scroll — soft tick, throttled
+  var lastSwipeTick = 0;
+  document.querySelectorAll('.skills-grid, .connector-grid, .context-grid, .explainer-grid, .tips-grid, .gs-sources').forEach(function(el) {
+    el.addEventListener('touchmove', function() {
+      var now = Date.now();
+      if (now - lastSwipeTick < 120) return;
+      lastSwipeTick = now;
+      softTick();
+    }, { passive: true });
+  });
+})();
+</script>
+
 </body>
 </html>

@@ -113,24 +113,13 @@ h1 span { color: var(--accent); }
   flex: 0 0 240px;
   margin-right: 4px;
 }
-.search-icon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-dim);
-  font-size: 13px;
-  pointer-events: none;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-}
+.search-icon { display: none; }
 #search {
   width: 100%;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 8px 10px 8px 30px;
+  padding: 8px 10px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
   color: var(--text);
@@ -1453,8 +1442,8 @@ footer {
   .controls { padding: 10px 12px; gap: 8px; }
   .controls-logo svg { height: 16px !important; }
   .search-wrap { flex: 1; min-width: 0; }
-  #search { font-size: 12px; padding: 7px 8px 7px 28px; }
-  .search-icon { font-size: 12px; left: 8px; }
+  #search { font-size: 12px; padding: 7px 8px; }
+  .search-icon { display: none; }
   .hamburger { width: 34px; height: 34px; flex-shrink: 0; }
 
   /* Content */
@@ -2698,6 +2687,100 @@ a, button, label, select,
   color: var(--text-muted);
   line-height: 1.75;
 }
+
+/* ── SOURCES STEPPER — Get Started ── */
+.sources-stepper-tabs {
+  display: flex;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  width: 100%;
+}
+.sources-stepper-tab {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--border);
+  padding: 11px 8px 9px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  position: relative;
+  transition: background 0.15s;
+}
+.sources-stepper-tab:last-child { border-right: none; }
+.sources-stepper-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0; height: 2px;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.sources-stepper-tab.active::after { opacity: 1; }
+.sources-stepper-tab.active { background: var(--surface); }
+.sources-stepper-tab:hover:not(.active) { background: var(--surface); }
+.sst-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  color: var(--text-dim);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  letter-spacing: 0.04em;
+}
+.sst-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  transition: color 0.15s;
+}
+.sources-stepper-tab.active .sst-name { color: var(--accent); }
+.sources-stepper-tab.active .sst-eyebrow { color: var(--text-muted); }
+.sources-stepper-tab:hover:not(.active) .sst-name { color: var(--text-muted); }
+.gs-sources.stepper-mode {
+  display: grid !important;
+  grid-template-columns: 1fr;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+.gs-sources.stepper-mode .gs-source-card {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex !important;
+  flex-direction: column;
+  gap: 12px;
+  padding: 36px 44px;
+  border: none !important;
+  background: transparent !important;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(5px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.gs-sources.stepper-mode .gs-source-card.stepper-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.gs-sources.stepper-mode .gs-source-header { gap: 4px; }
+.gs-sources.stepper-mode .gs-source-eyebrow { font-size: 11px; }
+.gs-sources.stepper-mode .gs-source-name { font-size: 22px; font-weight: 700; }
+.gs-sources.stepper-mode .gs-source-desc { font-size: 14px; line-height: 1.75; }
+.gs-sources.stepper-mode .gs-source-skills { margin-top: 0; }
+.gs-sources.stepper-mode .gs-source-link { margin-top: 4px; align-self: flex-start; }
 
 </style>
 
@@ -5457,8 +5540,8 @@ decision frameworks all valid.</code></div>
       el.addEventListener('scroll', swipeThrottled, { passive: true });
     });
 
-    // Theme toggle — silent (controls button stays silent)
     var themeBtn = document.getElementById('theme-btn');
+    if (themeBtn) themeBtn.addEventListener('mouseenter', hoverThrottled);
 
     // Toast
     var toastEl = document.getElementById('hyku-toast');
@@ -5478,6 +5561,7 @@ decision frameworks all valid.</code></div>
     var eqMuteBtn   = document.getElementById('eq-mute-btn');
     var soundBtn    = document.getElementById('sound-btn');
     var volSlider   = document.getElementById('vol-slider');
+    if (soundBtn) soundBtn.addEventListener('mouseenter', hoverThrottled);
 
     // Sync slider to persisted volume
     if (volSlider) volSlider.value = Math.round(masterVolume * 100);
@@ -6283,6 +6367,99 @@ decision frameworks all valid.</code></div>
         if (typeof window._brPlayAccordion === 'function') window._brPlayAccordion(true);
       });
     });
+
+    tabRow.addEventListener('keydown', function (e) {
+      var idx = tabs.findIndex(function (t) { return t.classList.contains('active'); });
+      if (e.key === 'ArrowRight') {
+        var next = (idx + 1) % tabs.length;
+        tabs[next].click(); tabs[next].focus(); e.preventDefault();
+      } else if (e.key === 'ArrowLeft') {
+        var prev = (idx - 1 + tabs.length) % tabs.length;
+        tabs[prev].click(); tabs[prev].focus(); e.preventDefault();
+      }
+    });
+  }
+
+  function destroyStepper() {
+    if (!tabRow) return;
+    tabRow.parentNode && tabRow.parentNode.removeChild(tabRow);
+    tabRow = null; tabs = [];
+    grid.classList.remove('stepper-mode');
+    cards.forEach(function (c) { c.classList.remove('stepper-active'); });
+  }
+
+  function check() {
+    if (window.innerWidth > BREAKPOINT) buildStepper();
+    else destroyStepper();
+  }
+
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(check, 150);
+  });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', check);
+  } else {
+    check();
+  }
+})();
+</script>
+
+<script>
+/* ── SOURCES STEPPER — Get Started ── */
+(function () {
+  var BREAKPOINT = 700;
+  var grid = document.querySelector('#getting-started .gs-sources');
+  if (!grid) return;
+  var cards = Array.from(grid.querySelectorAll(':scope > .gs-source-card'));
+  if (cards.length < 2) return;
+
+  var tabRow = null;
+  var tabs = [];
+
+  function buildStepper() {
+    if (tabRow) return;
+
+    cards.forEach(function (c) { c.classList.add('br-in'); });
+
+    tabRow = document.createElement('div');
+    tabRow.className = 'sources-stepper-tabs';
+
+    var lastTabHover = 0;
+
+    tabs = cards.map(function (card, i) {
+      var eyebrowEl = card.querySelector('.gs-source-eyebrow');
+      var nameEl    = card.querySelector('.gs-source-name');
+      var btn = document.createElement('button');
+      btn.className = 'sources-stepper-tab' + (i === 0 ? ' active' : '');
+      btn.setAttribute('aria-label', nameEl ? nameEl.textContent.trim() : '');
+      btn.innerHTML =
+        '<span class="sst-eyebrow">' + (eyebrowEl ? eyebrowEl.textContent.trim() : '') + '</span>' +
+        '<span class="sst-name">'    + (nameEl    ? nameEl.textContent.trim()    : '') + '</span>';
+      tabRow.appendChild(btn);
+
+      btn.addEventListener('mouseenter', function () {
+        var n = Date.now();
+        if (n - lastTabHover < 70) return;
+        lastTabHover = n;
+        if (typeof window._brHover === 'function') window._brHover();
+      });
+      btn.addEventListener('click', function () {
+        tabs.forEach(function (t) { t.classList.remove('active'); });
+        cards.forEach(function (c) { c.classList.remove('stepper-active'); });
+        btn.classList.add('active');
+        cards[i].classList.add('stepper-active');
+        if (typeof window._brPlayAccordion === 'function') window._brPlayAccordion(true);
+      });
+
+      return btn;
+    });
+
+    grid.parentNode.insertBefore(tabRow, grid);
+    grid.classList.add('stepper-mode');
+    cards[0].classList.add('stepper-active');
 
     tabRow.addEventListener('keydown', function (e) {
       var idx = tabs.findIndex(function (t) { return t.classList.contains('active'); });

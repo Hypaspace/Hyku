@@ -480,6 +480,103 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 }
 .step-note { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
 
+/* ── OPERATION SEQUENCES ── */
+.op-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+.op-seq {
+  background: var(--surface);
+  border: 1px solid rgba(0,253,207,0.09);
+  border-radius: 4px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.35s ease, transform 0.35s ease, border-color 0.2s;
+}
+.op-seq.op-fired { opacity: 1; transform: none; }
+.op-seq:hover { border-color: rgba(0,253,207,0.2); }
+.op-seq::before {
+  content: '';
+  position: absolute; top: 0; left: 0; width: 45%; height: 1px;
+  background: linear-gradient(90deg, rgba(0,253,207,0.5) 0%, transparent 100%);
+}
+.op-header { margin-bottom: 20px; }
+.op-meta {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.op-code { font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(0,253,207,0.38); }
+.op-steps-count { font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(0,253,207,0.22); }
+.op-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--text); margin-bottom: 5px;
+}
+.op-desc { font-size: 12px; color: var(--text-muted); line-height: 1.55; }
+.op-trace {
+  position: relative;
+  margin-top: 20px;
+}
+.op-trace::before {
+  content: '';
+  position: absolute;
+  left: 5px; top: 10px; bottom: 10px; width: 1px;
+  background: rgba(0,253,207,0.1);
+  z-index: 0;
+}
+.op-trace::after {
+  content: '';
+  position: absolute;
+  left: 5px; top: 10px; bottom: 10px; width: 1px;
+  background: rgba(0,253,207,0.5);
+  transform: scaleY(0); transform-origin: top;
+  transition: transform 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+}
+.op-seq.op-drawn .op-trace::after { transform: scaleY(1); }
+.op-node {
+  display: flex; align-items: flex-start;
+  gap: 13px; padding: 7px 0;
+}
+.op-node-dot {
+  width: 11px; height: 11px; border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid rgba(0,253,207,0.35);
+  flex-shrink: 0; margin-top: 2px;
+  position: relative; z-index: 1;
+  opacity: 0; transform: scale(0.2);
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+.op-node.node-in .op-node-dot {
+  opacity: 1; transform: scale(1);
+  transition: opacity 0.15s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+              background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+.op-node:hover .op-node-dot {
+  background: rgba(0,253,207,0.18);
+  border-color: rgba(0,253,207,0.8);
+  box-shadow: 0 0 7px rgba(0,253,207,0.3);
+}
+.op-node-body { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.op-node-num { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: rgba(0,253,207,0.25); letter-spacing: 0.1em; }
+.op-node-cmd { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.op-node-note { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+:root.light .op-seq { border-color: rgba(0,120,96,0.12); background: var(--surface); }
+:root.light .op-seq:hover { border-color: rgba(0,120,96,0.28); }
+:root.light .op-seq::before { background: linear-gradient(90deg, rgba(0,120,96,0.4) 0%, transparent 100%); }
+:root.light .op-code { color: rgba(0,120,96,0.42); }
+:root.light .op-steps-count { color: rgba(0,120,96,0.28); }
+:root.light .op-trace::before { background: rgba(0,120,96,0.1); }
+:root.light .op-trace::after { background: rgba(0,120,96,0.55); }
+:root.light .op-node-dot { background: var(--bg); border-color: rgba(0,120,96,0.38); }
+:root.light .op-node:hover .op-node-dot { background: rgba(0,120,96,0.12); border-color: rgba(0,120,96,0.8); box-shadow: 0 0 7px rgba(0,120,96,0.2); }
+:root.light .op-node-num { color: rgba(0,120,96,0.3); }
+
 /* ── EMPTY STATE ── */
 .empty-state { display: none; padding: 80px 48px; text-align: center; }
 .empty-state.visible { display: block; }
@@ -1504,6 +1601,7 @@ footer {
   .connector-featured { grid-column: auto; }
   .gs-sources { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
   .pipeline-grid { grid-template-columns: 1fr; }
+  .op-grid { grid-template-columns: 1fr; }
   #glossary .skills-grid { grid-template-columns: repeat(2, 1fr); }
   .gl-row { grid-template-columns: 160px 1fr; }
 
@@ -3663,48 +3761,77 @@ claude
 
       <h2 class="pipelines-heading">Checklists &amp; Pipelines</h2>
       <div class="pipelines-body open" id="pipelines-body">
-        <div class="pipeline-grid">
-          <div class="pipeline-card">
-            <div class="pipeline-name">Full UI Build Pipeline</div>
-            <div class="pipeline-desc">The recommended order for building a new interface from scratch.</div>
-            <div class="pipeline-steps">
-              <div class="pipeline-step"><span class="step-num">01</span><span class="step-cmd">/teach-impeccable</span><span class="step-note">Save design context once at project start</span></div>
-              <div class="pipeline-step"><span class="step-num">02</span><span class="step-cmd">/design-lab</span><span class="step-note">Explore 5 directions before committing</span></div>
-              <div class="pipeline-step"><span class="step-num">03</span><span class="step-cmd">/baseline-ui</span><span class="step-note">Enforce quality standards upfront</span></div>
-              <div class="pipeline-step"><span class="step-num">04</span><span class="step-cmd">/frontend-design</span><span class="step-note">Build the interface</span></div>
-              <div class="pipeline-step"><span class="step-num">05</span><span class="step-cmd">/animate</span><span class="step-note">Add purposeful motion</span></div>
-              <div class="pipeline-step"><span class="step-num">06</span><span class="step-cmd">/polish</span><span class="step-note">Final pass before ship</span></div>
+        <div class="op-grid">
+
+          <div class="op-seq">
+            <div class="op-header">
+              <div class="op-meta">
+                <span class="op-code">OP·7714·UI·BUILD</span>
+                <span class="op-steps-count">06 STEPS</span>
+              </div>
+              <div class="op-name">Full UI Build Pipeline</div>
+              <div class="op-desc">Recommended order for building a new interface from scratch.</div>
+            </div>
+            <div class="op-trace">
+              <div class="op-node"><div class="op-node-dot"></div><div class="op-node-body"><span class="op-node-num">01</span><span class="op-node-cmd">/teach-impeccable</span><span class="op-node-note">Save design context once at project start</span></div></div>
+              <div class="op-node"><div class="op-node-dot"></div><div class="op-node-body"><span class="op-node-num">02</span><span class="op-node-cmd">/design-lab</span><span class="op-node-note">Explore 5 directions before committing</span></div></div>
+              <div class="op-node"><div class="op-node-dot"></div><div class="op-node-body"><span class="op-node-num">03</span><span class="op-node-cmd">/baseline-ui</span><span class="op-node-note">Enforce quality standards upfront</span></div></div>
+              <div class="op-node"><div class="op-node-dot"></div><div class="op-node-body"><span class="op-node-num">04</span><span class="op-node-cmd">/frontend-design</span><span class="op-node-note">Build the interface</span></div></div>
+              <div class="op-node"><div class="op-node-dot"></div><div class="op-node-body"><span class="op-node-num">05</span><span class="op-node-cmd">/animate</span><span class="op-node-note">Add purposeful motion</span></div></div>
+              <div class="op-node"><div class="op-node-dot"></div><div class="op-node-body"><span class="op-node-num">06</span><span class="op-node-cmd">/polish</span><span class="op-node-note">Final pass before ship</span></div></div>
             </div>
           </div>
-          <div class="pipeline-card">
-            <div class="pipeline-name">Pre-Ship Checklist</div>
-            <div class="pipeline-desc">Run in order before any production deployment.</div>
-            <div class="pipeline-steps">
-              <div class="pipeline-step"><span class="step-num">01</span><span class="step-cmd">/audit</span><span class="step-note">Find all issues across all dimensions</span></div>
-              <div class="pipeline-step"><span class="step-num">02</span><span class="step-cmd">/fixing-accessibility</span><span class="step-note">Patch identified a11y problems</span></div>
-              <div class="pipeline-step"><span class="step-num">03</span><span class="step-cmd">/fixing-metadata</span><span class="step-note">SEO and OG tags</span></div>
-              <div class="pipeline-step"><span class="step-num">04</span><span class="step-cmd">/fixing-motion-performance</span><span class="step-note">Smooth out animation jank</span></div>
-              <div class="pipeline-step"><span class="step-num">05</span><span class="step-cmd">/polish</span><span class="step-note">Final pass</span></div>
+
+          <div class="op-seq">
+            <div class="op-header">
+              <div class="op-meta">
+                <span class="op-code">OP·7714·SHIP·CHK</span>
+                <span class="op-steps-count">05 STEPS</span>
+              </div>
+              <div class="op-name">Pre-Ship Checklist</div>
+              <div class="op-desc">Run in order before any production deployment.</div>
+            </div>
+            <div class="op-trace">
+              <div class="op-node"><div class="op-node-dot"></div><div class="op-node-body"><span class="op-node-num">01</span><span class="op-node-cmd">/audit</span><span class="op-node-note">Find all issues across all dimensions</span></div></div>
+              <div class="op-node"><div class="op-node-dot"></div><div class="op-node-body"><span class="op-node-num">02</span><span class="op-node-cmd">/fixing-accessibility</span><span class="op-node-note">Patch identified a11y problems</span></div></div>
+              <div class="op-node"><div class="op-node-dot"></div><div class="op-node-body"><span class="op-node-num">03</span><span class="op-node-cmd">/fixing-metadata</span><span class="op-node-note">SEO and OG tags</span></div></div>
+              <div class="op-node"><div class="op-node-dot"></div><div class="op-node-body"><span class="op-node-num">04</span><span class="op-node-cmd">/fixing-motion-performance</span><span class="op-node-note">Smooth out animation jank</span></div></div>
+              <div class="op-node"><div class="op-node-dot"></div><div class="op-node-body"><span class="op-node-num">05</span><span class="op-node-cmd">/polish</span><span class="op-node-note">Final pass</span></div></div>
             </div>
           </div>
-          <div class="pipeline-card">
-            <div class="pipeline-name">Motion Pipeline</div>
-            <div class="pipeline-desc">Adding motion correctly design before implementation.</div>
-            <div class="pipeline-steps">
-              <div class="pipeline-step"><span class="step-num">01</span><span class="step-cmd">/interaction-design</span><span class="step-note">Define transition patterns first</span></div>
-              <div class="pipeline-step"><span class="step-num">02</span><span class="step-cmd">/animate</span><span class="step-note">Implement based on patterns</span></div>
-              <div class="pipeline-step"><span class="step-num">03</span><span class="step-cmd">/fixing-motion-performance</span><span class="step-note">Fix any performance issues</span></div>
+
+          <div class="op-seq">
+            <div class="op-header">
+              <div class="op-meta">
+                <span class="op-code">OP·7714·MOTION</span>
+                <span class="op-steps-count">03 STEPS</span>
+              </div>
+              <div class="op-name">Motion Pipeline</div>
+              <div class="op-desc">Adding motion correctly — design before implementation.</div>
+            </div>
+            <div class="op-trace">
+              <div class="op-node"><div class="op-node-dot"></div><div class="op-node-body"><span class="op-node-num">01</span><span class="op-node-cmd">/interaction-design</span><span class="op-node-note">Define transition patterns first</span></div></div>
+              <div class="op-node"><div class="op-node-dot"></div><div class="op-node-body"><span class="op-node-num">02</span><span class="op-node-cmd">/animate</span><span class="op-node-note">Implement based on patterns</span></div></div>
+              <div class="op-node"><div class="op-node-dot"></div><div class="op-node-body"><span class="op-node-num">03</span><span class="op-node-cmd">/fixing-motion-performance</span><span class="op-node-note">Fix any performance issues</span></div></div>
             </div>
           </div>
-          <div class="pipeline-card">
-            <div class="pipeline-name">Accessibility Pipeline</div>
-            <div class="pipeline-desc">Full a11y pass from copy to code.</div>
-            <div class="pipeline-steps">
-              <div class="pipeline-step"><span class="step-num">01</span><span class="step-cmd">/clarify</span><span class="step-note">Fix UX copy and labels first</span></div>
-              <div class="pipeline-step"><span class="step-num">02</span><span class="step-cmd">/wcag-audit-patterns</span><span class="step-note">Full WCAG 2.2 audit</span></div>
-              <div class="pipeline-step"><span class="step-num">03</span><span class="step-cmd">/fixing-accessibility</span><span class="step-note">Patch identified issues</span></div>
+
+          <div class="op-seq">
+            <div class="op-header">
+              <div class="op-meta">
+                <span class="op-code">OP·7714·A11Y</span>
+                <span class="op-steps-count">03 STEPS</span>
+              </div>
+              <div class="op-name">Accessibility Pipeline</div>
+              <div class="op-desc">Full a11y pass from copy to code.</div>
+            </div>
+            <div class="op-trace">
+              <div class="op-node"><div class="op-node-dot"></div><div class="op-node-body"><span class="op-node-num">01</span><span class="op-node-cmd">/clarify</span><span class="op-node-note">Fix UX copy and labels first</span></div></div>
+              <div class="op-node"><div class="op-node-dot"></div><div class="op-node-body"><span class="op-node-num">02</span><span class="op-node-cmd">/wcag-audit-patterns</span><span class="op-node-note">Full WCAG 2.2 audit</span></div></div>
+              <div class="op-node"><div class="op-node-dot"></div><div class="op-node-body"><span class="op-node-num">03</span><span class="op-node-cmd">/fixing-accessibility</span><span class="op-node-note">Patch identified issues</span></div></div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -5173,6 +5300,45 @@ decision frameworks all valid.</code></div>
     }
   })();
 
+  // ── OPERATION SEQUENCES ──
+  (function() {
+    var seqs = document.querySelectorAll('.op-seq');
+    if (!seqs.length) return;
+
+    function fireSeq(seq) {
+      seq.classList.add('op-fired');
+      setTimeout(function() {
+        seq.classList.add('op-drawn');
+        seq.querySelectorAll('.op-node').forEach(function(node, i) {
+          setTimeout(function() { node.classList.add('node-in'); }, 180 + i * 95);
+        });
+      }, 220);
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      seqs.forEach(function(s) {
+        s.classList.add('op-fired', 'op-drawn');
+        s.querySelectorAll('.op-node').forEach(function(n) { n.classList.add('node-in'); });
+      });
+      return;
+    }
+
+    var opObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (!entry.isIntersecting) return;
+        var seq = entry.target;
+        var idx = parseInt(seq.dataset.opIdx || 0, 10);
+        setTimeout(function() { fireSeq(seq); }, idx * 90);
+        opObs.unobserve(seq);
+      });
+    }, { threshold: 0.15 });
+
+    seqs.forEach(function(seq, i) {
+      seq.dataset.opIdx = i;
+      opObs.observe(seq);
+    });
+  })();
+
   // ── COLLAPSIBLE NAV SECTIONS ──
   document.querySelectorAll('.nav-label-collapsible').forEach(label => {
     const sectionId = label.dataset.section;
@@ -5843,7 +6009,7 @@ decision frameworks all valid.</code></div>
       if (!soundEnabled || !_unlocked) return;
       var n = Date.now();
       if (n - lastCardH < 80) return;
-      var target = e.target.closest('.skill-card, .connector-card, .context-card, .tip-card, .tl-row, .explainer-card, .gs-source-card, .gl-acc-btn, #search-suggestions li');
+      var target = e.target.closest('.skill-card, .connector-card, .context-card, .tip-card, .tl-row, .op-node, .explainer-card, .gs-source-card, .gl-acc-btn, #search-suggestions li');
       if (!target) return;
       // Suppress if moving between children within the same target (token hover etc.)
       if (e.relatedTarget && target.contains(e.relatedTarget)) return;

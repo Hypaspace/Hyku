@@ -283,8 +283,39 @@ body.exiting { animation: sys-exit 0.85s cubic-bezier(0.76,0,0.24,1) forwards; }
 .scan-prog-wrap { margin-top: 8px; display: flex; align-items: center; gap: 10px; }
 .scan-prog-label { font-size: 8px; letter-spacing: 0.1em; color: var(--dimmer); flex-shrink: 0; }
 .scan-prog-track { flex: 1; height: 1px; background: rgba(0,253,207,0.07); }
-.scan-prog-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent3), var(--accent)); box-shadow: 0 0 6px rgba(0,253,207,0.7); transition: width 3s linear; }
+.scan-prog-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent3), var(--accent)); box-shadow: 0 0 6px rgba(0,253,207,0.7); }
 .scan-prog-pct { font-size: 8px; letter-spacing: 0.06em; color: rgba(0,253,207,0.5); flex-shrink: 0; min-width: 28px; text-align: right; }
+
+/* ── MOBILE DENIAL — amber overrides ── */
+#scan-panel.scan-denied .scan-title { color: #FFB020; }
+#scan-panel.scan-denied .scan-line {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,176,32,0.15) 15%, rgba(255,176,32,0.85) 50%, rgba(255,176,32,0.15) 85%, transparent 100%);
+  box-shadow: 0 0 10px rgba(255,176,32,0.7), 0 0 24px rgba(255,176,32,0.25);
+}
+#scan-panel.scan-denied .scan-border {
+  background: linear-gradient(135deg, rgba(255,176,32,0.55) 0%, rgba(255,176,32,0.08) 50%, rgba(255,108,14,0.35) 100%);
+}
+#scan-panel.scan-denied .scan-flash  { background: rgba(255,108,14,0.4); }
+#scan-panel.scan-denied .scan-prog-fill { background: linear-gradient(90deg, #FF6C0E, #FFB020); box-shadow: 0 0 6px rgba(255,176,32,0.7); }
+#scan-panel.scan-denied .scan-prog-pct { color: rgba(255,176,32,0.6); }
+.deny-val { color: #FFB020 !important; }
+
+/* ── DENY PANEL ── */
+.deny-wrap {
+  width: 100%; display: none; opacity: 0; pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+.deny-wrap.dy-visible { opacity: 1; pointer-events: auto; }
+.deny-panel {
+  width: 100%; background: rgba(10,4,2,0.92);
+  border: 1px solid rgba(255,176,32,0.18); border-radius: 3px;
+  padding: 28px 24px; display: flex; flex-direction: column; gap: 14px;
+}
+.deny-eyebrow { font-size: 7px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,176,32,0.45); }
+.deny-code { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #FFB020; }
+.deny-msg { font-size: 12px; letter-spacing: 0.03em; color: rgba(255,176,32,0.55); line-height: 1.8; }
+.deny-footer { margin-top: 4px; display: flex; align-items: center; gap: 8px; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,176,32,0.3); }
+.deny-blink { color: rgba(255,176,32,0.5); animation: ts-blink 0.65s ease infinite; }
 
 .scan-privacy {
   margin-top: 10px;
@@ -444,6 +475,16 @@ body.exiting { animation: sys-exit 0.85s cubic-bezier(0.76,0,0.24,1) forwards; }
       </div>
     </div>
 
+    <!-- 3. DENIAL PANEL (mobile devices) -->
+    <div class="deny-wrap" id="deny-wrap">
+      <div class="deny-panel">
+        <span class="deny-eyebrow">TERMINAL ACCESS DENIED</span>
+        <span class="deny-code">ERR:4091 &nbsp;·&nbsp; DEVICE: MOBILE &nbsp;·&nbsp; CLEARANCE: NONE</span>
+        <p class="deny-msg">Secure terminal access requires a desktop environment. This reference guide is optimised for desktop use — return to this URL on a desktop system to gain full access.</p>
+        <div class="deny-footer"><span class="deny-blink">█</span><span>Awaiting desktop terminal connection</span></div>
+      </div>
+    </div>
+
   </div><!-- /slot -->
 
   <div class="enter-wrap" id="enter-wrap">
@@ -511,6 +552,15 @@ body.exiting { animation: sys-exit 0.85s cubic-bezier(0.76,0,0.24,1) forwards; }
   }
   function playHover()  { tone(2200, 0.018, 0.035, 1800); }
   function playClick()  { tone(90, 0.14, 0.08, 45, 'sawtooth'); setTimeout(function() { tone(1400, 0.025, 0.04); }, 15); }
+  function isMobile() { return window.innerWidth <= 768; }
+
+  function playDenied() {
+    tone(440, 0.12, 0.08, 220, 'sawtooth');
+    setTimeout(function() { tone(330, 0.12, 0.08, 165, 'sawtooth'); }, 200);
+    setTimeout(function() { tone(220, 0.22, 0.09, 110, 'sawtooth'); }, 400);
+    setTimeout(function() { tone(90, 0.55, 0.06, 60, 'square'); }, 620);
+  }
+
   function playScanStart() {
     tone(140, 0.45, 0.03, 220, 'sine');
     setTimeout(function() { tone(480, 0.1, 0.02, 720, 'sine'); }, 350);
@@ -629,8 +679,43 @@ body.exiting { animation: sys-exit 0.85s cubic-bezier(0.76,0,0.24,1) forwards; }
     }, LINE_BASE + 1460 + 920);
   }
 
+  function showDenyPanel() {
+    var denyWrap = document.getElementById('deny-wrap');
+    denyWrap.style.display = 'block';
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { denyWrap.classList.add('dy-visible'); });
+    });
+    setTimeout(function () { tone(110, 1.4, 0.035, 75, 'sine'); }, 200);
+  }
+
+  function rejectScan() {
+    stopScanPings();
+    scanPanel.classList.add('scan-denied');
+    scanFlash.classList.add('firing');
+    playDenied();
+    scanFlash.addEventListener('animationend', function () { scanFlash.classList.remove('firing'); }, { once: true });
+
+    scanTitle.textContent = 'ACCESS RESTRICTED';
+    scanBlink.style.display = 'none';
+    scanLine.style.animationPlayState = 'paused';
+    scanStatusV.textContent  = 'DENIED';
+    scanStatusV.classList.add('deny-val');
+    scanBaseline.textContent = 'INVALID';
+    scanBaseline.classList.add('deny-val');
+
+    setTimeout(function () {
+      scanPanel.style.opacity = '0';
+      setTimeout(function () {
+        scanPanel.style.display = 'none';
+        if (scanStream) scanStream.getTracks().forEach(function (t) { t.stop(); });
+        showDenyPanel();
+      }, 600);
+    }, 1800);
+  }
+
   /* ── SCAN RESOLVE → hand off to terminal ── */
   function resolveScan() {
+    if (isMobile()) { rejectScan(); return; }
     stopScanPings();
     scanFlash.classList.add('firing');
     playScanResolve();

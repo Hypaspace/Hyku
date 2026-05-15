@@ -529,30 +529,44 @@ body.denied .logo-wrap [fill="#00FDCF"] { fill: #FFB020; }
     clockEl.textContent = [h, m, s].map(function (n) { return String(n).padStart(2, '0'); }).join(':');
   }, 1000);
 
-  /* ── RAIN CANVAS ── */
+  /* ── HEX FRAGMENT CANVAS ── */
   var canvas = document.getElementById('rain'), ctx = canvas.getContext('2d');
-  var W, H, drops, rainAF;
-  var _rainRGB = '0,253,207';
-  function initRain() {
+  var W, H, bgAF;
+  var _hexRGB = '0,253,207';
+  var HEX_CHARS = '0123456789ABCDEF';
+  var hexParts = [];
+  function randHex(len) { var s = ''; for (var i = 0; i < len; i++) s += HEX_CHARS[Math.floor(Math.random() * 16)]; return s; }
+  function initHex() {
     var dpr = window.devicePixelRatio || 1;
     W = window.innerWidth; H = window.innerHeight;
     canvas.width = W * dpr; canvas.height = H * dpr;
     canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    var colW = Math.round(W / 48); drops = [];
-    for (var i = 0; i < 48; i++) drops.push({ x: Math.round(i * colW + colW * 0.5), y: Math.random() * H * 1.8 - H * 0.4, speed: 0.5 + Math.random() * 1.2, trail: 30 + Math.floor(Math.random() * 28), alpha: 0.55 + Math.random() * 0.35 });
+    hexParts = [];
+    for (var i = 0; i < 70; i++) {
+      var len = 2 + Math.floor(Math.random() * 5);
+      hexParts.push({ x: Math.random() * W, y: Math.random() * H, str: randHex(len), speed: 0.15 + Math.random() * 0.45, alpha: 0.04 + Math.random() * 0.14, size: 9 + Math.floor(Math.random() * 4), timer: Math.floor(Math.random() * 200) });
+    }
   }
-  function drawRain() {
-    ctx.fillStyle = 'rgba(5,8,8,0.14)'; ctx.fillRect(0, 0, W, H);
-    drops.forEach(function (d) {
-      var headY = Math.round(d.y);
-      if (headY >= 0 && headY <= H) { ctx.fillStyle = 'rgba(' + _rainRGB + ',' + d.alpha.toFixed(3) + ')'; ctx.fillRect(d.x, headY, 1, 1); }
-      for (var j = 1; j < d.trail; j++) { var py = headY - j * 3; if (py < 0 || py > H) continue; var a = d.alpha * Math.pow(1 - j / d.trail, 1.6); ctx.fillStyle = 'rgba(' + _rainRGB + ',' + a.toFixed(3) + ')'; ctx.fillRect(d.x, py, 1, 1); }
-      d.y += d.speed; if (d.y - d.trail * 3 > H) d.y = -(d.trail * 3);
+  function drawHex() {
+    ctx.fillStyle = 'rgba(5,8,8,0.06)'; ctx.fillRect(0, 0, W, H);
+    hexParts.forEach(function (p) {
+      p.timer++;
+      if (p.timer % 80 === 0) { p.str = randHex(2 + Math.floor(Math.random() * 5)); }
+      ctx.font = p.size + 'px "JetBrains Mono",monospace';
+      ctx.fillStyle = 'rgba(' + _hexRGB + ',' + p.alpha.toFixed(3) + ')';
+      ctx.fillText(p.str, p.x, p.y);
+      p.y += p.speed;
+      if (p.y > H + 20) {
+        p.y = -20; p.x = Math.random() * W;
+        p.alpha = 0.04 + Math.random() * 0.14;
+        p.speed = 0.15 + Math.random() * 0.45;
+        p.str = randHex(2 + Math.floor(Math.random() * 5));
+      }
     });
-    rainAF = requestAnimationFrame(drawRain);
+    bgAF = requestAnimationFrame(drawHex);
   }
-  initRain(); window.addEventListener('resize', initRain); drawRain();
+  initHex(); window.addEventListener('resize', initHex); drawHex();
 
   document.querySelectorAll('.logo-wrap, .sublabel').forEach(function (el) {
     el.addEventListener('animationend', function () { el.style.clipPath = 'none'; }, { once: true });
@@ -710,7 +724,7 @@ body.denied .logo-wrap [fill="#00FDCF"] { fill: #FFB020; }
 
   function rejectScan() {
     stopScanPings();
-    _rainRGB = '255,176,32';
+    _hexRGB = '255,176,32';
     document.body.classList.add('denied');
     scanPanel.classList.add('scan-denied');
     scanFlash.classList.add('firing');
@@ -841,7 +855,7 @@ body.denied .logo-wrap [fill="#00FDCF"] { fill: #FFB020; }
     playClick(); enterBtn.disabled = true; enterBtn.textContent = 'ACCESSING...';
     triggerGlitch();
     setTimeout(function () {
-      cancelAnimationFrame(rainAF); clearInterval(clockTimer);
+      cancelAnimationFrame(bgAF); clearInterval(clockTimer);
       document.body.classList.add('exiting');
       document.body.addEventListener('animationend', function () { window.location.href = 'main.html'; }, { once: true });
       setTimeout(function () { window.location.href = 'main.html'; }, 1200);

@@ -1678,6 +1678,62 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   .cxn-detail.open { max-height: 600px; }
 }
 
+/* ── GLOSSARY TERMINAL ── */
+.gl-terminal { font-family: 'JetBrains Mono', monospace; border: 1px solid rgba(0,253,207,0.12); border-radius: 4px; overflow: hidden; background: var(--surface); }
+.gl-term-hdr { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; background: rgba(0,253,207,0.05); border-bottom: 1px solid rgba(0,253,207,0.1); font-size: 10px; letter-spacing: 0.1em; color: rgba(0,253,207,0.5); flex-wrap: wrap; gap: 6px; }
+.gl-term-hdr-title { color: rgba(0,253,207,0.7); }
+.gl-term-hdr-status { display: flex; align-items: center; gap: 8px; }
+.gl-term-hdr-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(0,253,207,0.65); box-shadow: 0 0 6px rgba(0,253,207,0.4); animation: gl-pulse 2s ease-in-out infinite; flex-shrink: 0; }
+@keyframes gl-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+.gl-terminal-search-info { display: none; padding: 6px 16px; font-size: 10px; color: rgba(0,253,207,0.4); letter-spacing: 0.08em; border-bottom: 1px solid rgba(0,253,207,0.06); background: rgba(0,253,207,0.03); }
+.gl-terminal-search-info.gl-search-active { display: flex; align-items: center; gap: 8px; }
+.gl-search-count { color: rgba(0,253,207,0.65); }
+.gl-term-body { display: flex; height: 280px; }
+.gl-sector-col { width: 148px; flex-shrink: 0; border-right: 1px solid rgba(0,253,207,0.08); overflow-y: auto; padding: 8px 0; }
+.gl-sector-col::-webkit-scrollbar { width: 3px; }
+.gl-sector-col::-webkit-scrollbar-thumb { background: rgba(0,253,207,0.15); border-radius: 2px; }
+.gl-sector-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.04em; color: rgba(0,253,207,0.45); background: none; border: none; cursor: pointer; transition: color 0.12s, background 0.12s; text-align: left; border-right: 2px solid transparent; }
+.gl-sector-btn:hover { color: rgba(0,253,207,0.8); background: rgba(0,253,207,0.04); }
+.gl-sector-btn.gl-active { color: var(--accent); background: rgba(0,253,207,0.06); border-right-color: var(--accent); }
+.gl-sector-count { font-size: 9px; opacity: 0.5; }
+.gl-records-col { flex: 1; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+.gl-records-hdr { padding: 8px 16px 6px; border-bottom: 1px solid rgba(0,253,207,0.06); font-size: 9px; letter-spacing: 0.1em; color: rgba(0,253,207,0.35); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.gl-records-hdr-name { color: rgba(0,253,207,0.6); font-size: 10px; }
+.gl-chip-grid { flex: 1; padding: 10px 12px; overflow-y: auto; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 6px; }
+.gl-chip-grid::-webkit-scrollbar { width: 3px; }
+.gl-chip-grid::-webkit-scrollbar-thumb { background: rgba(0,253,207,0.15); border-radius: 2px; }
+.gl-chip { padding: 5px 10px; font-size: 11px; background: rgba(0,253,207,0.04); border: 1px solid rgba(0,253,207,0.12); border-radius: 2px; color: rgba(0,253,207,0.55); cursor: pointer; transition: background 0.1s, border-color 0.1s, color 0.1s; letter-spacing: 0.02em; font-family: 'JetBrains Mono', monospace; }
+.gl-chip:hover { background: rgba(0,253,207,0.09); border-color: rgba(0,253,207,0.32); color: var(--accent); }
+.gl-chip.gl-chip-active { background: rgba(0,253,207,0.11); border-color: rgba(0,253,207,0.48); color: var(--accent); }
+.gl-chip.gl-chip-hidden { display: none; }
+.gl-def-panel { border-top: 1px solid rgba(0,253,207,0.1); padding: 14px 16px; min-height: 90px; background: rgba(0,0,0,0.15); position: relative; }
+.gl-def-panel::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0; transition: opacity 0.2s; }
+.gl-def-panel.gl-def-active::before { opacity: 0.6; }
+.gl-def-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: rgba(0,253,207,0.35); margin-bottom: 5px; }
+.gl-def-term-name { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); margin-bottom: 6px; font-weight: 500; }
+.gl-def-text { font-size: 12.5px; color: var(--text-muted); line-height: 1.65; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+.gl-def-idle { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(0,253,207,0.22); }
+:root.light .gl-terminal { border-color: rgba(0,120,96,0.15); }
+:root.light .gl-term-hdr { background: rgba(0,120,96,0.05); border-bottom-color: rgba(0,120,96,0.1); color: rgba(0,120,96,0.45); }
+:root.light .gl-term-hdr-title { color: rgba(0,120,96,0.65); }
+:root.light .gl-term-hdr-dot { background: rgba(0,120,96,0.6); box-shadow: none; }
+:root.light .gl-terminal-search-info { background: rgba(0,120,96,0.04); border-bottom-color: rgba(0,120,96,0.08); color: rgba(0,120,96,0.4); }
+:root.light .gl-search-count { color: rgba(0,120,96,0.7); }
+:root.light .gl-sector-col { border-right-color: rgba(0,120,96,0.1); }
+:root.light .gl-sector-btn { color: rgba(0,120,96,0.45); }
+:root.light .gl-sector-btn:hover { color: rgba(0,120,96,0.8); background: rgba(0,120,96,0.04); }
+:root.light .gl-sector-btn.gl-active { color: rgba(0,120,96,0.9); background: rgba(0,120,96,0.06); border-right-color: rgba(0,120,96,0.6); }
+:root.light .gl-records-hdr { border-bottom-color: rgba(0,120,96,0.07); color: rgba(0,120,96,0.35); }
+:root.light .gl-records-hdr-name { color: rgba(0,120,96,0.6); }
+:root.light .gl-chip { background: rgba(0,120,96,0.04); border-color: rgba(0,120,96,0.12); color: rgba(0,120,96,0.55); }
+:root.light .gl-chip:hover { background: rgba(0,120,96,0.08); border-color: rgba(0,120,96,0.32); color: rgba(0,120,96,0.9); }
+:root.light .gl-chip.gl-chip-active { background: rgba(0,120,96,0.1); border-color: rgba(0,120,96,0.48); color: rgba(0,120,96,0.9); }
+:root.light .gl-def-panel { background: rgba(0,120,96,0.03); }
+:root.light .gl-def-panel::before { background: rgba(0,120,96,0.6); }
+:root.light .gl-def-eyebrow { color: rgba(0,120,96,0.35); }
+:root.light .gl-def-term-name { color: rgba(0,120,96,0.85); }
+:root.light .gl-def-idle { color: rgba(0,120,96,0.22); }
+
 .tip-warn .tip-icon { color: var(--accent2); }
 .tip-go   .tip-icon { color: var(--accent3); }
 .tip-label { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.3; }
@@ -1810,6 +1866,10 @@ footer {
   .gl-row { grid-template-columns: 1fr; gap: 0; }
   .gl-term { border-right: none; border-bottom: 1px solid var(--border); padding: 10px 14px 5px; }
   .gl-def { padding: 5px 14px 10px; }
+  /* Glossary terminal — compact on mobile */
+  .gl-sector-col { width: 104px; }
+  .gl-sector-btn { padding: 7px 10px; font-size: 10px; }
+  .gl-chip { font-size: 10px; padding: 4px 8px; }
 
   /* Category headers */
   .category-header { flex-wrap: wrap; gap: 8px; }
@@ -5154,6 +5214,8 @@ decision frameworks all valid.</code></div>
     if (visible === 0 && !wasEmpty && typeof window._brNoMatch === 'function') window._brNoMatch();
     if (resultsCount) resultsCount.textContent = visible + ' results';
     search.classList.toggle('no-results', visible === 0 && !!searchQuery);
+    window._glSearchActive = !!searchQuery;
+    if (typeof window._glUpdateTerminal === 'function') window._glUpdateTerminal();
   }
 
   // ── TYPEAHEAD SUGGESTIONS ──
@@ -6850,6 +6912,201 @@ decision frameworks all valid.</code></div>
       window._brCollapseAll = false;
     });
   });
+})();
+
+/* ── GLOSSARY DATABASE TERMINAL ── */
+(function () {
+  var SECTORS = [
+    { id: 'glossary-strategy',   label: 'Strategy'   },
+    { id: 'glossary-components', label: 'Components' },
+    { id: 'glossary-states',     label: 'States'     },
+    { id: 'glossary-visual',     label: 'Visual'     },
+    { id: 'glossary-motion',     label: 'Motion'     },
+    { id: 'glossary-systems',    label: 'Systems'    },
+    { id: 'glossary-research',   label: 'Research'   },
+    { id: 'glossary-a11y',       label: 'A11y'       },
+    { id: 'glossary-business',   label: 'Business'   }
+  ];
+
+  // Read term/def data from gl-row elements before hiding sections
+  var db = {};
+  SECTORS.forEach(function (s) {
+    var section = document.getElementById(s.id);
+    if (!section) { db[s.id] = []; return; }
+    db[s.id] = Array.from(section.querySelectorAll('.gl-row')).map(function (row) {
+      return {
+        term: (row.querySelector('.gl-term') || { textContent: '' }).textContent.trim(),
+        def:  (row.querySelector('.gl-def')  || { textContent: '' }).textContent.trim()
+      };
+    });
+  });
+
+  var glossaryEl = document.getElementById('glossary');
+  if (!glossaryEl) return;
+
+  // Hide collapse-all button and all category-section visuals
+  var colBtn = document.getElementById('gl-collapse-all');
+  if (colBtn) colBtn.style.display = 'none';
+  glossaryEl.querySelectorAll('.category-section').forEach(function (s) { s.style.display = 'none'; });
+
+  // Build sector button markup
+  var totalTerms = SECTORS.reduce(function (sum, s) { return sum + (db[s.id] ? db[s.id].length : 0); }, 0);
+  var sectorsHtml = SECTORS.map(function (s, i) {
+    return '<button class="gl-sector-btn' + (i === 0 ? ' gl-active' : '') + '" data-sector="' + s.id + '">' +
+      '<span>' + s.label + '</span><span class="gl-sector-count">' + (db[s.id] ? db[s.id].length : 0) + '</span></button>';
+  }).join('');
+
+  // Inject terminal widget after extra-header
+  var terminal = document.createElement('div');
+  terminal.className = 'gl-terminal';
+  terminal.id = 'gl-terminal';
+  terminal.innerHTML =
+    '<div class="gl-term-hdr">' +
+      '<span class="gl-term-hdr-title">CLASSIFICATION DATABASE &nbsp;&middot;&nbsp; SECTOR 7-BR</span>' +
+      '<span class="gl-term-hdr-status"><span class="gl-term-hdr-dot"></span>' +
+        '<span id="gl-term-hdr-count">' + totalTerms + ' RECORDS INDEXED</span></span>' +
+    '</div>' +
+    '<div class="gl-terminal-search-info" id="gl-search-info">' +
+      'SEARCH FILTER ACTIVE &nbsp;&middot;&nbsp; SHOWING: <span class="gl-search-count" id="gl-search-count">0 MATCHES</span>' +
+    '</div>' +
+    '<div class="gl-term-body">' +
+      '<div class="gl-sector-col" id="gl-sector-col">' + sectorsHtml + '</div>' +
+      '<div class="gl-records-col">' +
+        '<div class="gl-records-hdr">' +
+          '<span class="gl-records-hdr-name" id="gl-records-hdr-name">STRATEGY</span>' +
+          '<span id="gl-records-hdr-count"></span>' +
+        '</div>' +
+        '<div class="gl-chip-grid" id="gl-chip-grid"></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="gl-def-panel" id="gl-def-panel">' +
+      '<div class="gl-def-idle" id="gl-def-idle">SELECT A TERM TO VIEW DEFINITION &nbsp;&middot;&nbsp; AWAITING INPUT_</div>' +
+      '<div id="gl-def-content" style="display:none">' +
+        '<div class="gl-def-eyebrow" id="gl-def-eyebrow"></div>' +
+        '<div class="gl-def-term-name" id="gl-def-term-name"></div>' +
+        '<div class="gl-def-text" id="gl-def-text"></div>' +
+      '</div>' +
+    '</div>';
+
+  var extraHeader = glossaryEl.querySelector('.extra-header');
+  if (extraHeader && extraHeader.nextSibling) {
+    glossaryEl.insertBefore(terminal, extraHeader.nextSibling);
+  } else {
+    glossaryEl.appendChild(terminal);
+  }
+
+  // State
+  var activeSector = SECTORS[0].id;
+  var activeChipTerm = null;
+  var searchActive = false;
+
+  function showDef(term, def, sectorLabel) {
+    var idle = document.getElementById('gl-def-idle');
+    var content = document.getElementById('gl-def-content');
+    var eyebrow = document.getElementById('gl-def-eyebrow');
+    var termName = document.getElementById('gl-def-term-name');
+    var defText = document.getElementById('gl-def-text');
+    var panel = document.getElementById('gl-def-panel');
+    if (idle) idle.style.display = 'none';
+    if (content) content.style.display = 'block';
+    if (eyebrow) eyebrow.textContent = 'SECTOR: ' + sectorLabel.toUpperCase() + '  ·  CLASS: DEFINITION';
+    if (termName) termName.textContent = term;
+    if (defText) defText.textContent = def;
+    if (panel) panel.classList.add('gl-def-active');
+  }
+
+  function renderChips(sectorId) {
+    var grid = document.getElementById('gl-chip-grid');
+    var hdrName = document.getElementById('gl-records-hdr-name');
+    var hdrCount = document.getElementById('gl-records-hdr-count');
+    if (!grid) return;
+    activeSector = sectorId;
+
+    var sector = SECTORS.find(function (s) { return s.id === sectorId; });
+    var sectorLabel = sector ? sector.label : sectorId.replace('glossary-', '');
+    if (hdrName) hdrName.textContent = sectorLabel.toUpperCase();
+
+    var section = document.getElementById(sectorId);
+    var rows = section ? Array.from(section.querySelectorAll('.gl-row')) : [];
+    var terms = db[sectorId] || [];
+
+    grid.innerHTML = '';
+    var visibleCount = 0;
+    terms.forEach(function (t, i) {
+      var chip = document.createElement('button');
+      chip.className = 'gl-chip';
+      chip.textContent = t.term;
+
+      // Match visibility against hidden state of corresponding gl-row
+      var row = rows[i] || null;
+      if (row && row.classList.contains('hidden')) {
+        chip.classList.add('gl-chip-hidden');
+      } else {
+        visibleCount++;
+      }
+      if (t.term === activeChipTerm) chip.classList.add('gl-chip-active');
+
+      chip.addEventListener('click', function () {
+        activeChipTerm = t.term;
+        grid.querySelectorAll('.gl-chip').forEach(function (c) { c.classList.remove('gl-chip-active'); });
+        chip.classList.add('gl-chip-active');
+        showDef(t.term, t.def, sectorLabel);
+        if (typeof window._brPlayAccordion === 'function') window._brPlayAccordion(true);
+      });
+      grid.appendChild(chip);
+    });
+
+    if (hdrCount) {
+      hdrCount.textContent = searchActive
+        ? visibleCount + ' MATCH' + (visibleCount !== 1 ? 'ES' : '') + ' OF ' + terms.length + ' RECORDS'
+        : terms.length + ' RECORDS';
+    }
+  }
+
+  // Sector button clicks
+  var sectorCol = document.getElementById('gl-sector-col');
+  if (sectorCol) {
+    sectorCol.addEventListener('click', function (e) {
+      var btn = e.target.closest('.gl-sector-btn');
+      if (!btn) return;
+      sectorCol.querySelectorAll('.gl-sector-btn').forEach(function (b) { b.classList.remove('gl-active'); });
+      btn.classList.add('gl-active');
+      activeChipTerm = null;
+      var idle = document.getElementById('gl-def-idle');
+      var content = document.getElementById('gl-def-content');
+      var panel = document.getElementById('gl-def-panel');
+      if (idle) idle.style.display = '';
+      if (content) content.style.display = 'none';
+      if (panel) panel.classList.remove('gl-def-active');
+      renderChips(btn.dataset.sector);
+      if (typeof window._brFilterSelect === 'function') window._brFilterSelect();
+    });
+  }
+
+  // Initial render
+  renderChips(SECTORS[0].id);
+
+  // Search hook — called by update() after each filter/search cycle
+  window._glUpdateTerminal = function () {
+    var infoBar = document.getElementById('gl-search-info');
+    var searchCountEl = document.getElementById('gl-search-count');
+    var headerCount = document.getElementById('gl-term-hdr-count');
+    searchActive = !!window._glSearchActive;
+    if (infoBar) infoBar.classList.toggle('gl-search-active', searchActive);
+    if (searchActive) {
+      var totalMatches = 0;
+      SECTORS.forEach(function (s) {
+        var section = document.getElementById(s.id);
+        if (!section) return;
+        section.querySelectorAll('.gl-row:not(.hidden)').forEach(function () { totalMatches++; });
+      });
+      if (searchCountEl) searchCountEl.textContent = totalMatches + ' MATCH' + (totalMatches !== 1 ? 'ES' : '');
+      if (headerCount) headerCount.textContent = totalMatches + ' MATCHES FOUND';
+    } else {
+      if (headerCount) headerCount.textContent = totalTerms + ' RECORDS INDEXED';
+    }
+    renderChips(activeSector);
+  };
 })();
 
 /* ── GLOSSARY ACCORDION — left-to-right scan + lock-on as rows enter view ── */

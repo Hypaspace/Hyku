@@ -2781,6 +2781,57 @@ a, button, label, select,
 .gs-sources.stepper-mode .gs-source-skills { margin-top: 0; }
 .gs-sources.stepper-mode .gs-source-link { margin-top: 4px; align-self: flex-start; }
 
+/* ── FOCUS STYLES ── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto !important; }
+}
+
+/* ── PAGE ENTRY ANIMATION ── */
+@keyframes page-enter { from { opacity: 0; } to { opacity: 1; } }
+body { animation: page-enter 0.5s ease both; }
+
+/* ── VERIFIED PILL ── */
+.verified-pill {
+  display: none;
+  align-items: center; gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent); opacity: 0.75;
+  border: 1px solid currentColor; border-radius: 2px;
+  padding: 3px 8px;
+}
+.verified-pill.show { display: flex; }
+.verified-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--accent); opacity: 0.9;
+  animation: vdot-blink 1.8s ease infinite;
+}
+@keyframes vdot-blink { 0%,100% { opacity: 0.9; } 50% { opacity: 0.25; } }
+
+/* ── FAV BUTTON ── */
+.fav-btn {
+  position: absolute; top: 10px; right: 10px;
+  background: none; border: none; padding: 4px;
+  font-size: 14px; line-height: 1; cursor: pointer;
+  color: var(--text-dim); opacity: 0.35;
+  transition: opacity 0.15s, color 0.15s, transform 0.15s;
+}
+.fav-btn:hover { opacity: 0.75; transform: scale(1.15); }
+.fav-btn.active { color: #FFB020; opacity: 1; }
+.fav-btn.active:hover { transform: scale(1.1); }
+
 /* ── MOBILE GATE ── */
 .mobile-gate {
   display: none;
@@ -2835,6 +2886,7 @@ a, button, label, select,
 
 <div class="controls">
   <div class="controls-top-row">
+  <div class="verified-pill" id="verified-pill"><span class="verified-dot"></span>OPERATOR: VERIFIED</div>
   <div class="controls-logo">
     <a href="#" style="display:flex;align-items:center;text-decoration:none">
       <svg id="Layer_1" class="hyku-logo" xmlns="http://www.w3.org/2000/svg" height="22" width="auto" viewBox="0 0 497.8 100">
@@ -2861,6 +2913,7 @@ a, button, label, select,
     <button class="filter-btn" data-filter="ux" aria-label="Filter by UX">UX</button>
     <button class="filter-btn" data-filter="brand" aria-label="Filter by Brand">Brand</button>
     <button class="filter-btn" data-filter="platform" aria-label="Filter by Platform">Platform</button>
+    <button class="filter-btn" data-filter="favourites" aria-label="Filter by Saved">★ Saved</button>
   </div>
   <div class="search-wrap">
     <label for="search" class="sr-only">Search skills</label>
@@ -4622,6 +4675,18 @@ decision frameworks all valid.</code></div>
   let activeFilter = 'all';
   let searchQuery = '';
 
+  // Favourites
+  let favs = [];
+  try { favs = JSON.parse(localStorage.getItem('hyku-favs') || '[]'); } catch(e) {}
+  function saveFavs() { try { localStorage.setItem('hyku-favs', JSON.stringify(favs)); } catch(e) {} }
+  function toggleFav(cmd) {
+    const i = favs.indexOf(cmd);
+    if (i === -1) favs.push(cmd); else favs.splice(i, 1);
+    saveFavs();
+  }
+
+  let lastSearchKey = 0;
+
   function update() {
     let visible = 0;
 
@@ -4637,7 +4702,7 @@ decision frameworks all valid.</code></div>
         const cardCat = (card.dataset.category || '');
 
         const isGlos = cardCat && cardCat.startsWith('glossary-');
-        const matchesFilter = activeFilter === 'all' || cardCat === activeFilter || (activeFilter === 'glossary' && isGlos);
+        const matchesFilter = activeFilter === 'all' || cardCat === activeFilter || (activeFilter === 'glossary' && isGlos) || (activeFilter === 'favourites' && favs.includes(card.dataset.cmd));
         const matchesSearch = !searchQuery ||
           cmd.includes(searchQuery) ||
           trigger.includes(searchQuery) ||
@@ -4750,9 +4815,20 @@ decision frameworks all valid.</code></div>
     searchQuery = e.target.value.toLowerCase().trim();
     update();
     renderSuggestions(e.target.value.trim());
+    const now = Date.now();
+    if (now - lastSearchKey > 80 && typeof window._brSearchKey === 'function') { window._brSearchKey(); lastSearchKey = now; }
   });
 
   search.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      search.value = '';
+      searchQuery = '';
+      closeSuggestions();
+      update();
+      search.blur();
+      return;
+    }
     const items = suggestions.querySelectorAll('li');
     if (!items.length) return;
     if (e.key === 'ArrowDown') {
@@ -4781,6 +4857,7 @@ decision frameworks all valid.</code></div>
       filterBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       activeFilter = btn.dataset.filter;
+      if (typeof window._brFilterSelect === 'function') window._brFilterSelect();
       update();
       // Scroll explicitly after filter change — not inside update() so nav links still work
       if (activeFilter === 'all') {
@@ -4794,6 +4871,25 @@ decision frameworks all valid.</code></div>
       }
     });
   });
+
+  // Global keyboard shortcuts: / or Cmd+K → focus search; Escape (global) → clear search
+  document.addEventListener('keydown', e => {
+    const tag = document.activeElement ? document.activeElement.tagName : '';
+    const inInput = tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement.isContentEditable;
+    if ((e.key === '/' && !inInput) || (e.key === 'k' && (e.metaKey || e.ctrlKey))) {
+      e.preventDefault();
+      search.focus();
+      search.select();
+    }
+  });
+
+  // Verified pill — show if boot screen confirmed via sessionStorage
+  (function() {
+    const pill = document.getElementById('verified-pill');
+    if (pill && sessionStorage.getItem('hyku-verified') === '1') {
+      pill.classList.add('show');
+    }
+  })();
 
   // Nav links scroll directly — never re-runs update() so glossary stays intact
   navLinks.forEach(link => {
@@ -4828,6 +4924,21 @@ decision frameworks all valid.</code></div>
   document.querySelectorAll('.skill-card:not(.glossary-card)').forEach(card => {
     const cmd = card.dataset.cmd;
     if (!cmd) return;
+
+    // Fav star button
+    const favBtn = document.createElement('button');
+    favBtn.className = 'fav-btn' + (favs.includes(cmd) ? ' active' : '');
+    favBtn.textContent = '★';
+    favBtn.setAttribute('aria-label', `Save ${cmd}`);
+    favBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleFav(cmd);
+      favBtn.classList.toggle('active', favs.includes(cmd));
+      // Refresh view if currently on favourites filter
+      if (activeFilter === 'favourites') update();
+    });
+    card.appendChild(favBtn);
+
     const btn = document.createElement('button');
     btn.className = 'copy-btn';
     btn.textContent = 'Copy';
@@ -5490,6 +5601,15 @@ decision frameworks all valid.</code></div>
       if (!soundEnabled) return;
       tone(1800, 0.022, 0.025, 1400);
     }
+
+    // Filter select: crisp nav select sound
+    function playFilterSelect() {
+      tone(1200, 0.03, 0.04, 1600);
+      setTimeout(function(){ tone(1600, 0.04, 0.035, 1800); }, 55);
+    }
+
+    window._brFilterSelect = function() { if (soundEnabled) playFilterSelect(); };
+    window._brSearchKey    = function() { if (soundEnabled) tone(1800, 0.01, 0.012, 1500, 'sine'); };
 
     // ── ATTACH LISTENERS ──
 

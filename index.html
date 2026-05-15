@@ -316,16 +316,6 @@ body.exiting { animation: sys-exit 0.85s cubic-bezier(0.76,0,0.24,1) forwards; }
 .deny-msg { font-size: 12px; letter-spacing: 0.03em; color: rgba(255,176,32,0.55); line-height: 1.8; }
 .deny-footer { margin-top: 4px; display: flex; align-items: center; gap: 8px; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,176,32,0.3); }
 .deny-blink { color: rgba(255,176,32,0.5); animation: ts-blink 0.65s ease infinite; }
-.deny-url-row { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
-.deny-url-val { flex: 1; font-size: 10px; letter-spacing: 0.06em; color: rgba(255,176,32,0.5); word-break: break-all; }
-.deny-copy-btn {
-  flex-shrink: 0; background: none; border: 1px solid rgba(255,176,32,0.3); border-radius: 2px;
-  color: rgba(255,176,32,0.6); font-family: 'JetBrains Mono', monospace;
-  font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
-  padding: 4px 10px; cursor: pointer; transition: border-color 0.15s, color 0.15s;
-}
-.deny-copy-btn:hover { border-color: rgba(255,176,32,0.65); color: rgba(255,176,32,0.9); }
-.deny-copy-btn.copied { border-color: rgba(0,253,207,0.4); color: rgba(0,253,207,0.7); }
 
 /* ── WHOLE-SCREEN DENIAL STATE ── */
 body.denied { background: #060503; }
@@ -510,10 +500,6 @@ body.denied .logo-wrap [fill="#00FDCF"] { fill: #FFB020; }
         <span class="deny-eyebrow">TERMINAL ACCESS DENIED</span>
         <span class="deny-code">ERR:4091 &nbsp;·&nbsp; DEVICE: MOBILE &nbsp;·&nbsp; CLEARANCE: NONE</span>
         <p class="deny-msg">Secure terminal access requires a desktop environment. This reference guide is optimised for desktop use — return to this URL on a desktop system to gain full access.</p>
-        <div class="deny-url-row">
-          <span class="deny-url-val" id="deny-url-val"></span>
-          <button class="deny-copy-btn" id="deny-copy-btn">Copy URL</button>
-        </div>
         <div class="deny-footer"><span class="deny-blink">█</span><span>Awaiting desktop terminal connection</span></div>
       </div>
     </div>
@@ -734,22 +720,6 @@ body.denied .logo-wrap [fill="#00FDCF"] { fill: #FFB020; }
       requestAnimationFrame(function () { denyWrap.classList.add('dy-visible'); });
     });
     setTimeout(function () { tone(110, 1.4, 0.035, 75, 'sine'); }, 200);
-
-    var urlVal = document.getElementById('deny-url-val');
-    var copyBtn = document.getElementById('deny-copy-btn');
-    var pageUrl = window.location.href;
-    if (urlVal) urlVal.textContent = pageUrl;
-    if (copyBtn) {
-      copyBtn.addEventListener('click', function () {
-        navigator.clipboard.writeText(pageUrl).then(function () {
-          copyBtn.textContent = 'Copied!';
-          copyBtn.classList.add('copied');
-          setTimeout(function () { copyBtn.textContent = 'Copy URL'; copyBtn.classList.remove('copied'); }, 2000);
-        }).catch(function () {
-          copyBtn.textContent = 'Manual copy';
-        });
-      });
-    }
   }
 
   function rejectScan() {

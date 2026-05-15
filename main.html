@@ -166,6 +166,7 @@ h1 span { color: var(--accent); }
 .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 #search:hover { border-color: var(--text-muted); }
 #search:focus { border-color: var(--accent); }
+#search.no-results { border-color: rgba(243,39,53,0.6); box-shadow: 0 0 0 2px rgba(243,39,53,0.1); }
 .filter-group {
   display: flex;
   gap: 6px;
@@ -2886,7 +2887,6 @@ body { animation: page-enter 0.5s ease both; }
 
 <div class="controls">
   <div class="controls-top-row">
-  <div class="verified-pill" id="verified-pill"><span class="verified-dot"></span>OPERATOR: VERIFIED</div>
   <div class="controls-logo">
     <a href="#" style="display:flex;align-items:center;text-decoration:none">
       <svg id="Layer_1" class="hyku-logo" xmlns="http://www.w3.org/2000/svg" height="22" width="auto" viewBox="0 0 497.8 100">
@@ -4741,6 +4741,7 @@ decision frameworks all valid.</code></div>
     if (emptyState) emptyState.classList.toggle('visible', visible === 0);
     if (visible === 0 && !wasEmpty && typeof window._brNoMatch === 'function') window._brNoMatch();
     if (resultsCount) resultsCount.textContent = visible + ' results';
+    search.classList.toggle('no-results', visible === 0 && !!searchQuery);
   }
 
   // ── TYPEAHEAD SUGGESTIONS ──
@@ -5544,16 +5545,16 @@ decision frameworks all valid.</code></div>
     // Filter button hover: slightly lower terminal blip
     function playFilterHover() { tone(1600, 0.022, 0.035, 1200); }
 
-    // Nav filter click: mechanical key thud — low sawtooth thump + high tick
+    // Nav filter click: soft sine thud + gentle tick
     function playNavClick() {
-      tone(90, 0.14, 0.08, 45, 'sawtooth');
-      setTimeout(function(){ tone(1400, 0.025, 0.04); }, 15);
+      tone(120, 0.08, 0.04, 60, 'sine');
+      setTimeout(function(){ tone(1200, 0.02, 0.025); }, 20);
     }
 
-    // Sidebar nav select: MUTHR-style two-step terminal confirm
+    // Sidebar nav select: soft two-step terminal confirm
     function playNavSelect() {
-      tone(880, 0.035, 0.05);
-      setTimeout(function(){ tone(1100, 0.045, 0.04); }, 55);
+      tone(660, 0.03, 0.03);
+      setTimeout(function(){ tone(880, 0.035, 0.025); }, 55);
     }
 
     // Theme toggle: short matched blip pair

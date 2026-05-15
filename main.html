@@ -1551,6 +1551,133 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 :root.light .tl-entry.open .tl-chevron { color: rgba(0,120,96,0.65); }
 :root.light .tips-log-footer { border-top-color: rgba(0,120,96,0.1); color: rgba(0,120,96,0.28); }
 :root.light .tl-cursor { color: rgba(0,120,96,0.38); }
+
+/* ── CONNECTOR SCHEMATIC ── */
+.cxn-schematic {
+  font-family: 'JetBrains Mono', monospace;
+  border: 1px solid rgba(0,253,207,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.cxn-schematic-header {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  padding: 10px 18px;
+  background: rgba(0,253,207,0.04);
+  border-bottom: 1px solid rgba(0,253,207,0.08);
+  font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(0,253,207,0.45);
+}
+.cxn-schematic-count { color: rgba(0,253,207,0.25); }
+.cxn-map { display: flex; align-items: stretch; min-height: 260px; }
+.cxn-core {
+  width: 128px; flex-shrink: 0;
+  padding: 20px 16px;
+  border-right: 1px solid rgba(0,253,207,0.08);
+  display: flex; flex-direction: column; gap: 5px;
+  background: rgba(0,253,207,0.02);
+  position: relative;
+  opacity: 0; transform: translateX(-8px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.cxn-schematic.cxn-live .cxn-core { opacity: 1; transform: none; }
+.cxn-core::after {
+  content: ''; position: absolute; top: 0; right: 0; width: 1px; height: 48px;
+  background: linear-gradient(to bottom, rgba(0,253,207,0.5), transparent);
+}
+.cxn-core-eyebrow { font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(0,253,207,0.3); }
+.cxn-core-name { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: 0.04em; margin-top: 3px; }
+.cxn-core-sub { font-size: 7px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(0,253,207,0.32); }
+.cxn-core-lines { margin-top: auto; padding-top: 16px; display: flex; flex-direction: column; gap: 5px; }
+.cxn-core-line { height: 1px; background: rgba(0,253,207,0.1); border-radius: 1px; }
+.cxn-core-line:nth-child(1) { width: 72%; }
+.cxn-core-line:nth-child(2) { width: 50%; }
+.cxn-core-line:nth-child(3) { width: 32%; }
+.cxn-core-status { display: flex; align-items: center; gap: 5px; margin-top: 10px; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(0,253,207,0.48); }
+.cxn-core-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(0,253,207,0.65); animation: vdot-blink 1.8s ease infinite; flex-shrink: 0; }
+.cxn-bridge { width: 36px; flex-shrink: 0; display: flex; align-items: center; }
+.cxn-bridge-fill { height: 1px; width: 0%; background: rgba(0,253,207,0.45); transition: width 0.32s ease 0.5s; }
+.cxn-schematic.cxn-live .cxn-bridge-fill { width: 100%; }
+.cxn-spine-col { flex: 1; display: flex; min-width: 0; position: relative; }
+.cxn-spine-line { width: 1px; flex-shrink: 0; align-self: stretch; background: rgba(0,253,207,0.08); position: relative; overflow: hidden; }
+.cxn-spine-fill { position: absolute; left: 0; top: 0; width: 100%; height: 0%; background: rgba(0,253,207,0.5); transition: height 0.65s ease 0.82s; }
+.cxn-schematic.cxn-live .cxn-spine-fill { height: 100%; }
+.cxn-nodes { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.cxn-node {
+  flex: 1; min-height: 52px;
+  display: flex; align-items: center;
+  border-bottom: 1px solid rgba(0,253,207,0.06);
+  cursor: pointer; opacity: 0;
+  transition: opacity 0.25s ease, background 0.15s;
+}
+.cxn-node:last-child { border-bottom: none; }
+.cxn-node.cxn-node-show { opacity: 1; }
+.cxn-node:hover { background: rgba(0,253,207,0.04); }
+.cxn-node.cxn-active { background: rgba(0,253,207,0.06); }
+.cxn-featured.cxn-active { background: rgba(255,108,14,0.05); }
+.cxn-branch { width: 28px; flex-shrink: 0; height: 1px; align-self: center; background: rgba(0,253,207,0.08); position: relative; overflow: hidden; }
+.cxn-branch-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: rgba(0,253,207,0.45); transition: width 0.25s ease 0.06s; }
+.cxn-node.cxn-node-show .cxn-branch-fill { width: 100%; }
+.cxn-featured .cxn-branch-fill { background: rgba(255,108,14,0.5); }
+.cxn-node-inner { flex: 1; padding: 12px 16px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.cxn-node-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.cxn-node-name { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: 0.02em; }
+.cxn-node-badge { font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 6px; border-radius: 2px; flex-shrink: 0; }
+.cxn-badge-hot { background: rgba(255,108,14,0.12); color: rgba(255,108,14,0.85); border: 1px solid rgba(255,108,14,0.22); }
+.cxn-badge-std { background: rgba(0,253,207,0.07); color: rgba(0,253,207,0.65); border: 1px solid rgba(0,253,207,0.15); }
+.cxn-node-proto { font-size: 8px; letter-spacing: 0.1em; color: rgba(0,253,207,0.22); margin-left: auto; flex-shrink: 0; }
+.cxn-node-tagline { font-size: 11px; color: var(--text-dim); }
+.cxn-node-chevron { font-size: 8px; color: rgba(0,253,207,0.25); padding: 0 16px; flex-shrink: 0; transition: transform 0.2s, color 0.15s; }
+.cxn-node.cxn-active .cxn-node-chevron { transform: rotate(90deg); color: rgba(0,253,207,0.65); }
+.cxn-featured.cxn-active .cxn-node-chevron { color: rgba(255,108,14,0.65); }
+.cxn-detail { max-height: 0; overflow: hidden; transition: max-height 0.38s ease; border-top: 1px solid rgba(0,253,207,0.08); position: relative; }
+.cxn-detail.open { max-height: 380px; }
+.cxn-detail-body { padding: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.cxn-detail-head { font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(0,253,207,0.3); margin-bottom: 8px; }
+.cxn-detail-desc { font-size: 12px; color: var(--text-muted); line-height: 1.78; }
+.cxn-detail-req { font-size: 10px; color: var(--text-dim); margin-top: 12px; padding: 6px 10px; background: var(--surface2); border-radius: 3px; }
+.cxn-detail-link { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--accent); text-decoration: none; margin-top: 10px; }
+.cxn-detail-link:hover { text-decoration: underline; }
+.cxn-detail-caps { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.cxn-detail-cap { font-size: 11px; color: var(--text-muted); padding-left: 14px; position: relative; line-height: 1.55; }
+.cxn-detail-cap::before { content: '→'; position: absolute; left: 0; color: rgba(0,253,207,0.5); font-size: 10px; }
+.cxn-detail-install { font-family: 'JetBrains Mono', monospace; font-size: 10px; background: var(--bg); border: 1px solid rgba(0,253,207,0.12); border-radius: 3px; padding: 9px 12px; color: var(--accent3); word-break: break-all; }
+.cxn-detail-close { position: absolute; top: 12px; right: 16px; background: none; border: 1px solid rgba(0,253,207,0.15); border-radius: 2px; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(0,253,207,0.3); padding: 3px 8px; transition: color 0.15s, border-color 0.15s; }
+.cxn-detail-close:hover { color: rgba(0,253,207,0.7); border-color: rgba(0,253,207,0.4); }
+:root.light .cxn-schematic { border-color: rgba(0,120,96,0.18); }
+:root.light .cxn-schematic-header { background: rgba(0,120,96,0.04); border-bottom-color: rgba(0,120,96,0.1); color: rgba(0,120,96,0.5); }
+:root.light .cxn-schematic-count { color: rgba(0,120,96,0.3); }
+:root.light .cxn-core { background: rgba(0,120,96,0.025); border-right-color: rgba(0,120,96,0.1); }
+:root.light .cxn-core-eyebrow, :root.light .cxn-core-sub { color: rgba(0,120,96,0.4); }
+:root.light .cxn-core-line { background: rgba(0,120,96,0.1); }
+:root.light .cxn-core-status { color: rgba(0,120,96,0.5); }
+:root.light .cxn-core-dot { background: rgba(0,120,96,0.65); }
+:root.light .cxn-bridge-fill { background: rgba(0,120,96,0.45); }
+:root.light .cxn-spine-line { background: rgba(0,120,96,0.1); }
+:root.light .cxn-spine-fill { background: rgba(0,120,96,0.5); }
+:root.light .cxn-node { border-bottom-color: rgba(0,120,96,0.08); }
+:root.light .cxn-node:hover { background: rgba(0,120,96,0.04); }
+:root.light .cxn-node.cxn-active { background: rgba(0,120,96,0.06); }
+:root.light .cxn-branch { background: rgba(0,120,96,0.1); }
+:root.light .cxn-branch-fill { background: rgba(0,120,96,0.45); }
+:root.light .cxn-badge-std { background: rgba(0,120,96,0.07); color: rgba(0,120,96,0.7); border-color: rgba(0,120,96,0.18); }
+:root.light .cxn-node-proto { color: rgba(0,120,96,0.28); }
+:root.light .cxn-node-chevron { color: rgba(0,120,96,0.28); }
+:root.light .cxn-node.cxn-active .cxn-node-chevron { color: rgba(0,120,96,0.65); }
+:root.light .cxn-detail { border-top-color: rgba(0,120,96,0.1); }
+:root.light .cxn-detail-head { color: rgba(0,120,96,0.35); }
+:root.light .cxn-detail-cap::before { color: rgba(0,120,96,0.55); }
+:root.light .cxn-detail-install { border-color: rgba(0,120,96,0.15); }
+:root.light .cxn-detail-close { color: rgba(0,120,96,0.35); border-color: rgba(0,120,96,0.2); }
+:root.light .cxn-detail-close:hover { color: rgba(0,120,96,0.7); border-color: rgba(0,120,96,0.45); }
+@media (max-width: 900px) {
+  .cxn-map { flex-direction: column; min-height: auto; }
+  .cxn-core { width: auto; border-right: none; border-bottom: 1px solid rgba(0,253,207,0.08); flex-direction: row; flex-wrap: wrap; align-items: center; gap: 12px; padding: 14px 16px; }
+  .cxn-core-lines { display: none; }
+  .cxn-bridge { display: none; }
+  .cxn-detail-body { grid-template-columns: 1fr; gap: 16px; }
+  .cxn-detail.open { max-height: 600px; }
+}
+
 .tip-warn .tip-icon { color: var(--accent2); }
 .tip-go   .tip-icon { color: var(--accent3); }
 .tip-label { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.3; }
@@ -4590,83 +4717,94 @@ claude
         <div class="extra-desc">MCP connectors extend Claude beyond the terminal linking it directly to design tools, codebases, and storage. These are the ones that meaningfully improve design and build workflows.</div>
       </div>
 
-      <div class="connector-grid">
-
-        <div class="connector-card connector-featured">
-          <div class="connector-top">
-            <div class="connector-name">Figma</div>
-            <div class="connector-badge">Most impactful</div>
-          </div>
-          <div class="connector-desc">The highest-value connector for design/build work. Gives Claude direct access to your Figma files components, variables, layout data, and tokens so generated code reflects the actual design rather than a description of it. Also supports the reverse: send your built UI back to Figma as editable layers.</div>
-          <div class="connector-caps">
-            <div class="connector-cap">Figma → Code: pull design context into builds</div>
-            <div class="connector-cap">Code → Figma: push live UI back as editable frames</div>
-            <div class="connector-cap">Write to canvas: create/edit Figma content from Claude</div>
-            <div class="connector-cap">Code Connect: map components to your actual codebase</div>
-          </div>
-          <div class="connector-req">Requires Figma desktop app + Dev or Full seat · Free during beta</div>
-          <div class="connector-install">
-            <button class="code-toggle-btn" onclick="(function(b){var p=b.nextElementSibling;var open=p.classList.toggle('open');b.classList.toggle('open',open);b.querySelector('.ct-label').textContent=open?'Hide install':'Show install';b.querySelector('.ct-icon').textContent=open?'expand_less':'expand_more';})(this)"><span class="ct-label">Show install</span><span class="material-symbols-outlined ct-icon" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">expand_more</span></button><div class="collapsible-code"><code class="connector-code">claude mcp add --transport http figma https://mcp.figma.com/mcp</code></div>
-          </div>
-          <a class="gs-source-link" href="https://help.figma.com/hc/en-us/articles/32132100833559" target="_blank"><span class="material-symbols-outlined" style="font-size:14px;margin-right:5px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">arrow_outward</span>Figma MCP setup guide</a>
+      <div class="cxn-schematic" id="cxn-schematic">
+        <div class="cxn-schematic-header">
+          <span>NEXUS INTEGRATION MAP</span>
+          <span class="cxn-schematic-count">5 NODES ACTIVE &nbsp;·&nbsp; MCP PROTOCOL</span>
         </div>
-
-        <div class="connector-card">
-          <div class="connector-top">
-            <div class="connector-name">GitHub</div>
-            <div class="connector-badge connector-badge-neutral">Version control</div>
+        <div class="cxn-map">
+          <div class="cxn-core">
+            <div class="cxn-core-eyebrow">SYS:NODE·00</div>
+            <div class="cxn-core-name">CLAUDE</div>
+            <div class="cxn-core-sub">CORE SYSTEM</div>
+            <div class="cxn-core-lines">
+              <div class="cxn-core-line"></div>
+              <div class="cxn-core-line"></div>
+              <div class="cxn-core-line"></div>
+            </div>
+            <div class="cxn-core-status"><span class="cxn-core-dot"></span>ONLINE</div>
           </div>
-          <div class="connector-desc">Connects Claude to your repositories. Useful for reading existing component code before building new UI, pushing generated code directly, reviewing PRs for design quality, and keeping your skills folder in sync.</div>
-          <div class="connector-caps">
-            <div class="connector-cap">Read component code before building to avoid duplication</div>
-            <div class="connector-cap">Push generated UI code and open PRs</div>
-            <div class="connector-cap">Review PRs with design quality context</div>
-          </div>
-          <div class="connector-install">
-            <button class="code-toggle-btn" onclick="(function(b){var p=b.nextElementSibling;var open=p.classList.toggle('open');b.classList.toggle('open',open);b.querySelector('.ct-label').textContent=open?'Hide install':'Show install';b.querySelector('.ct-icon').textContent=open?'expand_less':'expand_more';})(this)"><span class="ct-label">Show install</span><span class="material-symbols-outlined ct-icon" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">expand_more</span></button><div class="collapsible-code"><code class="connector-code">claude mcp add --transport http github https://api.githubcopilot.com/mcp/v1</code></div>
+          <div class="cxn-bridge"><div class="cxn-bridge-fill"></div></div>
+          <div class="cxn-spine-col">
+            <div class="cxn-spine-line"><div class="cxn-spine-fill"></div></div>
+            <div class="cxn-nodes">
+              <div class="cxn-node cxn-featured" data-id="figma">
+                <div class="cxn-branch"><div class="cxn-branch-fill"></div></div>
+                <div class="cxn-node-inner">
+                  <div class="cxn-node-top">
+                    <span class="cxn-node-name">Figma</span>
+                    <span class="cxn-node-badge cxn-badge-hot">Most impactful</span>
+                    <span class="cxn-node-proto">MCP:HTTP</span>
+                  </div>
+                  <div class="cxn-node-tagline">Design ↔ Code — bi-directional bridge</div>
+                </div>
+                <div class="cxn-node-chevron">▶</div>
+              </div>
+              <div class="cxn-node" data-id="github">
+                <div class="cxn-branch"><div class="cxn-branch-fill"></div></div>
+                <div class="cxn-node-inner">
+                  <div class="cxn-node-top">
+                    <span class="cxn-node-name">GitHub</span>
+                    <span class="cxn-node-badge cxn-badge-std">Version control</span>
+                    <span class="cxn-node-proto">MCP:HTTP</span>
+                  </div>
+                  <div class="cxn-node-tagline">Read repos, push code, review PRs</div>
+                </div>
+                <div class="cxn-node-chevron">▶</div>
+              </div>
+              <div class="cxn-node" data-id="drive">
+                <div class="cxn-branch"><div class="cxn-branch-fill"></div></div>
+                <div class="cxn-node-inner">
+                  <div class="cxn-node-top">
+                    <span class="cxn-node-name">Google Drive</span>
+                    <span class="cxn-node-badge cxn-badge-std">Asset storage</span>
+                    <span class="cxn-node-proto">NATIVE</span>
+                  </div>
+                  <div class="cxn-node-tagline">Brand assets, DESIGN.md, style guides</div>
+                </div>
+                <div class="cxn-node-chevron">▶</div>
+              </div>
+              <div class="cxn-node" data-id="canva">
+                <div class="cxn-branch"><div class="cxn-branch-fill"></div></div>
+                <div class="cxn-node-inner">
+                  <div class="cxn-node-top">
+                    <span class="cxn-node-name">Canva</span>
+                    <span class="cxn-node-badge cxn-badge-std">Marketing assets</span>
+                    <span class="cxn-node-proto">NATIVE</span>
+                  </div>
+                  <div class="cxn-node-tagline">Social assets, ads, presentation decks</div>
+                </div>
+                <div class="cxn-node-chevron">▶</div>
+              </div>
+              <div class="cxn-node" data-id="supabase">
+                <div class="cxn-branch"><div class="cxn-branch-fill"></div></div>
+                <div class="cxn-node-inner">
+                  <div class="cxn-node-top">
+                    <span class="cxn-node-name">Supabase</span>
+                    <span class="cxn-node-badge cxn-badge-std">Backend</span>
+                    <span class="cxn-node-proto">NATIVE</span>
+                  </div>
+                  <div class="cxn-node-tagline">Schema-aware UI, queries, types</div>
+                </div>
+                <div class="cxn-node-chevron">▶</div>
+              </div>
+            </div>
           </div>
         </div>
-
-        <div class="connector-card">
-          <div class="connector-top">
-            <div class="connector-name">Google Drive</div>
-            <div class="connector-badge connector-badge-neutral">Asset storage</div>
-          </div>
-          <div class="connector-desc">Store and retrieve brand assets, design tokens, style guides, and reference documents. Useful for keeping Claude aligned with brand context across sessions point it at a Drive folder containing your DESIGN.md or brand guide.</div>
-          <div class="connector-caps">
-            <div class="connector-cap">Store brand guides, DESIGN.md, style references</div>
-            <div class="connector-cap">Retrieve assets into the build context</div>
-            <div class="connector-cap">Save generated skills and guides back to Drive</div>
-          </div>
-          <div class="connector-note">Already connected via claude.ai settings</div>
+        <div class="cxn-detail" id="cxn-detail">
+          <button class="cxn-detail-close" id="cxn-detail-close">✕ CLOSE</button>
+          <div class="cxn-detail-body" id="cxn-detail-body"></div>
         </div>
-
-        <div class="connector-card">
-          <div class="connector-top">
-            <div class="connector-name">Canva</div>
-            <div class="connector-badge connector-badge-neutral">Marketing assets</div>
-          </div>
-          <div class="connector-desc">Pairs well with the brand and marketing skills. Use Claude to plan and describe assets, then execute production-ready versions in Canva. Most useful alongside <code style="font-family:'JetBrains Mono',monospace;font-size:11px;colour:var(--accent)">/ckm-banner-design</code> and <code style="font-family:'JetBrains Mono',monospace;font-size:11px;colour:var(--accent)">/ckm-slides</code>.</div>
-          <div class="connector-caps">
-            <div class="connector-cap">Social assets, ads, presentation decks</div>
-            <div class="connector-cap">Brand-consistent marketing materials</div>
-          </div>
-          <div class="connector-note">Already connected via claude.ai settings</div>
-        </div>
-
-        <div class="connector-card">
-          <div class="connector-top">
-            <div class="connector-name">Supabase</div>
-            <div class="connector-badge connector-badge-neutral">Backend</div>
-          </div>
-          <div class="connector-desc">When building functional UIs that need real data, Supabase lets Claude read your schema and generate UI that maps to actual data structures not placeholder arrays. Useful for dashboards, admin panels, and data-heavy interfaces.</div>
-          <div class="connector-caps">
-            <div class="connector-cap">Read schema before building data-heavy UIs</div>
-            <div class="connector-cap">Generate queries and types aligned with your DB</div>
-          </div>
-          <div class="connector-note">Already connected via claude.ai settings</div>
-        </div>
-
       </div>
     </div>
 
@@ -5297,6 +5435,117 @@ decision frameworks all valid.</code></div>
         }
       }, { threshold: 0.1 });
       tlObs.observe(tipsLog);
+    }
+  })();
+
+  // ── CONNECTOR SCHEMATIC ──
+  (function() {
+    var schematic = document.getElementById('cxn-schematic');
+    if (!schematic) return;
+
+    var CXN = {
+      figma: {
+        name: 'Figma', proto: 'MCP:HTTP',
+        desc: 'The highest-value connector for design/build work. Gives Claude direct access to your Figma files — components, variables, layout data, and tokens — so generated code reflects the actual design rather than a description of it. Also supports the reverse: send your built UI back to Figma as editable layers.',
+        caps: ['Figma → Code: pull design context into builds', 'Code → Figma: push live UI back as editable frames', 'Write to canvas: create/edit Figma content from Claude', 'Code Connect: map components to your actual codebase'],
+        req: 'Requires Figma desktop app + Dev or Full seat · Free during beta',
+        install: 'claude mcp add --transport http figma https://mcp.figma.com/mcp',
+        link: { href: 'https://help.figma.com/hc/en-us/articles/32132100833559', label: 'Figma MCP setup guide' }
+      },
+      github: {
+        name: 'GitHub', proto: 'MCP:HTTP',
+        desc: 'Connects Claude to your repositories. Useful for reading existing component code before building new UI, pushing generated code directly, reviewing PRs for design quality, and keeping your skills folder in sync.',
+        caps: ['Read component code before building to avoid duplication', 'Push generated UI code and open PRs', 'Review PRs with design quality context'],
+        install: 'claude mcp add --transport http github https://api.githubcopilot.com/mcp/v1'
+      },
+      drive: {
+        name: 'Google Drive', proto: 'NATIVE',
+        desc: 'Store and retrieve brand assets, design tokens, style guides, and reference documents. Useful for keeping Claude aligned with brand context across sessions — point it at a Drive folder containing your DESIGN.md or brand guide.',
+        caps: ['Store brand guides, DESIGN.md, style references', 'Retrieve assets into the build context', 'Save generated skills and guides back to Drive'],
+        req: 'Already connected via claude.ai settings'
+      },
+      canva: {
+        name: 'Canva', proto: 'NATIVE',
+        desc: 'Pairs well with brand and marketing skills. Use Claude to plan and describe assets, then execute production-ready versions in Canva. Most useful alongside /ckm-banner-design and /ckm-slides.',
+        caps: ['Social assets, ads, presentation decks', 'Brand-consistent marketing materials'],
+        req: 'Already connected via claude.ai settings'
+      },
+      supabase: {
+        name: 'Supabase', proto: 'NATIVE',
+        desc: 'When building functional UIs that need real data, Supabase lets Claude read your schema and generate UI that maps to actual data structures — not placeholder arrays. Useful for dashboards, admin panels, and data-heavy interfaces.',
+        caps: ['Read schema before building data-heavy UIs', 'Generate queries and types aligned with your DB'],
+        req: 'Already connected via claude.ai settings'
+      }
+    };
+
+    var nodes    = schematic.querySelectorAll('.cxn-node');
+    var detail   = document.getElementById('cxn-detail');
+    var detailBody = document.getElementById('cxn-detail-body');
+    var closeBtn = document.getElementById('cxn-detail-close');
+    var activeId = null;
+
+    function renderDetail(id) {
+      var d = CXN[id];
+      if (!d) return;
+      var caps = d.caps.map(function(c) { return '<div class="cxn-detail-cap">' + c + '</div>'; }).join('');
+      var reqHtml = d.req ? '<div class="cxn-detail-req">' + d.req + '</div>' : '';
+      var installHtml = d.install ? '<div class="cxn-detail-head" style="margin-top:12px">INSTALL</div><div class="cxn-detail-install">' + d.install + '</div>' : '';
+      var linkHtml = d.link ? '<a class="cxn-detail-link" href="' + d.link.href + '" target="_blank">↗ ' + d.link.label + '</a>' : '';
+      detailBody.innerHTML =
+        '<div>' +
+          '<div class="cxn-detail-head">' + d.name + ' &nbsp;·&nbsp; ' + d.proto + '</div>' +
+          '<div class="cxn-detail-desc">' + d.desc + '</div>' +
+          reqHtml + linkHtml +
+        '</div>' +
+        '<div>' +
+          '<div class="cxn-detail-head">CAPABILITIES</div>' +
+          '<div class="cxn-detail-caps">' + caps + '</div>' +
+          installHtml +
+        '</div>';
+    }
+
+    nodes.forEach(function(node) {
+      node.addEventListener('click', function() {
+        var id = node.dataset.id;
+        if (activeId === id) {
+          node.classList.remove('cxn-active');
+          detail.classList.remove('open');
+          activeId = null;
+          if (typeof window._brPlayAccordion === 'function') window._brPlayAccordion(false);
+          return;
+        }
+        nodes.forEach(function(n) { n.classList.remove('cxn-active'); });
+        node.classList.add('cxn-active');
+        renderDetail(id);
+        detail.classList.add('open');
+        activeId = id;
+        if (typeof window._brPlayAccordion === 'function') window._brPlayAccordion(true);
+      });
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function() {
+        nodes.forEach(function(n) { n.classList.remove('cxn-active'); });
+        detail.classList.remove('open');
+        activeId = null;
+        if (typeof window._brPlayAccordion === 'function') window._brPlayAccordion(false);
+      });
+    }
+
+    function fireSchematic() {
+      schematic.classList.add('cxn-live');
+      nodes.forEach(function(node, i) {
+        setTimeout(function() { node.classList.add('cxn-node-show'); }, 1000 + i * 110);
+      });
+    }
+
+    if ('IntersectionObserver' in window) {
+      var cxnObs = new IntersectionObserver(function(entries) {
+        if (entries[0].isIntersecting) { fireSchematic(); cxnObs.disconnect(); }
+      }, { threshold: 0.15 });
+      cxnObs.observe(schematic);
+    } else {
+      fireSchematic();
     }
   })();
 

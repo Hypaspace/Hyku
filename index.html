@@ -392,14 +392,14 @@ body.exiting { animation: sys-exit 0.85s cubic-bezier(0.76,0,0.24,1) forwards; }
         <div class="scan-border"></div>
         <div class="scan-flash" id="scan-flash"></div>
         <div class="scan-consent" id="scan-consent">
-          <span class="scan-consent-eyebrow">NEXUS-VI &nbsp;·&nbsp; AUTHENTICATION PROTOCOL</span>
+          <span class="scan-consent-eyebrow">AUTHENTICATION PROTOCOL</span>
           <span class="scan-consent-title">BIOMETRIC SCAN REQUIRED</span>
           <p class="scan-consent-note">Your camera feed is processed locally to generate the scanning effect. No footage is recorded, stored, or transmitted.</p>
           <button class="scan-consent-btn" id="scan-consent-btn">AUTHORISE SCAN</button>
         </div>
         <div class="scan-content">
           <div class="scan-header">
-            <span class="scan-eyebrow">NEXUS-VI ·</span>
+
             <span class="scan-title" id="scan-title">OPERATOR AUTHENTICATION</span>
             <span class="scan-blink" id="scan-blink">█</span>
           </div>
@@ -453,7 +453,7 @@ body.exiting { animation: sys-exit 0.85s cubic-bezier(0.76,0,0.24,1) forwards; }
 
 <div class="bot-strip" aria-hidden="true">
   <div class="bot-strip-inner">
-    REF:NX6-7714 &nbsp;·&nbsp; SEQ:0091FF4A &nbsp;·&nbsp; LOCUS:07-BR &nbsp;·&nbsp; AUTH:HYPASPACE-CORP &nbsp;·&nbsp; STATUS:STANDBY &nbsp;·&nbsp; OPERATOR:UNVERIFIED &nbsp;·&nbsp; MODEL:NEXUS-VI &nbsp;·&nbsp; EMPATHY:NULL &nbsp;·&nbsp; INCEPT:2049.01.17 &nbsp;·&nbsp; SIG:00FD·CF4A·F201·B020 &nbsp;·&nbsp; REF:NX6-7714 &nbsp;·&nbsp; SEQ:0091FF4A &nbsp;·&nbsp; LOCUS:07-BR &nbsp;·&nbsp; AUTH:HYPASPACE-CORP &nbsp;·&nbsp; STATUS:STANDBY &nbsp;·&nbsp; OPERATOR:UNVERIFIED &nbsp;·&nbsp; MODEL:NEXUS-VI &nbsp;·&nbsp; EMPATHY:NULL &nbsp;·&nbsp; INCEPT:2049.01.17 &nbsp;·&nbsp; SIG:00FD·CF4A·F201·B020 &nbsp;·&nbsp;
+    REF:NX6-7714 &nbsp;·&nbsp; SEQ:0091FF4A &nbsp;·&nbsp; LOCUS:07-BR &nbsp;·&nbsp; AUTH:HYPASPACE-CORP &nbsp;·&nbsp; STATUS:STANDBY &nbsp;·&nbsp; OPERATOR:UNVERIFIED &nbsp;·&nbsp; EMPATHY:NULL &nbsp;·&nbsp; INCEPT:2049.01.17 &nbsp;·&nbsp; SIG:00FD·CF4A·F201·B020 &nbsp;·&nbsp; REF:NX6-7714 &nbsp;·&nbsp; SEQ:0091FF4A &nbsp;·&nbsp; LOCUS:07-BR &nbsp;·&nbsp; AUTH:HYPASPACE-CORP &nbsp;·&nbsp; STATUS:STANDBY &nbsp;·&nbsp; OPERATOR:UNVERIFIED &nbsp;·&nbsp; EMPATHY:NULL &nbsp;·&nbsp; INCEPT:2049.01.17 &nbsp;·&nbsp; SIG:00FD·CF4A·F201·B020 &nbsp;·&nbsp;
   </div>
 </div>
 
@@ -549,7 +549,7 @@ body.exiting { animation: sys-exit 0.85s cubic-bezier(0.76,0,0.24,1) forwards; }
   var scanLine     = document.getElementById('scan-line');
   var scanStream   = null;
 
-  function animScanProgress(duration) {
+  function animScanProgress(duration, cb) {
     var t0 = performance.now();
     (function tick(now) {
       var t = Math.min(1, (now - t0) / duration);
@@ -557,6 +557,7 @@ body.exiting { animation: sys-exit 0.85s cubic-bezier(0.76,0,0.24,1) forwards; }
       scanProgFill.style.width = pct + '%';
       scanProgPct.textContent = pct + '%';
       if (t < 1) requestAnimationFrame(tick);
+      else if (cb) cb();
     })(t0);
   }
 
@@ -640,7 +641,7 @@ body.exiting { animation: sys-exit 0.85s cubic-bezier(0.76,0,0.24,1) forwards; }
     scanLine.style.animationPlayState = 'paused';
     scanStatusV.textContent = 'PROCEED';
     scanStatusV.classList.add('resolved');
-    scanBaseline.textContent = 'UNMATCHED';
+    scanBaseline.textContent = 'MATCHED';
     scanBaseline.classList.add('resolved');
 
     /* Show resolved state briefly, then swap to terminal */
@@ -650,7 +651,7 @@ body.exiting { animation: sys-exit 0.85s cubic-bezier(0.76,0,0.24,1) forwards; }
         scanPanel.style.display = 'none';
         if (scanStream) scanStream.getTracks().forEach(function (t) { t.stop(); });
         startTerminal();
-      }, 450);
+      }, 600);
     }, 1200);
   }
 
@@ -661,8 +662,7 @@ body.exiting { animation: sys-exit 0.85s cubic-bezier(0.76,0,0.24,1) forwards; }
     var SCAN_DURATION = 3000;
     playScanStart();
     setTimeout(startScanPings, 500);
-    animScanProgress(SCAN_DURATION);
-    setTimeout(resolveScan, SCAN_DURATION);
+    animScanProgress(SCAN_DURATION, resolveScan);
   }
 
   function startScanNoCam() {
@@ -672,8 +672,7 @@ body.exiting { animation: sys-exit 0.85s cubic-bezier(0.76,0,0.24,1) forwards; }
     var SCAN_DURATION = 2200;
     playScanStart();
     setTimeout(startScanPings, 500);
-    animScanProgress(SCAN_DURATION);
-    setTimeout(resolveScan, SCAN_DURATION);
+    animScanProgress(SCAN_DURATION, resolveScan);
   }
 
   var consentEl  = document.getElementById('scan-consent');

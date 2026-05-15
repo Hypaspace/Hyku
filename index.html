@@ -317,6 +317,25 @@ body.exiting { animation: sys-exit 0.85s cubic-bezier(0.76,0,0.24,1) forwards; }
 .deny-footer { margin-top: 4px; display: flex; align-items: center; gap: 8px; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,176,32,0.3); }
 .deny-blink { color: rgba(255,176,32,0.5); animation: ts-blink 0.65s ease infinite; }
 
+/* ── WHOLE-SCREEN DENIAL STATE ── */
+body.denied { background: #060503; }
+body.denied .sweep {
+  background: linear-gradient(180deg, transparent 0%, rgba(255,176,32,0.015) 50%, transparent 100%);
+}
+body.denied .top-strip {
+  background: rgba(255,176,32,0.02);
+  border-bottom-color: rgba(255,176,32,0.08);
+}
+body.denied #clock { color: rgba(255,176,32,0.5); }
+body.denied .top-strip span:not(#clock) { color: rgba(255,176,32,0.28); }
+body.denied .bot-strip {
+  background: rgba(255,176,32,0.015);
+  border-top-color: rgba(255,176,32,0.08);
+}
+body.denied .bot-strip-inner { color: rgba(255,176,32,0.28); }
+body.denied .sublabel { color: rgba(255,176,32,0.35); }
+body.denied .logo-wrap [fill="#00FDCF"] { fill: #FFB020; }
+
 .scan-privacy {
   margin-top: 10px;
   font-size: 7px;
@@ -513,6 +532,7 @@ body.exiting { animation: sys-exit 0.85s cubic-bezier(0.76,0,0.24,1) forwards; }
   /* ── RAIN CANVAS ── */
   var canvas = document.getElementById('rain'), ctx = canvas.getContext('2d');
   var W, H, drops, rainAF;
+  var _rainRGB = '0,253,207';
   function initRain() {
     var dpr = window.devicePixelRatio || 1;
     W = window.innerWidth; H = window.innerHeight;
@@ -526,8 +546,8 @@ body.exiting { animation: sys-exit 0.85s cubic-bezier(0.76,0,0.24,1) forwards; }
     ctx.fillStyle = 'rgba(5,8,8,0.14)'; ctx.fillRect(0, 0, W, H);
     drops.forEach(function (d) {
       var headY = Math.round(d.y);
-      if (headY >= 0 && headY <= H) { ctx.fillStyle = 'rgba(0,253,207,' + d.alpha.toFixed(3) + ')'; ctx.fillRect(d.x, headY, 1, 1); }
-      for (var j = 1; j < d.trail; j++) { var py = headY - j * 3; if (py < 0 || py > H) continue; var a = d.alpha * Math.pow(1 - j / d.trail, 1.6); ctx.fillStyle = 'rgba(0,253,207,' + a.toFixed(3) + ')'; ctx.fillRect(d.x, py, 1, 1); }
+      if (headY >= 0 && headY <= H) { ctx.fillStyle = 'rgba(' + _rainRGB + ',' + d.alpha.toFixed(3) + ')'; ctx.fillRect(d.x, headY, 1, 1); }
+      for (var j = 1; j < d.trail; j++) { var py = headY - j * 3; if (py < 0 || py > H) continue; var a = d.alpha * Math.pow(1 - j / d.trail, 1.6); ctx.fillStyle = 'rgba(' + _rainRGB + ',' + a.toFixed(3) + ')'; ctx.fillRect(d.x, py, 1, 1); }
       d.y += d.speed; if (d.y - d.trail * 3 > H) d.y = -(d.trail * 3);
     });
     rainAF = requestAnimationFrame(drawRain);
@@ -690,6 +710,8 @@ body.exiting { animation: sys-exit 0.85s cubic-bezier(0.76,0,0.24,1) forwards; }
 
   function rejectScan() {
     stopScanPings();
+    _rainRGB = '255,176,32';
+    document.body.classList.add('denied');
     scanPanel.classList.add('scan-denied');
     scanFlash.classList.add('firing');
     playDenied();

@@ -788,7 +788,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 /* ── GLOSSARY DEFINITION LIST ── */
 .gl-list {
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 0;
   overflow: hidden;
 }
 .gl-row {
@@ -1305,7 +1305,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 .connector-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 0;
   padding: 24px;
   -webkit-touch-callout: none;
   -webkit-user-drag: none;
@@ -1329,7 +1329,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
   padding: 3px 8px;
-  border-radius: 4px;
+  border-radius: 0;
   background: rgba(248,169,111,0.1);
   color: var(--accent2);
   border: 1px solid rgba(248,169,111,0.2);
@@ -1349,7 +1349,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   left: 0;
   color: var(--text-dim);
 }
-.connector-req { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); padding: 6px 10px; background: var(--surface2); border-radius: 6px; }
+.connector-req { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); padding: 6px 10px; background: var(--surface2); border-radius: 0; }
 .connector-note { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent3); opacity: 0.7; }
 .connector-install { display: flex; flex-direction: column; gap: 4px; }
 .connector-install-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); }
@@ -1358,7 +1358,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   font-size: 11px;
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 0;
   padding: 8px 12px;
   color: var(--accent3);
   overflow-x: auto;
@@ -1429,7 +1429,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 .tip-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 0;
   padding: 24px;
   display: flex;
   -webkit-touch-callout: none;
@@ -1456,7 +1456,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 .tips-log {
   font-family: 'JetBrains Mono', monospace;
   border: 1px solid rgba(0,253,207,0.12);
-  border-radius: 4px;
+  border-radius: 0;
   overflow: hidden;
   position: relative;
 }
@@ -1502,7 +1502,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 .tl-row:hover { background: rgba(0,253,207,0.04); }
 .tl-badge {
   font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase;
-  padding: 2px 7px; border-radius: 2px; flex-shrink: 0;
+  padding: 2px 7px; border-radius: 0; flex-shrink: 0;
 }
 .tl-warn .tl-badge { background: rgba(255,108,14,0.12); color: rgba(255,108,14,0.85); border: 1px solid rgba(255,108,14,0.22); }
 .tl-note .tl-badge { background: rgba(0,253,207,0.08); color: rgba(0,253,207,0.75); border: 1px solid rgba(0,253,207,0.18); }
@@ -1675,7 +1675,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 }
 
 /* ── GLOSSARY TERMINAL ── */
-.gl-terminal { font-family: 'JetBrains Mono', monospace; border: 1px solid rgba(0,253,207,0.12); border-radius: 4px; overflow: hidden; background: var(--surface); }
+.gl-terminal { font-family: 'JetBrains Mono', monospace; border: 1px solid rgba(0,253,207,0.12); border-radius: 0; overflow: hidden; background: var(--surface); }
 .gl-term-hdr { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; background: rgba(0,253,207,0.05); border-bottom: 1px solid rgba(0,253,207,0.1); font-size: 10px; letter-spacing: 0.1em; color: rgba(0,253,207,0.5); flex-wrap: wrap; gap: 6px; }
 .gl-term-hdr-title { color: rgba(0,253,207,0.7); }
 .gl-term-hdr-status { display: flex; align-items: center; gap: 8px; }
@@ -1685,7 +1685,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 .gl-terminal-search-info.gl-search-active { display: flex; align-items: center; gap: 8px; }
 .gl-search-count { color: rgba(0,253,207,0.65); }
 .gl-term-body { display: flex; height: 280px; }
-.gl-sector-col { width: 148px; flex-shrink: 0; border-right: 1px solid rgba(0,253,207,0.08); overflow-y: auto; padding: 8px 0; }
+.gl-sector-col { width: 148px; flex-shrink: 0; border-right: 1px solid rgba(0,253,207,0.08); overflow-y: hidden; padding: 8px 0; }
 .gl-sector-col::-webkit-scrollbar { width: 3px; }
 .gl-sector-col::-webkit-scrollbar-thumb { background: rgba(0,253,207,0.15); border-radius: 2px; }
 .gl-sector-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.04em; color: rgba(0,253,207,0.45); background: none; border: none; cursor: pointer; transition: color 0.12s, background 0.12s; text-align: left; border-right: 2px solid transparent; }
@@ -1698,7 +1698,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 .gl-chip-grid { flex: 1; padding: 10px 12px; overflow-y: auto; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 6px; }
 .gl-chip-grid::-webkit-scrollbar { width: 3px; }
 .gl-chip-grid::-webkit-scrollbar-thumb { background: rgba(0,253,207,0.15); border-radius: 2px; }
-.gl-chip { padding: 5px 10px; font-size: 11px; background: rgba(0,253,207,0.04); border: 1px solid rgba(0,253,207,0.12); border-radius: 2px; color: rgba(0,253,207,0.55); cursor: pointer; transition: background 0.1s, border-color 0.1s, color 0.1s; letter-spacing: 0.02em; font-family: 'JetBrains Mono', monospace; }
+.gl-chip { padding: 5px 10px; font-size: 11px; background: rgba(0,253,207,0.04); border: 1px solid rgba(0,253,207,0.12); border-radius: 0; color: rgba(0,253,207,0.55); cursor: pointer; transition: background 0.1s, border-color 0.1s, color 0.1s; letter-spacing: 0.02em; font-family: 'JetBrains Mono', monospace; }
 .gl-chip:hover { background: rgba(0,253,207,0.09); border-color: rgba(0,253,207,0.32); color: var(--accent); }
 .gl-chip.gl-chip-active { background: rgba(0,253,207,0.11); border-color: rgba(0,253,207,0.48); color: var(--accent); }
 .gl-chip.gl-chip-hidden { display: none; }
@@ -4821,7 +4821,7 @@ claude
 
       <div class="cxn-schematic" id="cxn-schematic">
         <div class="cxn-schematic-header">
-          <span>NEXUS INTEGRATION MAP</span>
+          <span>INTEGRATION MAP</span>
           <span class="cxn-schematic-count">5 NODES ACTIVE &nbsp;·&nbsp; MCP PROTOCOL</span>
         </div>
         <div class="cxn-map">

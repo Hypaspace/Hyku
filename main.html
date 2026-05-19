@@ -499,11 +499,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 }
 .op-seq.op-fired { opacity: 1; transform: none; }
 .op-seq:hover { border-color: rgba(0,253,207,0.2); }
-.op-seq::before {
-  content: '';
-  position: absolute; top: 0; left: 0; width: 45%; height: 1px;
-  background: linear-gradient(90deg, rgba(0,253,207,0.5) 0%, transparent 100%);
-}
+.op-seq::before { display: none; }
 .op-header { margin-bottom: 20px; }
 .op-meta {
   display: flex; align-items: center; justify-content: space-between;
@@ -544,7 +540,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   gap: 13px; padding: 7px 0;
 }
 .op-node-dot {
-  width: 11px; height: 11px; border-radius: 50%;
+  width: 11px; height: 11px; border-radius: 0;
   background: var(--bg);
   border: 1px solid rgba(0,253,207,0.35);
   flex-shrink: 0; margin-top: 2px;
@@ -558,9 +554,9 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
               background 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 .op-node:hover .op-node-dot {
-  background: rgba(0,253,207,0.18);
-  border-color: rgba(0,253,207,0.8);
-  box-shadow: 0 0 7px rgba(0,253,207,0.3);
+  background: #ffffff;
+  border-color: #ffffff;
+  box-shadow: none;
 }
 .op-node-body { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
 .op-node-num { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: rgba(0,253,207,0.25); letter-spacing: 0.1em; }
@@ -3410,8 +3406,8 @@ body { animation: page-enter 0.5s ease both; }
       <a class="nav-link" data-target="pipelines"><span class="nav-dot"></span>Checklists &amp; Pipelines</a>
     </div>
     <div class="nav-section">
-      <div class="nav-label"><span class="material-symbols-outlined" style="font-size:18px;margin-right:6px;opacity:0.7;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">auto_stories</span>Glossary</div>
-      <a class="nav-link" data-target="glossary"><span class="nav-dot"></span>Classification Database<span class="nav-count">162</span></a>
+      <div class="nav-label"><span class="material-symbols-outlined" style="font-size:18px;margin-right:6px;opacity:0.7;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">auto_stories</span>Classification Database</div>
+      <a class="nav-link" data-target="glossary"><span class="nav-dot"></span>Index<span class="nav-count">162</span></a>
     </div>
     <div class="nav-section">
       <div class="nav-label"><span class="material-symbols-outlined" style="font-size:18px;margin-right:6px;opacity:0.7;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">more_horiz</span>More</div>
@@ -5044,7 +5040,7 @@ decision frameworks all valid.</code></div>
 
       <div class="tips-log" id="tips-log">
         <div class="tips-log-header">
-          <span>FIELD DISPATCH LOG &nbsp;·&nbsp; SECTOR 7-BR</span>
+          <span>FIELD DISPATCH LOG</span>
           <span>8 ENTRIES &nbsp;·&nbsp; CLEARANCE: LEVEL 2</span>
           <span class="tips-log-stamp">▓ CONFIDENTIAL ▓</span>
         </div>
@@ -7008,7 +7004,7 @@ decision frameworks all valid.</code></div>
   terminal.id = 'gl-terminal';
   terminal.innerHTML =
     '<div class="gl-term-hdr">' +
-      '<span class="gl-term-hdr-title">CLASSIFICATION DATABASE &nbsp;&middot;&nbsp; SECTOR 7-BR</span>' +
+      '<span class="gl-term-hdr-title">CLASSIFICATION DATABASE</span>' +
       '<span class="gl-term-hdr-status"><span class="gl-term-hdr-dot"></span>' +
         '<span id="gl-term-hdr-count">' + totalTerms + ' RECORDS INDEXED</span></span>' +
     '</div>' +
@@ -7351,97 +7347,31 @@ decision frameworks all valid.</code></div>
 </script>
 
 <script>
-/* ── EXPLAINER STEPPER — How Skills Work ── */
+/* ── EXPLAINER ANIMATE-IN — How Skills Work ── */
 (function () {
-  var BREAKPOINT = 900;
   var grid = document.querySelector('#what-are-skills .explainer-grid');
   if (!grid) return;
   var cards = Array.from(grid.querySelectorAll(':scope > .explainer-card'));
-  if (cards.length < 2) return;
+  if (!cards.length) return;
 
-  var tabRow = null;
-  var tabs = [];
-
-  function buildStepper() {
-    if (tabRow) return;
-
-    // Ensure all cards are revealed (br-reveal opacity:0 guard)
+  if (!('IntersectionObserver' in window)) {
     cards.forEach(function (c) { c.classList.add('br-in'); });
-
-    tabRow = document.createElement('div');
-    tabRow.className = 'explainer-stepper-tabs';
-
-    var lastTabHover = 0;
-
-    tabs = cards.map(function (card, i) {
-      var numEl   = card.querySelector('.explainer-num');
-      var labelEl = card.querySelector('.explainer-label');
-      var btn = document.createElement('button');
-      btn.className = 'explainer-stepper-tab' + (i === 0 ? ' active' : '');
-      btn.setAttribute('aria-label', labelEl ? labelEl.textContent.trim() : '');
-      btn.innerHTML =
-        '<span class="st-num">'   + (numEl   ? numEl.textContent.trim()   : ('0' + (i + 1))) + '</span>' +
-        '<span class="st-label">' + (labelEl ? labelEl.textContent.trim() : '')               + '</span>';
-      tabRow.appendChild(btn);
-      return btn;
-    });
-
-    grid.parentNode.insertBefore(tabRow, grid);
-    grid.classList.add('stepper-mode');
-    cards[0].classList.add('stepper-active');
-
-    tabs.forEach(function (tab, i) {
-      tab.addEventListener('mouseenter', function () {
-        var n = Date.now();
-        if (n - lastTabHover < 70) return;
-        lastTabHover = n;
-        if (typeof window._brHover === 'function') window._brHover();
-      });
-      tab.addEventListener('click', function () {
-        tabs.forEach(function (t) { t.classList.remove('active'); });
-        cards.forEach(function (c) { c.classList.remove('stepper-active'); });
-        tab.classList.add('active');
-        cards[i].classList.add('stepper-active');
-        if (typeof window._brPlayAccordion === 'function') window._brPlayAccordion(true);
-      });
-    });
-
-    tabRow.addEventListener('keydown', function (e) {
-      var idx = tabs.findIndex(function (t) { return t.classList.contains('active'); });
-      if (e.key === 'ArrowRight') {
-        var next = (idx + 1) % tabs.length;
-        tabs[next].click(); tabs[next].focus(); e.preventDefault();
-      } else if (e.key === 'ArrowLeft') {
-        var prev = (idx - 1 + tabs.length) % tabs.length;
-        tabs[prev].click(); tabs[prev].focus(); e.preventDefault();
-      }
-    });
+    return;
   }
 
-  function destroyStepper() {
-    if (!tabRow) return;
-    tabRow.parentNode && tabRow.parentNode.removeChild(tabRow);
-    tabRow = null; tabs = [];
-    grid.classList.remove('stepper-mode');
-    cards.forEach(function (c) { c.classList.remove('stepper-active'); });
-  }
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      var idx = parseInt(entry.target.dataset.exIdx || 0, 10);
+      setTimeout(function () { entry.target.classList.add('br-in'); }, idx * 80);
+      obs.unobserve(entry.target);
+    });
+  }, { threshold: 0.12 });
 
-  function check() {
-    if (window.innerWidth > BREAKPOINT) buildStepper();
-    else destroyStepper();
-  }
-
-  var resizeTimer;
-  window.addEventListener('resize', function () {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(check, 150);
+  cards.forEach(function (card, i) {
+    card.dataset.exIdx = i;
+    obs.observe(card);
   });
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', check);
-  } else {
-    check();
-  }
 })();
 </script>
 

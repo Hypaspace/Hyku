@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Skills Work — Panel Options</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:         #050808;
+  --surface:    #080F0F;
+  --surface2:   #0C1818;
+  --border:     #0E2A2A;
+  --accent:     #00FDCF;
+  --accent2:    #FFB020;
+  --accent3:    #4AF2A1;
+  --text:       #8EEBD8;
+  --text-muted: #489898;
+  --text-dim:   #2E7070;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  padding: 48px 40px 80px;
+}
+
+.option-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  margin-bottom: 24px;
+  margin-top: 72px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.option-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.option-label:first-child { margin-top: 0; }
+
+/* ── SHARED TWO-COLUMN WRAPPER ── */
+.how-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 0;
+  border: 1px solid rgba(0,253,207,0.15);
+}
+
+/* ── SPEC TERMINAL (left, shared across all options) ── */
+.spec-terminal {
+  border-right: 1px solid rgba(0,253,207,0.1);
+}
+.spec-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  height: 34px;
+  background: rgba(0,253,207,0.04);
+  border-bottom: 1px solid rgba(0,253,207,0.1);
+}
+.spec-titlebar-left { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.16em; color: rgba(0,253,207,0.45); }
+.spec-titlebar-right { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(0,253,207,0.25); letter-spacing: 0.08em; }
+
+.spec-signal-path {
+  padding: 18px 20px 16px;
+  border-bottom: 1px solid rgba(0,253,207,0.07);
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow-x: auto;
+}
+.sp-node { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; }
+.sp-node-box { border: 1px solid rgba(0,253,207,0.22); padding: 5px 12px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: rgba(0,253,207,0.7); background: rgba(0,253,207,0.04); white-space: nowrap; }
+.sp-node-sub { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: rgba(0,253,207,0.3); letter-spacing: 0.06em; white-space: nowrap; }
+.sp-arrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(0,253,207,0.2); padding: 0 10px; flex-shrink: 0; padding-bottom: 14px; }
+
+.spec-body { padding: 0; }
+.spec-entry { display: grid; grid-template-columns: 52px 160px 1fr; border-bottom: 1px solid rgba(0,253,207,0.05); align-items: baseline; cursor: default; transition: background 0.12s; }
+.spec-entry:last-child { border-bottom: none; }
+.spec-entry:hover { background: rgba(0,253,207,0.025); }
+.spec-entry-id { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(0,253,207,0.25); padding: 13px 0 13px 18px; letter-spacing: 0.1em; }
+.spec-entry-label { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--accent); padding: 13px 14px 13px 0; line-height: 1.45; letter-spacing: 0.02em; }
+.spec-entry-body { font-size: 12px; color: var(--text-muted); padding: 13px 18px 13px 0; line-height: 1.6; }
+.spec-entry-body code { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent); background: rgba(0,253,207,0.08); padding: 1px 4px; }
+.spec-entry-body strong { color: var(--text); font-weight: 600; }
+
+.spec-footer { padding: 10px 18px; background: rgba(0,253,207,0.02); border-top: 1px solid rgba(0,253,207,0.07); display: flex; align-items: center; gap: 8px; }
+.spec-footer-cursor { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent); animation: blink 1.1s step-end infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.spec-footer-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(0,253,207,0.22); letter-spacing: 0.1em; }
+
+
+/* ═══════════════════════════════════════
+   OPTION A — SYSTEM STATUS PANEL
+═══════════════════════════════════════ */
+.panel-status {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+}
+.panel-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 34px;
+  background: rgba(0,253,207,0.03);
+  border-bottom: 1px solid rgba(0,253,207,0.08);
+  flex-shrink: 0;
+}
+.panel-title { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.16em; color: rgba(0,253,207,0.4); }
+.panel-dot { width: 5px; height: 5px; background: var(--accent3); border-radius: 50%; animation: pdot 2s ease-in-out infinite; }
+@keyframes pdot { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+.status-body { padding: 20px 16px; display: flex; flex-direction: column; gap: 16px; flex: 1; }
+
+.status-row { display: flex; flex-direction: column; gap: 5px; }
+.status-key { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.18em; color: var(--text-dim); }
+.status-val { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: 0.04em; }
+.status-val.dim { color: var(--text-muted); font-size: 11px; }
+
+.status-bar-wrap { display: flex; align-items: center; gap: 8px; }
+.status-bar { flex: 1; height: 3px; background: rgba(0,253,207,0.08); }
+.status-bar-fill { height: 100%; background: var(--accent3); transition: width 1.2s ease; }
+.status-bar-label { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--text-dim); white-space: nowrap; }
+
+.status-divider { height: 1px; background: rgba(0,253,207,0.06); }
+
+.status-path { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); line-height: 1.8; }
+.status-path span { color: var(--accent); }
+
+.status-badge { display: inline-flex; align-items: center; gap: 5px; border: 1px solid rgba(74,242,161,0.2); padding: 3px 8px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.12em; color: var(--accent3); }
+.status-badge::before { content: ''; width: 4px; height: 4px; background: var(--accent3); border-radius: 50%; animation: pdot 1.5s ease-in-out infinite; }
+
+.status-log { margin-top: auto; padding-top: 16px; border-top: 1px solid rgba(0,253,207,0.06); }
+.status-log-line { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: var(--text-dim); line-height: 2; display: flex; gap: 8px; }
+.status-log-line .ts { color: rgba(0,253,207,0.18); }
+.status-log-line .msg { color: var(--text-muted); }
+.status-log-line .ok { color: var(--accent3); }
+
+
+/* ═══════════════════════════════════════
+   OPTION B — FILE TREE
+═══════════════════════════════════════ */
+.panel-tree {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+}
+.tree-body { padding: 20px 16px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.tree-line { font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.9; color: var(--text-muted); white-space: pre; }
+.tree-line .branch { color: rgba(0,253,207,0.2); }
+.tree-line .dir { color: var(--text); }
+.tree-line .file { color: var(--accent); }
+.tree-line .comment { color: var(--text-dim); font-size: 9px; }
+
+.tree-footer { padding: 12px 16px; border-top: 1px solid rgba(0,253,207,0.07); background: rgba(0,253,207,0.02); }
+.tree-footer-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); line-height: 1.8; }
+.tree-footer-text span { color: var(--accent); }
+
+.tree-note { margin-top: 16px; padding: 10px 12px; border: 1px solid rgba(0,253,207,0.1); background: rgba(0,253,207,0.03); }
+.tree-note-label { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.15em; color: rgba(0,253,207,0.3); margin-bottom: 5px; }
+.tree-note-text { font-size: 11px; color: var(--text-muted); line-height: 1.6; }
+
+
+/* ═══════════════════════════════════════
+   OPTION C — COMPARISON MATRIX
+═══════════════════════════════════════ */
+.panel-matrix {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+}
+.matrix-body { padding: 0; flex: 1; }
+.matrix-header-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  border-bottom: 1px solid rgba(0,253,207,0.1);
+  background: rgba(0,253,207,0.03);
+}
+.matrix-col-head { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: rgba(0,253,207,0.5); padding: 10px 10px; text-align: center; border-right: 1px solid rgba(0,253,207,0.07); }
+.matrix-col-head:last-child { border-right: none; }
+.matrix-col-head.hl { color: var(--accent); }
+
+.matrix-row { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 1px solid rgba(0,253,207,0.05); }
+.matrix-row:last-child { border-bottom: none; }
+.matrix-row:hover { background: rgba(0,253,207,0.02); }
+
+.matrix-cell { padding: 11px 10px; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--text-muted); text-align: center; border-right: 1px solid rgba(0,253,207,0.05); line-height: 1.4; display: flex; align-items: center; justify-content: center; }
+.matrix-cell:last-child { border-right: none; }
+.matrix-cell.hl { color: var(--accent); }
+.matrix-cell.yes { color: var(--accent3); }
+.matrix-cell.no { color: rgba(255,80,80,0.6); }
+.matrix-cell.mid { color: var(--accent2); }
+
+.matrix-attr-row { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 1px solid rgba(0,253,207,0.05); }
+.matrix-attr { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.1em; color: var(--text-dim); padding: 7px 10px; text-align: center; border-right: 1px solid rgba(0,253,207,0.04); text-transform: uppercase; background: rgba(0,0,0,0.15); }
+.matrix-attr:last-child { border-right: none; }
+
+.matrix-footer { padding: 10px 14px; border-top: 1px solid rgba(0,253,207,0.07); background: rgba(0,253,207,0.02); }
+.matrix-footer-text { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: var(--text-dim); line-height: 1.9; }
+.matrix-footer-text span { color: var(--accent3); }
+
+
+/* ═══════════════════════════════════════
+   OPTION D — QUICK INSTALL TERMINAL
+═══════════════════════════════════════ */
+.panel-install {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+}
+.install-body { padding: 20px 16px; flex: 1; display: flex; flex-direction: column; gap: 18px; }
+
+.install-section-label { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.18em; color: var(--text-dim); margin-bottom: 10px; }
+
+.install-terminal {
+  border: 1px solid rgba(0,253,207,0.12);
+  background: rgba(0,0,0,0.3);
+}
+.install-term-bar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(0,253,207,0.08);
+  background: rgba(0,253,207,0.03);
+}
+.term-dot { width: 6px; height: 6px; border-radius: 50%; }
+.term-dot.r { background: rgba(255,80,80,0.5); }
+.term-dot.y { background: rgba(255,176,32,0.5); }
+.term-dot.g { background: rgba(74,242,161,0.5); }
+.install-term-title { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--text-dim); margin-left: 6px; letter-spacing: 0.1em; }
+
+.install-term-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+.term-line { font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.7; white-space: pre-wrap; }
+.term-line .prompt { color: var(--accent3); }
+.term-line .cmd { color: var(--text); }
+.term-line .arg { color: var(--accent); }
+.term-line .comment { color: var(--text-dim); font-size: 9.5px; }
+.term-line .out { color: var(--text-muted); }
+.term-line .ok { color: var(--accent3); }
+.term-line .cursor { display: inline-block; width: 7px; height: 12px; background: var(--accent); animation: blink 1s step-end infinite; vertical-align: text-bottom; margin-left: 1px; }
+
+.install-divider { height: 1px; background: rgba(0,253,207,0.06); }
+
+.install-tip { padding: 10px 12px; border-left: 2px solid rgba(0,253,207,0.25); background: rgba(0,253,207,0.03); }
+.install-tip-label { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.15em; color: rgba(0,253,207,0.4); margin-bottom: 5px; }
+.install-tip-text { font-size: 11.5px; color: var(--text-muted); line-height: 1.6; }
+.install-tip-text code { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent); background: rgba(0,253,207,0.08); padding: 1px 4px; }
+
+.install-links { display: flex; flex-direction: column; gap: 4px; margin-top: auto; }
+.install-link { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); display: flex; align-items: center; gap: 6px; padding: 5px 0; border-bottom: 1px solid rgba(0,253,207,0.04); }
+.install-link::before { content: '▶'; font-size: 7px; color: rgba(0,253,207,0.25); }
+.install-link:last-child { border-bottom: none; }
+.install-link span { color: var(--accent); }
+
+</style>
+</head>
+<body>
+
+<!-- ═══════════ OPTION A ═══════════ -->
+<div class="option-label">// Option A — System Status Panel</div>
+<div class="how-layout">
+
+  <!-- LEFT: spec terminal -->
+  <div class="spec-terminal">
+    <div class="spec-titlebar">
+      <span class="spec-titlebar-left">SKILLS — SYSTEM SPEC &nbsp;·&nbsp; REV 1.0</span>
+      <span class="spec-titlebar-right">6 ENTRIES LOADED</span>
+    </div>
+    <div class="spec-signal-path">
+      <div class="sp-node"><div class="sp-node-box">SKILL.md</div><div class="sp-node-sub">FOLDER + FILE</div></div>
+      <div class="sp-arrow">──▶</div>
+      <div class="sp-node"><div class="sp-node-box">SESSION LOAD</div><div class="sp-node-sub">~100 TOKENS</div></div>
+      <div class="sp-arrow">──▶</div>
+      <div class="sp-node"><div class="sp-node-box">CONTEXT MATCH</div><div class="sp-node-sub">AUTOMATIC</div></div>
+      <div class="sp-arrow">──▶</div>
+      <div class="sp-node"><div class="sp-node-box">EXECUTE</div><div class="sp-node-sub">OR /COMMAND</div></div>
+      <div class="sp-arrow">──▶</div>
+      <div class="sp-node"><div class="sp-node-box">OUTPUT</div><div class="sp-node-sub">SPECIALISED</div></div>
+    </div>
+    <div class="spec-body">
+      <div class="spec-entry"><span class="spec-entry-id">S-01</span><span class="spec-entry-label">Instruction folders</span><span class="spec-entry-body">A skill is a folder containing a <code>SKILL.md</code> file plus any supporting scripts, data, or references. Claude reads these at session start and uses them as specialised knowledge.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-02</span><span class="spec-entry-label">Auto-activation</span><span class="spec-entry-body">You don't invoke most skills by name. Claude reads all installed SKILL.md files and activates the right one based on your request — no commands needed.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-03</span><span class="spec-entry-label">Lightweight</span><span class="spec-entry-body">Skills load ~100 tokens at session start — far less than an equivalent MCP server. Multiple skills can be active simultaneously without meaningful performance impact.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-04</span><span class="spec-entry-label">Anyone can write one</span><span class="spec-entry-body">A skill is just markdown. Encode your design system, component patterns, team conventions — available in every session without re-explaining.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-05</span><span class="spec-entry-label">Skills vs prompts vs MCP</span><span class="spec-entry-body"><strong>Prompts</strong> are one-shot. <strong>Skills</strong> persist, activate by context. <strong>MCP servers</strong> give live tool access but cost more tokens. Use skills for reusable expertise; MCP for live data.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-06</span><span class="spec-entry-label">Claude Code only</span><span class="spec-entry-body">Skills require the terminal-based agent, not claude.ai. Install via <code>npm install -g @anthropic-ai/claude-code</code>.</span></div>
+    </div>
+    <div class="spec-footer"><span class="spec-footer-cursor">█</span><span class="spec-footer-text">END OF SPEC &nbsp;·&nbsp; SKILLS SYSTEM v1.0</span></div>
+  </div>
+
+  <!-- RIGHT: System Status -->
+  <div class="panel-status">
+    <div class="panel-titlebar">
+      <span class="panel-title">SYS STATUS</span>
+      <span class="panel-dot"></span>
+    </div>
+    <div class="status-body">
+      <div class="status-row">
+        <div class="status-key">RUNTIME</div>
+        <div class="status-val">CLAUDE CODE</div>
+        <div class="status-badge">ONLINE</div>
+      </div>
+      <div class="status-divider"></div>
+      <div class="status-row">
+        <div class="status-key">TOKEN COST PER SKILL</div>
+        <div class="status-val">~100 <span style="font-size:10px;color:var(--text-dim)">tokens</span></div>
+        <div class="status-bar-wrap">
+          <div class="status-bar"><div class="status-bar-fill" style="width:4%" id="tok-bar"></div></div>
+          <div class="status-bar-label">vs 2,500 avg MCP</div>
+        </div>
+      </div>
+      <div class="status-divider"></div>
+      <div class="status-row">
+        <div class="status-key">INSTALL DIRECTORY</div>
+        <div class="status-path"><span>~/.claude/</span>skills/<br><span>~/.claude/</span>CLAUDE.md</div>
+      </div>
+      <div class="status-divider"></div>
+      <div class="status-row">
+        <div class="status-key">ACTIVATION METHOD</div>
+        <div class="status-val dim">CONTEXT-AWARE AUTO</div>
+      </div>
+      <div class="status-divider"></div>
+      <div class="status-row">
+        <div class="status-key">STACK LIMIT</div>
+        <div class="status-val dim">5–10 RECOMMENDED</div>
+      </div>
+      <div class="status-log">
+        <div class="status-log-line"><span class="ts">09:41:03</span><span class="msg">session init</span><span class="ok">OK</span></div>
+        <div class="status-log-line"><span class="ts">09:41:03</span><span class="msg">skills scanned</span><span class="ok">12 LOADED</span></div>
+        <div class="status-log-line"><span class="ts">09:41:04</span><span class="msg">context match</span><span class="ok">ACTIVE</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ═══════════ OPTION B ═══════════ -->
+<div class="option-label">// Option B — File Tree</div>
+<div class="how-layout">
+
+  <div class="spec-terminal">
+    <div class="spec-titlebar"><span class="spec-titlebar-left">SKILLS — SYSTEM SPEC &nbsp;·&nbsp; REV 1.0</span><span class="spec-titlebar-right">6 ENTRIES LOADED</span></div>
+    <div class="spec-signal-path">
+      <div class="sp-node"><div class="sp-node-box">SKILL.md</div><div class="sp-node-sub">FOLDER + FILE</div></div>
+      <div class="sp-arrow">──▶</div>
+      <div class="sp-node"><div class="sp-node-box">SESSION LOAD</div><div class="sp-node-sub">~100 TOKENS</div></div>
+      <div class="sp-arrow">──▶</div>
+      <div class="sp-node"><div class="sp-node-box">CONTEXT MATCH</div><div class="sp-node-sub">AUTOMATIC</div></div>
+      <div class="sp-arrow">──▶</div>
+      <div class="sp-node"><div class="sp-node-box">EXECUTE</div><div class="sp-node-sub">OR /COMMAND</div></div>
+      <div class="sp-arrow">──▶</div>
+      <div class="sp-node"><div class="sp-node-box">OUTPUT</div><div class="sp-node-sub">SPECIALISED</div></div>
+    </div>
+    <div class="spec-body">
+      <div class="spec-entry"><span class="spec-entry-id">S-01</span><span class="spec-entry-label">Instruction folders</span><span class="spec-entry-body">A skill is a folder containing a <code>SKILL.md</code> file plus any supporting scripts, data, or references. Claude reads these at session start and uses them as specialised knowledge.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-02</span><span class="spec-entry-label">Auto-activation</span><span class="spec-entry-body">You don't invoke most skills by name. Claude reads all installed SKILL.md files and activates the right one based on your request — no commands needed.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-03</span><span class="spec-entry-label">Lightweight</span><span class="spec-entry-body">Skills load ~100 tokens at session start — far less than an equivalent MCP server. Multiple skills can be active simultaneously without meaningful performance impact.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-04</span><span class="spec-entry-label">Anyone can write one</span><span class="spec-entry-body">A skill is just markdown. Encode your design system, component patterns, team conventions — available in every session without re-explaining.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-05</span><span class="spec-entry-label">Skills vs prompts vs MCP</span><span class="spec-entry-body"><strong>Prompts</strong> are one-shot. <strong>Skills</strong> persist, activate by context. <strong>MCP servers</strong> give live tool access but cost more tokens. Use skills for reusable expertise; MCP for live data.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-06</span><span class="spec-entry-label">Claude Code only</span><span class="spec-entry-body">Skills require the terminal-based agent, not claude.ai. Install via <code>npm install -g @anthropic-ai/claude-code</code>.</span></div>
+    </div>
+    <div class="spec-footer"><span class="spec-footer-cursor">█</span><span class="spec-footer-text">END OF SPEC &nbsp;·&nbsp; SKILLS SYSTEM v1.0</span></div>
+  </div>
+
+  <!-- RIGHT: File Tree -->
+  <div class="panel-tree">
+    <div class="panel-titlebar">
+      <span class="panel-title">DIRECTORY</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(0,253,207,0.2);letter-spacing:0.08em">~/.claude/</span>
+    </div>
+    <div class="tree-body">
+      <div class="tree-line"><span class="dir">~/.claude/</span></div>
+      <div class="tree-line"><span class="branch">├── </span><span class="file">CLAUDE.md</span>  <span class="comment">← global config</span></div>
+      <div class="tree-line"><span class="branch">├── </span><span class="dir">skills/</span></div>
+      <div class="tree-line"><span class="branch">│   ├── </span><span class="dir">frontend-design/</span></div>
+      <div class="tree-line"><span class="branch">│   │   └── </span><span class="file">SKILL.md</span></div>
+      <div class="tree-line"><span class="branch">│   ├── </span><span class="dir">ui-ux-pro-max/</span></div>
+      <div class="tree-line"><span class="branch">│   │   └── </span><span class="file">SKILL.md</span></div>
+      <div class="tree-line"><span class="branch">│   ├── </span><span class="dir">audit/</span></div>
+      <div class="tree-line"><span class="branch">│   │   └── </span><span class="file">SKILL.md</span></div>
+      <div class="tree-line"><span class="branch">│   └── </span><span class="dir">polish/</span></div>
+      <div class="tree-line"><span class="branch">│       └── </span><span class="file">SKILL.md</span></div>
+      <div class="tree-line"><span class="branch">└── </span><span class="dir">projects/</span></div>
+      <div class="tree-line"><span class="branch">    └── </span><span class="dir">my-app/</span></div>
+      <div class="tree-line"><span class="branch">        └── </span><span class="file">CLAUDE.md</span>  <span class="comment">← project config</span></div>
+      <div class="tree-note">
+        <div class="tree-note-label">DROP ZONE</div>
+        <div class="tree-note-text">Any folder with a <code style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);background:rgba(0,253,207,0.08);padding:1px 4px">SKILL.md</code> inside <code style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);background:rgba(0,253,207,0.08);padding:1px 4px">~/.claude/skills/</code> is live on next session start.</div>
+      </div>
+    </div>
+    <div class="tree-footer">
+      <div class="tree-footer-text">
+        <span>Global skills</span> → active everywhere<br>
+        <span>Project skills</span> → active in that dir only
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ═══════════ OPTION C ═══════════ -->
+<div class="option-label">// Option C — Comparison Matrix</div>
+<div class="how-layout">
+
+  <div class="spec-terminal">
+    <div class="spec-titlebar"><span class="spec-titlebar-left">SKILLS — SYSTEM SPEC &nbsp;·&nbsp; REV 1.0</span><span class="spec-titlebar-right">6 ENTRIES LOADED</span></div>
+    <div class="spec-signal-path">
+      <div class="sp-node"><div class="sp-node-box">SKILL.md</div><div class="sp-node-sub">FOLDER + FILE</div></div>
+      <div class="sp-arrow">──▶</div>
+      <div class="sp-node"><div class="sp-node-box">SESSION LOAD</div><div class="sp-node-sub">~100 TOKENS</div></div>
+      <div class="sp-arrow">──▶</div>
+      <div class="sp-node"><div class="sp-node-box">CONTEXT MATCH</div><div class="sp-node-sub">AUTOMATIC</div></div>
+      <div class="sp-arrow">──▶</div>
+      <div class="sp-node"><div class="sp-node-box">EXECUTE</div><div class="sp-node-sub">OR /COMMAND</div></div>
+      <div class="sp-arrow">──▶</div>
+      <div class="sp-node"><div class="sp-node-box">OUTPUT</div><div class="sp-node-sub">SPECIALISED</div></div>
+    </div>
+    <div class="spec-body">
+      <div class="spec-entry"><span class="spec-entry-id">S-01</span><span class="spec-entry-label">Instruction folders</span><span class="spec-entry-body">A skill is a folder containing a <code>SKILL.md</code> file plus any supporting scripts, data, or references. Claude reads these at session start and uses them as specialised knowledge.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-02</span><span class="spec-entry-label">Auto-activation</span><span class="spec-entry-body">You don't invoke most skills by name. Claude reads all installed SKILL.md files and activates the right one based on your request — no commands needed.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-03</span><span class="spec-entry-label">Lightweight</span><span class="spec-entry-body">Skills load ~100 tokens at session start — far less than an equivalent MCP server. Multiple skills can be active simultaneously without meaningful performance impact.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-04</span><span class="spec-entry-label">Anyone can write one</span><span class="spec-entry-body">A skill is just markdown. Encode your design system, component patterns, team conventions — available in every session without re-explaining.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-05</span><span class="spec-entry-label">Skills vs prompts vs MCP</span><span class="spec-entry-body"><strong>Prompts</strong> are one-shot. <strong>Skills</strong> persist, activate by context. <strong>MCP servers</strong> give live tool access but cost more tokens. Use skills for reusable expertise; MCP for live data.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-06</span><span class="spec-entry-label">Claude Code only</span><span class="spec-entry-body">Skills require the terminal-based agent, not claude.ai. Install via <code>npm install -g @anthropic-ai/claude-code</code>.</span></div>
+    </div>
+    <div class="spec-footer"><span class="spec-footer-cursor">█</span><span class="spec-footer-text">END OF SPEC &nbsp;·&nbsp; SKILLS SYSTEM v1.0</span></div>
+  </div>
+
+  <!-- RIGHT: Comparison Matrix -->
+  <div class="panel-matrix">
+    <div class="panel-titlebar">
+      <span class="panel-title">COMPARISON</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(0,253,207,0.2)">3 TYPES</span>
+    </div>
+    <div class="matrix-body">
+      <div class="matrix-header-row">
+        <div class="matrix-col-head">PROMPT</div>
+        <div class="matrix-col-head hl">SKILL</div>
+        <div class="matrix-col-head">MCP SERVER</div>
+      </div>
+
+      <div class="matrix-attr-row">
+        <div class="matrix-attr">persistence</div>
+        <div class="matrix-attr">persistence</div>
+        <div class="matrix-attr">persistence</div>
+      </div>
+      <div class="matrix-row">
+        <div class="matrix-cell no">one-shot</div>
+        <div class="matrix-cell yes hl">every session</div>
+        <div class="matrix-cell yes">every session</div>
+      </div>
+
+      <div class="matrix-attr-row">
+        <div class="matrix-attr">activation</div>
+        <div class="matrix-attr">activation</div>
+        <div class="matrix-attr">activation</div>
+      </div>
+      <div class="matrix-row">
+        <div class="matrix-cell mid">manual</div>
+        <div class="matrix-cell yes hl">automatic</div>
+        <div class="matrix-cell mid">manual / auto</div>
+      </div>
+
+      <div class="matrix-attr-row">
+        <div class="matrix-attr">token cost</div>
+        <div class="matrix-attr">token cost</div>
+        <div class="matrix-attr">token cost</div>
+      </div>
+      <div class="matrix-row">
+        <div class="matrix-cell mid">variable</div>
+        <div class="matrix-cell yes hl">~100 tokens</div>
+        <div class="matrix-cell no">high</div>
+      </div>
+
+      <div class="matrix-attr-row">
+        <div class="matrix-attr">live data</div>
+        <div class="matrix-attr">live data</div>
+        <div class="matrix-attr">live data</div>
+      </div>
+      <div class="matrix-row">
+        <div class="matrix-cell no">✗</div>
+        <div class="matrix-cell no hl">✗</div>
+        <div class="matrix-cell yes">✓</div>
+      </div>
+
+      <div class="matrix-attr-row">
+        <div class="matrix-attr">write your own</div>
+        <div class="matrix-attr">write your own</div>
+        <div class="matrix-attr">write your own</div>
+      </div>
+      <div class="matrix-row">
+        <div class="matrix-cell yes">✓</div>
+        <div class="matrix-cell yes hl">✓</div>
+        <div class="matrix-cell mid">complex</div>
+      </div>
+
+      <div class="matrix-attr-row">
+        <div class="matrix-attr">setup</div>
+        <div class="matrix-attr">setup</div>
+        <div class="matrix-attr">setup</div>
+      </div>
+      <div class="matrix-row">
+        <div class="matrix-cell yes">none</div>
+        <div class="matrix-cell yes hl">drop a folder</div>
+        <div class="matrix-cell no">config + server</div>
+      </div>
+
+    </div>
+    <div class="matrix-footer">
+      <div class="matrix-footer-text">
+        <span>✓</span> Skills = best ratio of power to setup cost.<br>Use MCP only when live data access is needed.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ═══════════ OPTION D ═══════════ -->
+<div class="option-label">// Option D — Quick Install Terminal</div>
+<div class="how-layout">
+
+  <div class="spec-terminal">
+    <div class="spec-titlebar"><span class="spec-titlebar-left">SKILLS — SYSTEM SPEC &nbsp;·&nbsp; REV 1.0</span><span class="spec-titlebar-right">6 ENTRIES LOADED</span></div>
+    <div class="spec-signal-path">
+      <div class="sp-node"><div class="sp-node-box">SKILL.md</div><div class="sp-node-sub">FOLDER + FILE</div></div>
+      <div class="sp-arrow">──▶</div>
+      <div class="sp-node"><div class="sp-node-box">SESSION LOAD</div><div class="sp-node-sub">~100 TOKENS</div></div>
+      <div class="sp-arrow">──▶</div>
+      <div class="sp-node"><div class="sp-node-box">CONTEXT MATCH</div><div class="sp-node-sub">AUTOMATIC</div></div>
+      <div class="sp-arrow">──▶</div>
+      <div class="sp-node"><div class="sp-node-box">EXECUTE</div><div class="sp-node-sub">OR /COMMAND</div></div>
+      <div class="sp-arrow">──▶</div>
+      <div class="sp-node"><div class="sp-node-box">OUTPUT</div><div class="sp-node-sub">SPECIALISED</div></div>
+    </div>
+    <div class="spec-body">
+      <div class="spec-entry"><span class="spec-entry-id">S-01</span><span class="spec-entry-label">Instruction folders</span><span class="spec-entry-body">A skill is a folder containing a <code>SKILL.md</code> file plus any supporting scripts, data, or references. Claude reads these at session start and uses them as specialised knowledge.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-02</span><span class="spec-entry-label">Auto-activation</span><span class="spec-entry-body">You don't invoke most skills by name. Claude reads all installed SKILL.md files and activates the right one based on your request — no commands needed.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-03</span><span class="spec-entry-label">Lightweight</span><span class="spec-entry-body">Skills load ~100 tokens at session start — far less than an equivalent MCP server. Multiple skills can be active simultaneously without meaningful performance impact.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-04</span><span class="spec-entry-label">Anyone can write one</span><span class="spec-entry-body">A skill is just markdown. Encode your design system, component patterns, team conventions — available in every session without re-explaining.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-05</span><span class="spec-entry-label">Skills vs prompts vs MCP</span><span class="spec-entry-body"><strong>Prompts</strong> are one-shot. <strong>Skills</strong> persist, activate by context. <strong>MCP servers</strong> give live tool access but cost more tokens. Use skills for reusable expertise; MCP for live data.</span></div>
+      <div class="spec-entry"><span class="spec-entry-id">S-06</span><span class="spec-entry-label">Claude Code only</span><span class="spec-entry-body">Skills require the terminal-based agent, not claude.ai. Install via <code>npm install -g @anthropic-ai/claude-code</code>.</span></div>
+    </div>
+    <div class="spec-footer"><span class="spec-footer-cursor">█</span><span class="spec-footer-text">END OF SPEC &nbsp;·&nbsp; SKILLS SYSTEM v1.0</span></div>
+  </div>
+
+  <!-- RIGHT: Quick Install Terminal -->
+  <div class="panel-install">
+    <div class="panel-titlebar">
+      <span class="panel-title">QUICK START</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(0,253,207,0.2)">3 STEPS</span>
+    </div>
+    <div class="install-body">
+      <div>
+        <div class="install-section-label">01 · INSTALL CLAUDE CODE</div>
+        <div class="install-terminal">
+          <div class="install-term-bar">
+            <div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div>
+            <span class="install-term-title">TERMINAL</span>
+          </div>
+          <div class="install-term-body">
+            <div class="term-line"><span class="prompt">$ </span><span class="cmd">npm install -g </span><span class="arg">@anthropic-ai/claude-code</span></div>
+            <div class="term-line"><span class="out">  added 1 package in 3.2s</span></div>
+            <div class="term-line"><span class="ok">  ✓ claude-code installed</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="install-section-label">02 · ADD A SKILL</div>
+        <div class="install-terminal">
+          <div class="install-term-bar">
+            <div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div>
+            <span class="install-term-title">TERMINAL</span>
+          </div>
+          <div class="install-term-body">
+            <div class="term-line"><span class="prompt">$ </span><span class="cmd">cp -r </span><span class="arg">polish/ ~/.claude/skills/</span></div>
+            <div class="term-line"><span class="ok">  ✓ skill ready on next session</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="install-section-label">03 · USE IT</div>
+        <div class="install-terminal">
+          <div class="install-term-bar">
+            <div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div>
+            <span class="install-term-title">CLAUDE CODE</span>
+          </div>
+          <div class="install-term-body">
+            <div class="term-line"><span class="prompt">&gt; </span><span class="cmd">/polish</span></div>
+            <div class="term-line"><span class="out">  Running polish pipeline…</span></div>
+            <div class="term-line"><span class="ok">  ✓ 12 improvements applied</span></div>
+            <div class="term-line"><span class="cursor"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="install-divider"></div>
+
+      <div class="install-tip">
+        <div class="install-tip-label">PRO TIP</div>
+        <div class="install-tip-text">Run <code>/teach-impeccable</code> once at project start — saves your design context so every skill has it automatically.</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Animate the token bar in option A after a short delay
+  setTimeout(function() {
+    var bar = document.getElementById('tok-bar');
+    if (bar) bar.style.width = '4%';
+  }, 300);
+</script>
+
+</body>
+</html>

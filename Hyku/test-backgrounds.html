@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HYKU — Background Comparison</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root { --accent: #00FDCF; --dim: rgba(46,112,112,0.7); --dimmer: rgba(46,112,112,0.45); --border: rgba(0,253,207,0.08); }
+
+html, body { width: 100%; height: 100%; overflow: hidden; background: #050808; font-family: 'JetBrains Mono', monospace; }
+
+#bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9997;
+  background: repeating-linear-gradient(to bottom, transparent 0px, transparent 2px, rgba(0,0,0,0.10) 2px, rgba(0,0,0,0.10) 3px);
+}
+.grain-overlay {
+  position: fixed; inset: -50%; width: 200%; height: 200%;
+  pointer-events: none; z-index: 9998; opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px; animation: grain-shift 0.35s steps(1) infinite;
+}
+@keyframes grain-shift {
+  0%  { transform: translate(0,0); }       12% { transform: translate(-5%,-10%); }
+  24% { transform: translate(-15%,5%); }   36% { transform: translate(7%,-25%); }
+  48% { transform: translate(-5%,25%); }   60% { transform: translate(-15%,10%); }
+  72% { transform: translate(15%,0%); }    84% { transform: translate(0%,15%); }
+  96% { transform: translate(3%,35%); }
+}
+.ca-overlay {
+  position: fixed; inset: 0; pointer-events: none; z-index: 9996;
+  background:
+    radial-gradient(ellipse 120% 120% at 0%   50%, rgba(255,0,60,0.06)  0%, transparent 42%),
+    radial-gradient(ellipse 120% 120% at 100% 50%, rgba(0,60,255,0.06)  0%, transparent 42%),
+    radial-gradient(ellipse 120% 120% at 50% 0%,   rgba(255,0,60,0.04)  0%, transparent 38%),
+    radial-gradient(ellipse 120% 120% at 50% 100%, rgba(0,60,255,0.04)  0%, transparent 38%);
+}
+.sweep {
+  position: fixed; left: 0; right: 0; height: 240px; top: -240px;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,253,207,0.02) 50%, transparent 100%);
+  animation: sweep 8s linear infinite; pointer-events: none; z-index: 2;
+}
+@keyframes sweep { from { top: -240px; } to { top: 100vh; } }
+@keyframes fade-in { to { opacity: 1; } }
+
+.top-strip {
+  position: fixed; top: 0; left: 0; right: 0; height: 28px;
+  background: rgba(0,253,207,0.02); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 22px; font-size: 9px; letter-spacing: 0.1em; color: var(--dimmer);
+  z-index: 9; opacity: 0; animation: fade-in 0.4s ease 0.05s forwards;
+}
+#clock { color: rgba(0,253,207,0.5); }
+
+.bot-strip {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 22px;
+  background: rgba(0,253,207,0.015); border-top: 1px solid var(--border);
+  display: flex; align-items: center; overflow: hidden; z-index: 9;
+  opacity: 0; animation: fade-in 0.5s ease 0.2s forwards;
+}
+.bot-strip-inner {
+  white-space: nowrap; font-size: 8px; letter-spacing: 0.08em;
+  color: var(--dimmer); animation: strip-roll 40s linear infinite;
+}
+@keyframes strip-roll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+.stage {
+  position: fixed; inset: 28px 0 22px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 10; padding: 24px; gap: 0;
+}
+.logo-wrap { margin-bottom: 20px; }
+.sublabel {
+  font-size: 9px; letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--dimmer); margin-bottom: 44px;
+}
+
+/* Static terminal placeholder */
+.demo-panel {
+  width: 100%; max-width: 540px;
+  background: rgba(0,10,10,0.82); border: 1px solid rgba(0,253,207,0.1);
+  border-radius: 3px; padding: 18px 20px 16px;
+}
+.demo-hd {
+  display: flex; justify-content: space-between;
+  font-size: 9px; letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--dim); padding-bottom: 12px; margin-bottom: 14px;
+  border-bottom: 1px solid rgba(0,253,207,0.06);
+}
+.demo-line {
+  font-size: 11px; color: rgba(72,152,152,0.9);
+  display: flex; justify-content: space-between; margin-bottom: 9px;
+}
+.demo-ok { font-size: 10px; padding: 1px 8px; border-radius: 2px; color: #4AF2A1; border: 1px solid rgba(74,242,161,0.2); }
+.demo-pend { font-size: 10px; padding: 1px 8px; border-radius: 2px; color: #FFB020; border: 1px solid rgba(255,176,32,0.2); animation: blink 0.85s ease infinite; }
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+.demo-prog-row { margin-top: 16px; }
+.demo-prog-lbl { display: flex; justify-content: space-between; font-size: 9px; letter-spacing: 0.09em; color: var(--dimmer); margin-bottom: 6px; }
+.demo-prog-track { height: 2px; background: rgba(0,253,207,0.07); border-radius: 2px; overflow: hidden; }
+.demo-prog-fill { height: 100%; width: 62%; background: linear-gradient(90deg, #4AF2A1, #00FDCF); box-shadow: 0 0 10px rgba(0,253,207,0.8); border-radius: 2px; }
+
+/* ── SWITCHER ── */
+.switcher {
+  position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 20px; z-index: 9999;
+  background: rgba(0,10,10,0.85); border: 1px solid rgba(0,253,207,0.15);
+  border-radius: 3px; padding: 10px 20px;
+}
+.sw-btn {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: rgba(0,253,207,0.5); background: none; border: none; cursor: pointer;
+  padding: 2px 6px; letter-spacing: 0.06em; transition: color 0.15s;
+}
+.sw-btn:hover { color: var(--accent); }
+.sw-label {
+  font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--accent); min-width: 180px; text-align: center;
+}
+.sw-dots { display: flex; gap: 6px; align-items: center; }
+.sw-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(0,253,207,0.2); transition: background 0.2s;
+}
+.sw-dot.active { background: var(--accent); }
+.sw-hint { font-size: 8px; letter-spacing: 0.12em; color: rgba(0,253,207,0.25); text-align: center; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+<div class="grain-overlay" aria-hidden="true"></div>
+<div class="ca-overlay" aria-hidden="true"></div>
+<div class="sweep" aria-hidden="true"></div>
+
+<div class="top-strip" aria-hidden="true">
+  <span>HYKU OS v2049.R</span>
+  <span>HYPASPACE CORP &nbsp;·&nbsp; RESTRICTED ACCESS</span>
+  <span id="clock">00:00:00</span>
+</div>
+
+<div class="stage">
+  <div class="logo-wrap">
+    <svg xmlns="http://www.w3.org/2000/svg" height="56" width="auto" viewBox="0 0 497.8 100" aria-label="HYKU">
+      <polygon fill="#ffffff" points="273.8 0 248.5 38.2 223.2 0 195.5 0 234.7 59 208.4 98.6 236.1 98.6 301.5 0 273.8 0"/>
+      <path fill="#00FDCF" d="M0,98.6L65.4,0h27.6S27.6,98.6,27.6,98.6H0Z"/>
+      <path fill="#ffffff" d="M99.8,98.6V0h24.2v37.9h40.6V0h24.2v98.6h-24.2v-38.6h-40.6v38.6h-24.2Z"/>
+      <path fill="#ffffff" d="M452.9,100c-9.1,0-17-1.8-23.7-5.4-6.7-3.6-11.9-8.8-15.6-15.4-3.7-6.7-5.5-14.5-5.5-23.5V0h24.2v55.6c0,4.4.8,8.3,2.5,11.6,1.7,3.3,4.1,5.9,7.2,7.7,3.2,1.8,6.8,2.7,10.9,2.7s7.9-.9,10.9-2.7c3-1.8,5.4-4.3,7.1-7.7,1.7-3.3,2.5-7.2,2.5-11.6V0h24.2v55.6c0,8.9-1.9,16.7-5.6,23.4-3.7,6.7-8.9,11.8-15.6,15.5-6.7,3.7-14.6,5.5-23.7,5.5Z"/>
+      <polygon fill="#ffffff" points="414.1 98.6 375 39.6 401.2 0 373.6 0 332.4 62.1 332.4 0 308.2 0 308.2 98.6 332.4 98.6 335.8 98.6 361.2 60.4 386.5 98.6 414.1 98.6"/>
+    </svg>
+  </div>
+  <div class="sublabel">Hypaspace Operating System &nbsp;·&nbsp; v2049.R</div>
+
+  <div class="demo-panel">
+    <div class="demo-hd"><span>SYSTEM INITIALISATION SEQUENCE</span><span style="color:rgba(0,253,207,0.7)">62%</span></div>
+    <div class="demo-line"><span>&gt; NEURAL ARCHITECTURE</span><span class="demo-ok">OK</span></div>
+    <div class="demo-line"><span>&gt; DESIGN KERNEL</span><span class="demo-ok">OK</span></div>
+    <div class="demo-line"><span>&gt; SKILL MATRIX <span style="color:var(--accent);margin-left:4px">47 MODULES</span></span><span class="demo-ok">OK</span></div>
+    <div class="demo-line"><span>&gt; OPERATOR AUTHENTICATION</span><span class="demo-pend">...</span></div>
+    <div class="demo-prog-row">
+      <div class="demo-prog-lbl"><span>LOADING</span><span>STANDBY</span></div>
+      <div class="demo-prog-track"><div class="demo-prog-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="bot-strip" aria-hidden="true">
+  <div class="bot-strip-inner">
+    REF:NX6-7714 &nbsp;·&nbsp; SEQ:0091FF4A &nbsp;·&nbsp; LOCUS:07-BR &nbsp;·&nbsp; AUTH:HYPASPACE-CORP &nbsp;·&nbsp; STATUS:STANDBY &nbsp;·&nbsp; OPERATOR:UNVERIFIED &nbsp;·&nbsp; EMPATHY:NULL &nbsp;·&nbsp; INCEPT:2049.01.17 &nbsp;·&nbsp; SIG:00FD·CF4A·F201·B020 &nbsp;·&nbsp; REF:NX6-7714 &nbsp;·&nbsp; SEQ:0091FF4A &nbsp;·&nbsp; LOCUS:07-BR &nbsp;·&nbsp; AUTH:HYPASPACE-CORP &nbsp;·&nbsp; STATUS:STANDBY &nbsp;·&nbsp; OPERATOR:UNVERIFIED &nbsp;·&nbsp; EMPATHY:NULL &nbsp;·&nbsp; INCEPT:2049.01.17 &nbsp;·&nbsp; SIG:00FD·CF4A·F201·B020 &nbsp;·&nbsp;
+  </div>
+</div>
+
+<!-- SWITCHER UI -->
+<div class="switcher">
+  <button class="sw-btn" id="prev-btn">&#8592;</button>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+    <span class="sw-label" id="sw-label">01 — RAIN (CURRENT)</span>
+    <div class="sw-dots" id="sw-dots"></div>
+    <span class="sw-hint">← → arrow keys to switch</span>
+  </div>
+  <button class="sw-btn" id="next-btn">&#8594;</button>
+</div>
+
+<script>
+(function () {
+
+  /* ── CLOCK ── */
+  var clockEl = document.getElementById('clock'), elapsed = 0;
+  setInterval(function () {
+    elapsed++;
+    var s = elapsed % 60, m = Math.floor(elapsed / 60) % 60, h = Math.floor(elapsed / 3600);
+    clockEl.textContent = [h, m, s].map(function (n) { return String(n).padStart(2, '0'); }).join(':');
+  }, 1000);
+
+  /* ── CANVAS ── */
+  var canvas = document.getElementById('bg'), ctx = canvas.getContext('2d');
+  var W, H, bgAF;
+
+  function resize() {
+    var dpr = window.devicePixelRatio || 1;
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', function () { resize(); initCurrent(); });
+
+  /* ══════════════════════════════
+     OPTION 1 — RAIN (current)
+  ══════════════════════════════ */
+  var rainDrops = [];
+  function initRain() {
+    rainDrops = [];
+    var colW = Math.round(W / 48);
+    for (var i = 0; i < 48; i++) {
+      rainDrops.push({ x: Math.round(i * colW + colW * 0.5), y: Math.random() * H * 1.8 - H * 0.4, speed: 0.5 + Math.random() * 1.2, trail: 30 + Math.floor(Math.random() * 28), alpha: 0.55 + Math.random() * 0.35 });
+    }
+  }
+  function drawRain() {
+    ctx.fillStyle = 'rgba(5,8,8,0.14)'; ctx.fillRect(0, 0, W, H);
+    rainDrops.forEach(function (d) {
+      var headY = Math.round(d.y);
+      if (headY >= 0 && headY <= H) { ctx.fillStyle = 'rgba(0,253,207,' + d.alpha.toFixed(3) + ')'; ctx.fillRect(d.x, headY, 1, 1); }
+      for (var j = 1; j < d.trail; j++) { var py = headY - j * 3; if (py < 0 || py > H) continue; var a = d.alpha * Math.pow(1 - j / d.trail, 1.6); ctx.fillStyle = 'rgba(0,253,207,' + a.toFixed(3) + ')'; ctx.fillRect(d.x, py, 1, 1); }
+      d.y += d.speed; if (d.y - d.trail * 3 > H) d.y = -(d.trail * 3);
+    });
+    bgAF = requestAnimationFrame(drawRain);
+  }
+
+  /* ══════════════════════════════
+     OPTION 2 — CLEAN (no bg)
+  ══════════════════════════════ */
+  function initClean() {}
+  function drawClean() {
+    ctx.fillStyle = '#050808'; ctx.fillRect(0, 0, W, H);
+    bgAF = requestAnimationFrame(drawClean);
+  }
+
+  /* ══════════════════════════════
+     OPTION 3 — STATIC NOISE
+  ══════════════════════════════ */
+  var noiseFrame = 0;
+  function initNoise() { noiseFrame = 0; }
+  function drawNoise() {
+    noiseFrame++;
+    if (noiseFrame % 2 === 0) {
+      ctx.fillStyle = 'rgba(5,8,8,0.35)'; ctx.fillRect(0, 0, W, H);
+      var count = Math.floor(W * H * 0.0018);
+      for (var i = 0; i < count; i++) {
+        var x = Math.floor(Math.random() * W);
+        var y = Math.floor(Math.random() * H);
+        var a = 0.04 + Math.random() * 0.18;
+        ctx.fillStyle = 'rgba(0,253,207,' + a.toFixed(3) + ')';
+        var sz = Math.random() > 0.92 ? 2 : 1;
+        ctx.fillRect(x, y, sz, sz);
+      }
+    }
+    bgAF = requestAnimationFrame(drawNoise);
+  }
+
+  /* ══════════════════════════════
+     OPTION 4 — HEX FRAGMENTS
+  ══════════════════════════════ */
+  var HEX = '0123456789ABCDEF';
+  var hexParts = [];
+  function randHex(len) { var s = ''; for (var i = 0; i < len; i++) s += HEX[Math.floor(Math.random() * 16)]; return s; }
+  function initHex() {
+    hexParts = [];
+    for (var i = 0; i < 70; i++) {
+      var len = 2 + Math.floor(Math.random() * 5);
+      hexParts.push({
+        x: Math.random() * W, y: Math.random() * H,
+        str: randHex(len), speed: 0.15 + Math.random() * 0.45,
+        alpha: 0.04 + Math.random() * 0.14,
+        size: 9 + Math.floor(Math.random() * 4),
+        timer: Math.floor(Math.random() * 200)
+      });
+    }
+  }
+  function drawHex() {
+    ctx.fillStyle = 'rgba(5,8,8,0.06)'; ctx.fillRect(0, 0, W, H);
+    hexParts.forEach(function (p) {
+      p.timer++;
+      if (p.timer % 80 === 0) { var len = 2 + Math.floor(Math.random() * 5); p.str = randHex(len); }
+      ctx.font = p.size + 'px "JetBrains Mono",monospace';
+      ctx.fillStyle = 'rgba(0,253,207,' + p.alpha.toFixed(3) + ')';
+      ctx.fillText(p.str, p.x, p.y);
+      p.y += p.speed;
+      if (p.y > H + 20) {
+        p.y = -20; p.x = Math.random() * W;
+        p.alpha = 0.04 + Math.random() * 0.14;
+        p.speed = 0.15 + Math.random() * 0.45;
+        var len = 2 + Math.floor(Math.random() * 5); p.str = randHex(len);
+      }
+    });
+    bgAF = requestAnimationFrame(drawHex);
+  }
+
+  /* ══════════════════════════════
+     OPTION 5 — SCAN INTERFERENCE
+  ══════════════════════════════ */
+  var scanLines = [];
+  function initScanLines() {
+    scanLines = [];
+    for (var i = 0; i < 5; i++) {
+      scanLines.push({
+        y: Math.random() * H,
+        speed: 0.25 + Math.random() * 0.7,
+        height: Math.random() > 0.6 ? 1 : 2,
+        alpha: 0.04 + Math.random() * 0.1,
+        wide: Math.random() > 0.7,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+  }
+  var scanT = 0;
+  function drawScanLines() {
+    scanT += 0.008;
+    ctx.fillStyle = 'rgba(5,8,8,0.04)'; ctx.fillRect(0, 0, W, H);
+    scanLines.forEach(function (ln) {
+      var pulse = 0.6 + 0.4 * Math.sin(scanT * 1.3 + ln.phase);
+      var a = ln.alpha * pulse;
+      if (ln.wide) {
+        var grad = ctx.createLinearGradient(0, 0, W, 0);
+        grad.addColorStop(0,   'rgba(0,253,207,0)');
+        grad.addColorStop(0.2, 'rgba(0,253,207,' + (a * 0.4).toFixed(3) + ')');
+        grad.addColorStop(0.5, 'rgba(0,253,207,' + a.toFixed(3) + ')');
+        grad.addColorStop(0.8, 'rgba(0,253,207,' + (a * 0.4).toFixed(3) + ')');
+        grad.addColorStop(1,   'rgba(0,253,207,0)');
+        ctx.fillStyle = grad;
+      } else {
+        ctx.fillStyle = 'rgba(0,253,207,' + a.toFixed(3) + ')';
+      }
+      ctx.fillRect(0, Math.round(ln.y), W, ln.height);
+      ln.y += ln.speed;
+      if (ln.y > H + 4) {
+        ln.y = -4;
+        ln.alpha = 0.04 + Math.random() * 0.1;
+        ln.speed = 0.25 + Math.random() * 0.7;
+        ln.wide  = Math.random() > 0.7;
+        ln.phase = Math.random() * Math.PI * 2;
+      }
+    });
+    bgAF = requestAnimationFrame(drawScanLines);
+  }
+
+  /* ══════════════════════════════
+     SWITCHER
+  ══════════════════════════════ */
+  var OPTIONS = [
+    { label: '01 — RAIN (current)',       init: initRain,      draw: drawRain      },
+    { label: '02 — CLEAN',                init: initClean,     draw: drawClean     },
+    { label: '03 — STATIC NOISE',         init: initNoise,     draw: drawNoise     },
+    { label: '04 — HEX FRAGMENTS',        init: initHex,       draw: drawHex       },
+    { label: '05 — SCAN INTERFERENCE',    init: initScanLines, draw: drawScanLines },
+  ];
+
+  var current = 0;
+  var labelEl = document.getElementById('sw-label');
+  var dotsWrap = document.getElementById('sw-dots');
+
+  /* Build dots */
+  var dots = OPTIONS.map(function (_, i) {
+    var d = document.createElement('div');
+    d.className = 'sw-dot' + (i === 0 ? ' active' : '');
+    dotsWrap.appendChild(d);
+    return d;
+  });
+
+  function initCurrent() {
+    cancelAnimationFrame(bgAF);
+    OPTIONS[current].init();
+  }
+
+  function goTo(idx) {
+    current = (idx + OPTIONS.length) % OPTIONS.length;
+    cancelAnimationFrame(bgAF);
+    ctx.clearRect(0, 0, W, H);
+    OPTIONS[current].init();
+    OPTIONS[current].draw();
+    labelEl.textContent = OPTIONS[current].label;
+    dots.forEach(function (d, i) { d.classList.toggle('active', i === current); });
+  }
+
+  document.getElementById('prev-btn').addEventListener('click', function () { goTo(current - 1); });
+  document.getElementById('next-btn').addEventListener('click', function () { goTo(current + 1); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') goTo(current + 1);
+    if (e.key === 'ArrowLeft')  goTo(current - 1);
+  });
+
+  /* Start on rain */
+  goTo(0);
+
+})();
+</script>
+</body>
+</html>

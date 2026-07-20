@@ -3438,6 +3438,23 @@ body { animation: page-enter 0.5s ease both; }
       </button>
     </div>
   </div>
+  <div class="sound-popup-wrap" id="optic-wrap">
+    <button class="theme-btn" id="optic-btn" aria-label="Optical pointer" title="Optical pointer (hand tracking)">
+      <span class="material-symbols-outlined" id="optic-icon" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 20">back_hand</span>
+    </button>
+    <div class="sound-popup optic-popup" id="optic-popup" role="dialog" aria-label="Optical pointer controls">
+      <div class="optic-title">OPTICAL POINTER</div>
+      <label class="optic-row" for="optic-enable">
+        <span>Hand tracking</span>
+        <input type="checkbox" id="optic-enable" class="optic-switch" />
+      </label>
+      <label class="optic-row" for="optic-preview-cb">
+        <span>Camera window</span>
+        <input type="checkbox" id="optic-preview-cb" class="optic-switch" checked />
+      </label>
+      <div class="optic-note" id="optic-note">Point to aim · pinch to click · open palm to scroll. Press H to toggle · Esc to stop.</div>
+    </div>
+  </div>
   <button class="theme-btn" id="theme-btn" aria-label="Toggle light/dark mode" title="Toggle light/dark mode">
     <span class="material-symbols-outlined" id="theme-icon" style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">light_mode</span>
   </button>
@@ -6347,6 +6364,11 @@ decision frameworks all valid.</code></div>
     function playHover() { tone(2200, 0.018, 0.035, 1800); }
     window._brHover = playHover;
 
+    // Pinch "click" — crisp confirm blip + short noise tick (optical pointer)
+    window._brPinchClick = function () { tone(1500, 0.05, 0.06, 2600, 'square'); noiseSweep(0.045, 0.03, 3200, 700); };
+    // Soft tick when the reticle first hovers a target
+    window._brPinchHover = function () { tone(1300, 0.014, 0.02, 1000); };
+
     // Card hover: softer, lower, quieter than button hover
     function playCardHover() { tone(1100, 0.014, 0.016, 900); }
     window._brCardHover = playCardHover;
@@ -7639,5 +7661,304 @@ decision frameworks all valid.</code></div>
 })();
 </script>
 
+<!-- ══════════════════════════════════════════════════════════════
+     OPTICAL POINTER — camera hand-tracking (experimental)
+     ══════════════════════════════════════════════════════════════ -->
+<style>
+  .optic-popup {
+    width: auto; min-width: 196px; padding: 12px 14px 11px;
+    align-items: stretch; gap: 10px;
+  }
+  .optic-title { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); }
+  .optic-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    font-size: 11px; color: var(--text-muted); letter-spacing: 0.02em; cursor: pointer;
+  }
+  .optic-row.disabled { opacity: 0.4; pointer-events: none; }
+  .optic-switch { appearance: none; -webkit-appearance: none; position: relative; width: 30px; height: 16px; border-radius: 10px; background: var(--surface2); border: 1px solid var(--border); cursor: pointer; flex-shrink: 0; transition: background .18s, border-color .18s; }
+  .optic-switch::after { content: ''; position: absolute; top: 1px; left: 1px; width: 12px; height: 12px; border-radius: 50%; background: var(--text-dim); transition: transform .18s, background .18s; }
+  .optic-switch:checked { background: rgba(0,253,207,0.18); border-color: var(--accent); }
+  .optic-switch:checked::after { transform: translateX(14px); background: var(--accent); }
+  .optic-note { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.06em; color: var(--text-dim); line-height: 1.6; }
+  #optic-btn.active { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 14px rgba(0,253,207,0.2); }
+
+  html.optic-active, html.optic-active * { cursor: none !important; }
+
+  #optic-reticle {
+    position: fixed; top: 0; left: 0; z-index: 100000; pointer-events: none;
+    width: 46px; height: 46px; margin: -23px 0 0 -23px; opacity: 0;
+    transition: opacity .25s, width .12s, height .12s, margin .12s; will-change: transform;
+  }
+  #optic-reticle.on { opacity: 1; }
+  #optic-reticle.pinch { width: 30px; height: 30px; margin: -15px 0 0 -15px; }
+  #optic-reticle .rt-ring { fill: none; stroke: #00FDCF; stroke-width: 1.5; opacity: 0.9; }
+  #optic-reticle .rt-cross { stroke: #00FDCF; stroke-width: 1; opacity: 0.65; }
+  #optic-reticle .rt-dot { fill: #00FDCF; }
+  #optic-reticle.pinch .rt-ring, #optic-reticle.pinch .rt-cross { stroke: #FFB020; }
+  #optic-reticle.pinch .rt-dot { fill: #FFB020; }
+  .optic-hot { outline: 1px solid rgba(0,253,207,0.55) !important; outline-offset: 2px; }
+
+  #optic-preview {
+    position: fixed; bottom: 84px; right: 20px; z-index: 99998;
+    width: 232px; border: 1px solid rgba(0,253,207,0.22); border-radius: 4px;
+    background: #010a0a; overflow: hidden; opacity: 0; transform: translateY(10px);
+    transition: opacity .3s, transform .3s; pointer-events: none;
+  }
+  #optic-preview.on { opacity: 1; transform: translateY(0); }
+  #optic-preview .opv-head { display: flex; justify-content: space-between; align-items: center; padding: 5px 9px; font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(0,253,207,0.5); border-bottom: 1px solid rgba(0,253,207,0.1); }
+  #optic-preview .opv-dot { width: 5px; height: 5px; border-radius: 50%; background: #4AF2A1; box-shadow: 0 0 6px #4AF2A1; }
+  #optic-preview .opv-body { position: relative; width: 100%; aspect-ratio: 4/3; }
+  #optic-preview video, #optic-preview canvas { position: absolute; inset: 0; width: 100%; height: 100%; transform: scaleX(-1); }
+  #optic-preview video { object-fit: cover; filter: saturate(0.6) contrast(1.05) brightness(0.9); }
+  #optic-preview canvas { z-index: 5; } /* keep hand skeleton above the scanline overlays */
+  /* Themed CRT scanlines + slow sweep over the feed */
+  #optic-preview .opv-body::after {
+    content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    background:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.16) 0 1px, transparent 1px 3px),
+      radial-gradient(120% 120% at 50% 50%, transparent 62%, rgba(0,20,18,0.42) 100%);
+    mix-blend-mode: multiply; animation: opv-flicker 3.6s steps(60) infinite;
+  }
+  #optic-preview .opv-body::before {
+    content: ''; position: absolute; left: 0; right: 0; height: 40%; z-index: 3; pointer-events: none;
+    background: linear-gradient(180deg, transparent, rgba(0,253,207,0.06), transparent);
+    animation: opv-sweep 4.4s linear infinite;
+  }
+  @keyframes opv-flicker { 0%,100% { opacity: 0.6; } 50% { opacity: 0.72; } }
+  @keyframes opv-sweep { 0% { transform: translateY(-120%); } 100% { transform: translateY(320%); } }
+  /* Scroll-gesture reticle state (open palm) */
+  #optic-reticle.scroll .rt-ring, #optic-reticle.scroll .rt-cross { stroke: #4AF2A1; }
+  #optic-reticle.scroll .rt-dot { fill: #4AF2A1; }
+</style>
+
+<div id="optic-reticle" aria-hidden="true">
+  <svg viewBox="0 0 46 46">
+    <circle class="rt-ring" cx="23" cy="23" r="18" />
+    <line class="rt-cross" x1="23" y1="2" x2="23" y2="12" />
+    <line class="rt-cross" x1="23" y1="34" x2="23" y2="44" />
+    <line class="rt-cross" x1="2" y1="23" x2="12" y2="23" />
+    <line class="rt-cross" x1="34" y1="23" x2="44" y2="23" />
+    <circle class="rt-dot" cx="23" cy="23" r="2" />
+  </svg>
+</div>
+
+<div id="optic-preview" aria-hidden="true">
+  <div class="opv-head"><span>CAM · HAND-TRACK</span><span class="opv-dot"></span></div>
+  <div class="opv-body">
+    <video id="optic-video" autoplay playsinline muted></video>
+    <canvas id="optic-overlay"></canvas>
+  </div>
+</div>
+
+<script>
+(function () {
+  var btn      = document.getElementById('optic-btn');
+  var popup    = document.getElementById('optic-popup');
+  var wrap     = document.getElementById('optic-wrap');
+  var enableCb = document.getElementById('optic-enable');
+  var previewToggle = document.getElementById('optic-preview-cb');
+  var noteEl   = document.getElementById('optic-note');
+  var reticle  = document.getElementById('optic-reticle');
+  var previewBox = document.getElementById('optic-preview');
+  var video    = document.getElementById('optic-video');
+  var overlay  = document.getElementById('optic-overlay');
+  var octx     = overlay.getContext('2d');
+  var docEl    = document.documentElement;
+
+  var landmarker = null, stream = null, raf = null, running = false, loadingModel = false;
+  var px = window.innerWidth/2, py = window.innerHeight/2, hasPos = false;
+  var SMOOTH = 0.4, GAIN = 1.5;
+  var pinching = false, hovered = null;
+
+  var CONN = [[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
+  var CLICKABLE = 'a,button,input,label,.skill-card,.filter-btn,.nav-link,.tl-row,.cxn-node,.fav-btn,.gl-acc-btn,.gl-chip,.gl-sector-btn,.copy-btn,.code-copy-btn,.code-toggle-btn,.back-to-top,.tab-btn,.context-card,.tip-card,.explainer-card,.gs-source-card,.hamburger';
+
+  function camState() { try { return sessionStorage.getItem('hyku-cam'); } catch(e) { return null; } }
+
+  function setNote(t) { if (noteEl) noteEl.textContent = t; }
+
+  // If boot screen recorded a denial, disable the enable toggle up front.
+  if (camState() === 'denied') {
+    enableCb.closest('.optic-row').classList.add('disabled');
+    setNote('Camera unavailable — access was declined at start-up.');
+  }
+
+  // Popup open/close (mirrors the sound popup behaviour)
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    var open = popup.classList.toggle('open');
+    if (open && window._brHover) window._brHover();
+  });
+  document.addEventListener('click', function (e) {
+    if (popup.classList.contains('open') && !wrap.contains(e.target)) popup.classList.remove('open');
+  });
+
+  enableCb.addEventListener('change', function () {
+    if (enableCb.checked) enable(); else disable();
+  });
+  if (previewToggle) previewToggle.addEventListener('change', function () {
+    previewBox.classList.toggle('on', running && previewToggle.checked);
+  });
+
+  async function loadModel() {
+    if (landmarker || loadingModel) return;
+    loadingModel = true;
+    setNote('Loading hand-tracking model…');
+    var mod = await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14');
+    var vision = await mod.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
+    async function make(d) {
+      return mod.HandLandmarker.createFromOptions(vision, {
+        baseOptions: { modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task', delegate: d },
+        runningMode: 'VIDEO', numHands: 1, minHandDetectionConfidence: 0.5, minTrackingConfidence: 0.5
+      });
+    }
+    try { landmarker = await make('GPU'); } catch (e) { landmarker = await make('CPU'); }
+    loadingModel = false;
+  }
+
+  async function enable() {
+    try {
+      await loadModel();
+      setNote('Requesting camera…');
+      // Reuses the permission already granted at the boot scan — no second prompt.
+      stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480, facingMode: 'user' }, audio: false });
+      video.srcObject = stream;
+      await video.play();
+      overlay.width = video.videoWidth || 640;
+      overlay.height = video.videoHeight || 480;
+
+      running = true;
+      docEl.classList.add('optic-active');
+      btn.classList.add('active');
+      reticle.classList.add('on');
+      if (!previewToggle || previewToggle.checked) previewBox.classList.add('on');
+      setNote('Active · point · pinch to click · open palm to scroll.');
+      loop();
+    } catch (err) {
+      enableCb.checked = false;
+      try { sessionStorage.setItem('hyku-cam', 'denied'); } catch(e) {}
+      var n = err && err.name;
+      if (n === 'NotAllowedError') setNote('Camera permission denied.');
+      else if (n === 'NotFoundError') setNote('No camera found.');
+      else setNote('Could not start camera.');
+    }
+  }
+
+  function disable() {
+    running = false;
+    if (raf) cancelAnimationFrame(raf);
+    if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
+    docEl.classList.remove('optic-active');
+    btn.classList.remove('active');
+    reticle.classList.remove('on');
+    previewBox.classList.remove('on');
+    clearHover(); pinching = false;
+    setNote('Point to aim · pinch to click · open palm to scroll. Press H to toggle · Esc to stop.');
+  }
+
+  function d(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+
+  // Count extended fingers among middle/ring/pinky (curled when pointing, extended on open palm)
+  function openCount(lm) {
+    var w = lm[0], pairs = [[12,10],[16,14],[20,18]], c = 0;
+    for (var i = 0; i < pairs.length; i++) if (d(lm[pairs[i][0]], w) > d(lm[pairs[i][1]], w) * 1.05) c++;
+    return c;
+  }
+
+  var SCROLL_DEADZONE = 0.13, SCROLL_SPEED = 22;
+
+  function loop() {
+    if (!running) return;
+    raf = requestAnimationFrame(loop);
+    var res = null;
+    try { res = landmarker.detectForVideo(video, performance.now()); } catch (e) {}
+    octx.clearRect(0, 0, overlay.width, overlay.height);
+
+    if (res && res.landmarks && res.landmarks.length) {
+      var lm = res.landmarks[0], tip = lm[8], thumb = lm[4];
+      drawHand(lm);
+
+      var scrollMode = openCount(lm) >= 2;
+      var aim = scrollMode ? lm[9] : tip;   // palm centre while scrolling, fingertip while pointing
+      var nx = Math.min(1, Math.max(0, 0.5 + (aim.x - 0.5) * GAIN));
+      var ny = Math.min(1, Math.max(0, 0.5 + (aim.y - 0.5) * GAIN));
+      var tx = (1 - nx) * window.innerWidth, ty = ny * window.innerHeight;
+      if (!hasPos) { px = tx; py = ty; hasPos = true; }
+      px += (tx - px) * SMOOTH; py += (ty - py) * SMOOTH;
+      reticle.style.transform = 'translate(' + px + 'px,' + py + 'px)';
+
+      reticle.classList.toggle('scroll', scrollMode);
+
+      if (scrollMode) {
+        // Open palm → raise/lower hand to scroll. Neutral dead-zone in the middle.
+        reticle.classList.remove('pinch');
+        clearHover(); pinching = false;
+        var off = lm[0].y - 0.5;   // wrist height: <0 hand raised, >0 lowered
+        if (Math.abs(off) > SCROLL_DEADZONE) {
+          var v = (off - (off < 0 ? -SCROLL_DEADZONE : SCROLL_DEADZONE)) / (0.5 - SCROLL_DEADZONE);
+          window.scrollBy(0, v * SCROLL_SPEED);
+        }
+      } else {
+        var palm = d(lm[0], lm[5]) || 0.0001;
+        var isPinch = (d(thumb, tip) / palm) < 0.45;
+        reticle.classList.toggle('pinch', isPinch);
+        updateHover(px, py);
+        if (isPinch && !pinching) fireClick();
+        pinching = isPinch;
+      }
+    } else {
+      clearHover();
+    }
+  }
+
+  function updateHover(x, y) {
+    var el = document.elementFromPoint(x, y);
+    var t = el ? el.closest(CLICKABLE) : null;
+    if (t !== hovered) {
+      if (hovered) hovered.classList.remove('optic-hot');
+      hovered = t;
+      if (hovered) { hovered.classList.add('optic-hot'); if (window._brPinchHover) window._brPinchHover(); }
+    }
+  }
+  function clearHover() { if (hovered) { hovered.classList.remove('optic-hot'); hovered = null; } }
+
+  function fireClick() {
+    if (!hovered) return;
+    if (window._brPinchClick) window._brPinchClick();
+    hovered.click();
+  }
+
+  function drawHand(lm) {
+    var w = overlay.width, h = overlay.height, i;
+    octx.save();
+    octx.shadowColor = 'rgba(0,253,207,0.9)'; octx.shadowBlur = 4;
+    octx.lineWidth = 2.5; octx.strokeStyle = 'rgba(0,253,207,0.9)';
+    octx.beginPath();
+    for (i = 0; i < CONN.length; i++) { octx.moveTo(lm[CONN[i][0]].x*w, lm[CONN[i][0]].y*h); octx.lineTo(lm[CONN[i][1]].x*w, lm[CONN[i][1]].y*h); }
+    octx.stroke();
+    for (i = 0; i < lm.length; i++) {
+      var key = (i === 8 || i === 4);
+      octx.beginPath(); octx.arc(lm[i].x*w, lm[i].y*h, key ? 5.5 : 3, 0, Math.PI*2);
+      octx.fillStyle = i === 8 ? '#00FDCF' : i === 4 ? '#FFB020' : 'rgba(120,255,230,0.9)';
+      octx.fill();
+    }
+    octx.restore();
+  }
+
+  window.addEventListener('resize', function () { hasPos = false; });
+
+  function isTyping() { var a = document.activeElement; return a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.isContentEditable); }
+  window.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && running) { enableCb.checked = false; disable(); return; }
+    // Press H to toggle hand tracking on/off (ignored while typing)
+    if ((e.key === 'h' || e.key === 'H') && !isTyping() && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      if (enableCb.closest('.optic-row').classList.contains('disabled')) return;
+      e.preventDefault();
+      enableCb.checked = !enableCb.checked;
+      if (enableCb.checked) enable(); else disable();
+    }
+  });
+})();
+</script>
 </body>
 </html>

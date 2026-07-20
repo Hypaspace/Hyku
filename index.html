@@ -811,6 +811,7 @@ body.denied .logo-wrap [fill="#00FDCF"] { fill: #FFB020; }
     consentBtn.disabled = true;
 
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      try { sessionStorage.setItem('hyku-cam', 'denied'); } catch(e) {}
       consentBtn.textContent = 'CAMERA UNAVAILABLE — PROCEEDING';
       setTimeout(function () { fadeOutConsent(startScanNoCam); }, 1000);
       return;
@@ -818,9 +819,12 @@ body.denied .logo-wrap [fill="#00FDCF"] { fill: #FFB020; }
 
     navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 320 }, facingMode: 'user' } })
       .then(function (stream) {
+        /* Camera authorised — record grant so main.html can reuse it without re-prompting */
+        try { sessionStorage.setItem('hyku-cam', 'granted'); } catch(e) {}
         fadeOutConsent(function () { startScanWithCamera(stream); });
       })
       .catch(function () {
+        try { sessionStorage.setItem('hyku-cam', 'denied'); } catch(e) {}
         consentBtn.textContent = 'CAMERA UNAVAILABLE — PROCEEDING';
         setTimeout(function () { fadeOutConsent(startScanNoCam); }, 1000);
       });

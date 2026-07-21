@@ -1,32 +1,35 @@
-# Hypaspace — Streets of Growth Brand System
+# Hypaspace
 
-## Project Overview
-Static HTML/CSS/JS brand design system documentation site for Streets of Growth (SOG).
-Hosted on GitHub Pages via the `brandsystem` repo (`git@github.com:streetsofgrowth/brandsystem.git`).
+## Overview
+This folder is the **Hypaspace** brand umbrella and the Hyku website's git repo
+(`git@github-hypaspace:Hypaspace/Hyku.git`, branch `main`, domain `hyku.co.uk`).
 
-## Stack
+Products created under the Hypaspace brand live here:
+- Hyku website — the tracked files at the repo **root** (see below)
+- `HYBRIJ/` — public release macOS app (untracked / local)
+- `HYBRIJ Lite/` — friend's lightweight version of HYBRIJ (untracked / local)
+- `Hylift/` — audio-extractor macOS app (untracked / local; has its own `CLAUDE.md`)
+
+## Hyku website (repo root)
+- `index.html` — "HYKU — System Initialisation" boot/intro screen; ENTER navigates to `main.html`
+- `main.html` — "HYKU — Synthesising Code & Craft" main single-page site (nav, skills, connectors, footer)
+- `CNAME` — custom domain (`hyku.co.uk`)
+- `README.md`
+
+**hyku.co.uk serves from these repo-ROOT files** — keep `index.html` / `main.html` at the root.
+
+### Web stack
 - Vanilla HTML5 / CSS3 / JavaScript (no framework, no build tools, no npm)
-- Chart.js (CDN) for data visualizations
-- Material Icons (CDN)
-- 127+ custom SVG icons in /icons/
-
-## Structure
-- `index.html` — single-page brand documentation site (all content, styles, and scripts inline)
-- `icons/` — 127+ custom SVG icon files
-
-## Design Tokens (CSS Custom Properties)
-- Primary: SOG Purple `#625D9C`
-- Blue `#4197CB`, Sky `#5EB3E4`, Teal `#0095A9`, Green `#00AF9A`
-- Charcoal `#323E48`
-- Red `#F32735`, Orange `#FF6C0E`, Yellow `#F2CD00`
-- Off-white `#F5F5F7`
-
-## Conventions
-- All styling via CSS custom properties (no preprocessors)
-- Dark floating sidebar: gradient from `#2C2A46` to `#00434C`, white logo
-- No build step — edit `index.html` directly, changes are immediate
-- Icons are standalone SVG files referenced in `index.html`
+- Google Fonts via CDN — JetBrains Mono (`index.html`); Share Tech Mono + Rajdhani (`main.html`)
+- Google Material Symbols (CDN)
+- No build step — edit the HTML directly; all styling inline via CSS custom properties
 - No TypeScript, no linting, no testing framework
 
+## macOS apps
+Each app subfolder is a standalone Xcode project with `build.sh` / `distribute.sh` scripts, and is
+local-only (not tracked in this repo). After any public-HYBRIJ code change, end with the DMG build
+command (build via `HYBRIJ/build.sh` / `distribute.sh`).
+
 ## Deployment
-Push to `main` branch → GitHub Pages auto-deploys.
+Push to `main` → GitHub Pages "deploy from branch" auto-deploys the root `index.html` / `main.html`.
+Live update lands ~2-3 min later (CDN `max-age=600`), so hard-refresh when checking.

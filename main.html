@@ -1369,7 +1369,7 @@ nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 /* ── CONTEXT FILES ── */
 .context-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
 .context-card {
@@ -3354,13 +3354,315 @@ body { animation: page-enter 0.5s ease both; }
 .gs-ascii-header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 32px; background: linear-gradient(to bottom, transparent, var(--surface)); pointer-events: none; z-index: 2; }
 .gs-source-card:hover .gs-ascii-header::after { background: linear-gradient(to bottom, transparent, var(--surface2)); }
 
+/* ── COMMAND REGISTRY (slash commands by use case) ───── */
+.cmd-registry {
+  font-family: 'JetBrains Mono', monospace;
+  border: 1px solid rgba(0,253,207,0.12);
+  position: relative;
+}
+.cmd-reg-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  padding: 10px 18px;
+  background: rgba(0,253,207,0.04);
+  border-bottom: 1px solid rgba(0,253,207,0.1);
+  font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(0,253,207,0.45);
+}
+.cmd-reg-stamp {
+  color: rgba(255,176,32,0.55);
+  border: 1px solid rgba(255,176,32,0.2);
+  padding: 2px 8px; font-size: 8px; letter-spacing: 0.1em; flex-shrink: 0;
+}
+/* Filter bar */
+.cmd-filter-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 18px;
+  border-bottom: 1px solid rgba(0,253,207,0.07);
+  background: rgba(0,253,207,0.015);
+}
+.cmd-filter-bar .material-symbols-outlined {
+  font-size: 16px; color: var(--text-dim);
+  font-variation-settings: 'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20;
+}
+#cmd-filter {
+  flex: 1; background: transparent; border: none; outline: none;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  color: var(--text); letter-spacing: 0.02em;
+}
+#cmd-filter::placeholder { color: var(--text-dim); }
+.cmd-filter-count { font-size: 9px; letter-spacing: 0.12em; color: var(--text-dim); text-transform: uppercase; flex-shrink: 0; }
+/* Use-case group */
+.cmd-group { border-bottom: 1px solid rgba(0,253,207,0.07); }
+.cmd-group:last-child { border-bottom: none; }
+.cmd-group.cmd-hidden { display: none; }
+.cmd-group-hdr {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 18px;
+  cursor: pointer; user-select: none;
+  transition: background 0.15s;
+}
+.cmd-group-hdr:hover { background: rgba(0,253,207,0.03); }
+.cmd-group-icon {
+  font-size: 17px !important; color: var(--accent); opacity: 0.7;
+  font-variation-settings: 'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20;
+  flex-shrink: 0;
+}
+.cmd-group-name {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text);
+}
+.cmd-group-note { font-size: 11px; color: var(--text-dim); letter-spacing: 0.01em; }
+.cmd-group-count {
+  margin-left: auto; flex-shrink: 0;
+  font-size: 9px; letter-spacing: 0.1em; color: var(--text-dim);
+  border: 1px solid rgba(0,253,207,0.14); padding: 2px 7px;
+}
+.cmd-group-chevron {
+  font-size: 15px !important; color: var(--text-dim); flex-shrink: 0;
+  transition: transform 0.2s ease;
+  font-variation-settings: 'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20;
+}
+.cmd-group.open .cmd-group-chevron { transform: rotate(180deg); }
+.cmd-group-body { display: none; padding: 2px 0 10px; }
+.cmd-group.open .cmd-group-body { display: block; }
+/* Command row */
+.cmd-row {
+  display: grid; grid-template-columns: minmax(180px, 260px) 1fr;
+  gap: 18px; align-items: baseline;
+  padding: 7px 18px 7px 46px;
+  border-left: 2px solid transparent;
+  transition: background 0.12s, border-color 0.12s;
+}
+.cmd-row:hover { background: rgba(0,253,207,0.035); border-left-color: rgba(0,253,207,0.4); }
+.cmd-row.cmd-hidden { display: none; }
+.cmd-name {
+  font-size: 12px; color: var(--accent);
+  cursor: pointer; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.cmd-name:hover { color: var(--accent3); }
+.cmd-name .cmd-args { color: var(--text-dim); font-size: 11px; }
+.cmd-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+.cmd-row[data-kind="skill"] .cmd-name { color: var(--accent2); }
+.cmd-row[data-kind="skill"] .cmd-name:hover { color: var(--accent3); }
+.cmd-copied {
+  position: fixed; z-index: 9999;
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--bg); background: var(--accent);
+  padding: 3px 8px; pointer-events: none;
+  animation: cmd-pop 1s ease forwards;
+}
+@keyframes cmd-pop {
+  0% { opacity: 0; transform: translateY(4px); }
+  15% { opacity: 1; transform: none; }
+  75% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-4px); }
+}
+/* Legend */
+.cmd-legend {
+  display: flex; gap: 20px; flex-wrap: wrap;
+  padding: 10px 18px;
+  border-top: 1px solid rgba(0,253,207,0.07);
+  background: rgba(0,253,207,0.015);
+  font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim);
+}
+.cmd-legend span::before {
+  content: '■'; margin-right: 6px; font-size: 8px;
+}
+.cmd-legend .cl-builtin::before { color: var(--accent); }
+.cmd-legend .cl-skill::before { color: var(--accent2); }
+.cmd-empty {
+  display: none; padding: 24px 18px;
+  font-size: 12px; color: var(--text-dim); letter-spacing: 0.04em;
+}
+.cmd-empty.show { display: block; }
+@media (max-width: 720px) {
+  .cmd-row { grid-template-columns: 1fr; gap: 4px; padding-left: 24px; }
+  .cmd-group-note { display: none; }
+}
+
+/* ── REFERENCE PANEL (shared: plugins / agents / hooks / artifacts) ── */
+.ref-panel {
+  font-family: 'JetBrains Mono', monospace;
+  border: 1px solid rgba(0,253,207,0.12);
+  margin-bottom: 22px;
+}
+.ref-panel-hdr {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  padding: 10px 18px;
+  background: rgba(0,253,207,0.04);
+  border-bottom: 1px solid rgba(0,253,207,0.1);
+  font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(0,253,207,0.45);
+}
+.ref-panel-hdr .rp-stamp {
+  color: rgba(255,176,32,0.55);
+  border: 1px solid rgba(255,176,32,0.2);
+  padding: 2px 8px; font-size: 8px; letter-spacing: 0.1em; flex-shrink: 0;
+}
+/* Numbered step flow */
+.rp-steps { display: flex; flex-wrap: wrap; gap: 0; }
+.rp-step {
+  flex: 1 1 200px; min-width: 0;
+  padding: 16px 18px;
+  border-right: 1px solid rgba(0,253,207,0.07);
+}
+.rp-step:last-child { border-right: none; }
+.rp-step-num {
+  font-size: 9px; letter-spacing: 0.14em; color: var(--accent); opacity: 0.7;
+  margin-bottom: 8px;
+}
+.rp-step-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text); margin-bottom: 8px;
+}
+.rp-step-body { font-size: 12px; color: var(--text-muted); line-height: 1.65; }
+/* Definition rows (label + description) */
+.rp-rows { padding: 6px 0; }
+.rp-row {
+  display: grid; grid-template-columns: minmax(150px, 230px) 1fr;
+  gap: 18px; align-items: baseline;
+  padding: 8px 18px;
+  border-left: 2px solid transparent;
+  transition: background 0.12s, border-color 0.12s;
+}
+.rp-row:hover { background: rgba(0,253,207,0.03); border-left-color: rgba(0,253,207,0.3); }
+.rp-key { font-size: 12px; color: var(--accent); }
+.rp-key .rp-req { color: var(--accent2); font-size: 9px; letter-spacing: 0.1em; margin-left: 6px; }
+.rp-val { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+.rp-section-label {
+  padding: 12px 18px 6px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--text-dim);
+  border-top: 1px solid rgba(0,253,207,0.07);
+}
+.rp-rows .rp-section-label:first-child { border-top: none; }
+/* Code block */
+.rp-code {
+  margin: 0; padding: 14px 18px;
+  background: rgba(0,0,0,0.22);
+  border-top: 1px solid rgba(0,253,207,0.07);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; line-height: 1.65; color: var(--text);
+  white-space: pre; overflow-x: auto;
+}
+:root.light .rp-code { background: rgba(0,0,0,0.05); }
+.rp-code .c { color: var(--text-dim); }
+.rp-code .k { color: var(--accent); }
+.rp-code .s { color: var(--accent2); }
+/* Two-column compare */
+.rp-compare { display: grid; grid-template-columns: 1fr 1fr; }
+.rp-compare > div { padding: 16px 18px; }
+.rp-compare > div:first-child { border-right: 1px solid rgba(0,253,207,0.07); }
+.rp-compare-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 10px; color: var(--text);
+}
+.rp-compare ul { margin: 0; padding-left: 16px; }
+.rp-compare li { font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+/* Callout */
+.rp-note {
+  padding: 12px 18px;
+  border-top: 1px solid rgba(0,253,207,0.07);
+  background: rgba(255,176,32,0.045);
+  font-size: 12px; color: var(--text-muted); line-height: 1.65;
+}
+.rp-note strong { color: var(--accent2); }
+.rp-panel-foot {
+  padding: 10px 18px;
+  border-top: 1px solid rgba(0,253,207,0.07);
+  font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim);
+}
+.ref-panel code, .rp-val code, .rp-step-body code {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: var(--accent); background: rgba(0,253,207,0.07); padding: 1px 5px;
+}
+@media (max-width: 720px) {
+  .rp-row { grid-template-columns: 1fr; gap: 3px; }
+  .rp-compare { grid-template-columns: 1fr; }
+  .rp-compare > div:first-child { border-right: none; border-bottom: 1px solid rgba(0,253,207,0.07); }
+  .rp-step { flex-basis: 100%; border-right: none; border-bottom: 1px solid rgba(0,253,207,0.07); }
+}
+
 </style>
 
   <!-- Google Material Symbols weight 100, outlined -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+<style>
+/* ── CRT SCANLINE-OPEN ARRIVAL ────────────────────────────
+   The inverse of index.html's power-down: two black bands
+   retreat from a centre line, so the page opens outward.
+   Only runs when index.html set the hyku-crt-in flag.     */
+.crt-in-band, .crt-in-flare { display: none; }
+/* The page's own 0.5s opacity fade would run underneath this mask and
+   swamp it — the reveal has to be the mask, not a crossfade. */
+:root.crt-in body { animation: none !important; }
+
+/* Bands slide out rather than scaling, so the glowing inner edge stays
+   a crisp 1px instead of being squashed with the rest of the element. */
+:root.crt-in .crt-in-band {
+  display: block; position: fixed; left: 0; right: 0; height: 50vh;
+  background: #050808; z-index: 2147483646; pointer-events: none;
+  will-change: transform;
+}
+:root.crt-in .crt-in-band.top {
+  top: 0;
+  border-bottom: 1px solid rgba(0,253,207,0.9);
+  box-shadow: 0 3px 18px 2px rgba(0,253,207,0.45);
+  animation: crt-band-top 0.6s cubic-bezier(0.22,1,0.28,1) forwards;
+}
+:root.crt-in .crt-in-band.bot {
+  bottom: 0;
+  border-top: 1px solid rgba(0,253,207,0.9);
+  box-shadow: 0 -3px 18px 2px rgba(0,253,207,0.45);
+  animation: crt-band-bot 0.6s cubic-bezier(0.22,1,0.28,1) forwards;
+}
+@keyframes crt-band-top { from { transform: translateY(0); } to { transform: translateY(-100%); } }
+@keyframes crt-band-bot { from { transform: translateY(0); } to { transform: translateY(100%); } }
+:root.crt-in .crt-in-flare {
+  display: block; position: fixed; left: 0; right: 0; top: 50%; height: 2px;
+  transform: translateY(-50%) scaleX(1.1);
+  background: linear-gradient(90deg, transparent, #eafffb 12%, #fff 50%, #eafffb 88%, transparent);
+  box-shadow: 0 0 18px 5px rgba(0,253,207,0.85), 0 0 60px 14px rgba(0,253,207,0.35);
+  z-index: 2147483647; pointer-events: none;
+  animation: crt-in-flare 0.6s cubic-bezier(0.22,1,0.28,1) forwards;
+}
+@keyframes crt-in-flare {
+  0%   { opacity: 1; transform: translateY(-50%) scaleX(1.12) scaleY(1.5); }
+  22%  { opacity: 1; transform: translateY(-50%) scaleX(1.06) scaleY(1.1); }
+  100% { opacity: 0; transform: translateY(-50%) scaleX(0.94) scaleY(0.35); }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root.crt-in .crt-in-band, :root.crt-in .crt-in-flare { display: none; }
+}
+</style>
+<script>
+/* Runs before first paint so the page never flashes in unmasked */
+(function () {
+  try {
+    if (sessionStorage.getItem('hyku-crt-in') === '1') {
+      sessionStorage.removeItem('hyku-crt-in');
+      document.documentElement.className += ' crt-in';
+      /* Drop the mask layers once they've played so nothing lingers */
+      setTimeout(function () {
+        document.documentElement.classList.remove('crt-in');
+        var sel = '.crt-in-band, .crt-in-flare';
+        document.querySelectorAll(sel).forEach(function (el) { el.remove(); });
+      }, 850);
+    }
+  } catch (e) {}
+})();
+</script>
 </head>
 <body>
+<div class="crt-in-band top" aria-hidden="true"></div>
+<div class="crt-in-band bot" aria-hidden="true"></div>
+<div class="crt-in-flare" aria-hidden="true"></div>
 <div class="mobile-gate" aria-live="polite">
   <span class="mg-eyebrow">TERMINAL ACCESS DENIED</span>
   <span class="mg-title">DESKTOP ENVIRONMENT REQUIRED</span>
@@ -3380,10 +3682,11 @@ body { animation: page-enter 0.5s ease both; }
   <div class="header-content">
     <div class="header-eyebrow">Hypaspace Systems</div>
     <h1><span class="h1-static">Synthesising Code &amp; Craft</span></h1>
-    <p class="header-desc">Open-source Claude Code plugins for specialised design and UI — 47 skills, what each does, when to reach for it, and how to install.</p>
+    <p class="header-desc">Open-source Claude Code plugins for specialised design and UI — 39 skills, what each does, when to reach for it, and how to install.</p>
     <div class="header-meta">
-      <div class="meta-pill"><strong>47</strong> Skills documented</div>
+      <div class="meta-pill"><strong>39</strong> Skills documented</div>
       <div class="meta-pill"><strong>10</strong> skill groups</div>
+      <div class="meta-pill"><strong>78</strong> slash commands</div>
       <div class="meta-pill">Requires <strong>Claude Code</strong></div>
     </div>
   </div>
@@ -3509,7 +3812,12 @@ body { animation: page-enter 0.5s ease both; }
       <a class="nav-link" data-target="glossary"><span class="nav-dot"></span>Index<span class="nav-count">162</span></a>
     </div>
     <div class="nav-section">
-      <div class="nav-label"><span class="material-symbols-outlined" style="font-size:18px;margin-right:6px;opacity:0.7;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">more_horiz</span>More</div>
+      <div class="nav-label"><span class="material-symbols-outlined" style="font-size:18px;margin-right:6px;opacity:0.7;font-variation-settings:'FILL' 0,'wght' 200,'GRAD' 0,'opsz' 20">menu_book</span>Reference</div>
+      <a class="nav-link" data-target="slash-commands"><span class="nav-dot"></span>Slash Commands<span class="nav-count">78</span></a>
+      <a class="nav-link" data-target="plugins"><span class="nav-dot"></span>Plugins &amp; Marketplaces</a>
+      <a class="nav-link" data-target="subagents"><span class="nav-dot"></span>Subagents</a>
+      <a class="nav-link" data-target="hooks"><span class="nav-dot"></span>Hooks</a>
+      <a class="nav-link" data-target="artifacts"><span class="nav-dot"></span>Artifacts</a>
       <a class="nav-link" data-target="connectors"><span class="nav-dot"></span>Connectors</a>
       <a class="nav-link" data-target="context-files"><span class="nav-dot"></span>Context Files</a>
       <a class="nav-link" data-target="what-are-skills"><span class="nav-dot"></span>How Skills Work</a>
@@ -3526,7 +3834,7 @@ body { animation: page-enter 0.5s ease both; }
       </div>
 
       <p class="gs-intro">
-        These skills are <strong>open-source Claude Code plugins</strong> structured instruction sets that load into Claude and unlock specialised design capabilities. They come from a handful of well-maintained GitHub repos. Download the ones you need, drop them into your <code style="font-family:'JetBrains Mono',monospace;font-size:12px;colour:var(--accent);background:var(--surface);padding:2px 6px;border-radius:4px">~/.claude/skills/</code> folder, and they're available in every Claude Code session.
+        These skills are <strong>open-source Claude Code plugins</strong> structured instruction sets that load into Claude and unlock specialised design capabilities. They come from a handful of well-maintained GitHub repos. Download the ones you need, drop them into your <code style="font-family:'JetBrains Mono',monospace;font-size:12px;colour:var(--accent);background:var(--surface);padding:2px 6px;border-radius:4px">~/.claude/skills/</code> folder, and they're available in every Claude Code session. Many are now also installable in one line from Anthropic's official marketplace with <code style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);background:var(--surface);padding:2px 6px;border-radius:4px">/plugin install</code> — see <strong>Plugins &amp; Marketplaces</strong>.
       </p>
 
       <!-- SOURCE CARDS -->
@@ -4912,6 +5220,514 @@ claude
     <!-- ═══════════════════════════════════════════════ -->
     <!-- CONNECTORS                                       -->
     <!-- ═══════════════════════════════════════════════ -->
+    <!-- SLASH COMMANDS -->
+    <div class="extra-section" id="slash-commands">
+      <div class="extra-header">
+        <div class="extra-title">Slash Commands</div>
+        <div class="extra-desc">Every command Claude Code ships with, grouped by what you're actually trying to do. Click any command to copy it. Built-in commands are part of the CLI; bundled skills ship with it but load only when invoked.</div>
+      </div>
+
+      <div class="cmd-registry" id="cmd-registry">
+        <div class="cmd-reg-header">
+          <span>COMMAND REGISTRY</span>
+          <span>78 COMMANDS &nbsp;·&nbsp; 9 CLASSES &nbsp;·&nbsp; CLI v2.1</span>
+          <span class="cmd-reg-stamp">▓ VERIFIED ▓</span>
+        </div>
+
+        <div class="cmd-filter-bar">
+          <span class="material-symbols-outlined">search</span>
+          <input type="text" id="cmd-filter" placeholder="Filter commands — try 'context', 'review', 'agent'…" autocomplete="off" spellcheck="false">
+          <span class="cmd-filter-count" id="cmd-filter-count">78 shown</span>
+        </div>
+
+        <!-- 1 · SESSION & CONTEXT -->
+        <div class="cmd-group open">
+          <div class="cmd-group-hdr">
+            <span class="material-symbols-outlined cmd-group-icon">layers</span>
+            <span class="cmd-group-name">Session &amp; Context</span>
+            <span class="cmd-group-note">Managing the conversation and its context window</span>
+            <span class="cmd-group-count">14</span>
+            <span class="material-symbols-outlined cmd-group-chevron">expand_more</span>
+          </div>
+          <div class="cmd-group-body">
+            <div class="cmd-row"><span class="cmd-name">/clear<span class="cmd-args"> [name]</span></span><span class="cmd-desc">Start a new conversation with empty context.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/compact<span class="cmd-args"> [instructions]</span></span><span class="cmd-desc">Free up context by summarising the conversation so far.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/autocompact<span class="cmd-args"> [auto|tokens]</span></span><span class="cmd-desc">Set how full the context window gets before Claude Code compacts automatically.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/context<span class="cmd-args"> [all]</span></span><span class="cmd-desc">Visualise current context usage as a coloured grid.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/resume</span><span class="cmd-desc">Return to an earlier conversation.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/rewind</span><span class="cmd-desc">Roll code and conversation back to a checkpoint, or summarise part of the conversation.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/branch<span class="cmd-args"> [name]</span></span><span class="cmd-desc">Branch the conversation here, so you can try a different direction without losing what you have.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/fork<span class="cmd-args"> [prompt]</span></span><span class="cmd-desc">Copy the conversation into a new background session and keep working here.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/background<span class="cmd-args"> [prompt]</span></span><span class="cmd-desc">Detach the session to run as a background agent and free this terminal.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/recap</span><span class="cmd-desc">Generate a one-line summary of the current session on demand.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/export<span class="cmd-args"> [filename]</span></span><span class="cmd-desc">Export the current conversation as plain text.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/copy<span class="cmd-args"> [N]</span></span><span class="cmd-desc">Copy the last assistant response to the clipboard.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/focus</span><span class="cmd-desc">Toggle focus view — only your last prompt, a one-line tool summary, and the final response.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/btw<span class="cmd-args"> [question]</span></span><span class="cmd-desc">Ask a side question about the session without adding it to the conversation.</span></div>
+          </div>
+        </div>
+
+        <!-- 2 · MODEL & OUTPUT -->
+        <div class="cmd-group open">
+          <div class="cmd-group-hdr">
+            <span class="material-symbols-outlined cmd-group-icon">tune</span>
+            <span class="cmd-group-name">Model &amp; Output</span>
+            <span class="cmd-group-note">Choosing how hard and how fast Claude thinks</span>
+            <span class="cmd-group-count">6</span>
+            <span class="material-symbols-outlined cmd-group-chevron">expand_more</span>
+          </div>
+          <div class="cmd-group-body">
+            <div class="cmd-row"><span class="cmd-name">/model<span class="cmd-args"> [model]</span></span><span class="cmd-desc">Switch the model and save it as your default for new sessions.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/effort<span class="cmd-args"> [level|auto]</span></span><span class="cmd-desc">Set the model effort level.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/fast<span class="cmd-args"> [on|off]</span></span><span class="cmd-desc">Toggle fast mode — Opus with faster output, not a smaller model.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/advisor<span class="cmd-args"> [model|off]</span></span><span class="cmd-desc">Consult a second model for guidance at key moments during a task.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/config<span class="cmd-args"> [key=value]</span></span><span class="cmd-desc">Open Settings to adjust theme, model, output style, and other preferences.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/color<span class="cmd-args"> [color|default]</span></span><span class="cmd-desc">Set the prompt bar colour for the current session.</span></div>
+          </div>
+        </div>
+
+        <!-- 3 · PLANNING & DELEGATION -->
+        <div class="cmd-group">
+          <div class="cmd-group-hdr">
+            <span class="material-symbols-outlined cmd-group-icon">account_tree</span>
+            <span class="cmd-group-name">Planning &amp; Delegation</span>
+            <span class="cmd-group-note">Scoping work, then handing it to agents</span>
+            <span class="cmd-group-count">9</span>
+            <span class="material-symbols-outlined cmd-group-chevron">expand_more</span>
+          </div>
+          <div class="cmd-group-body">
+            <div class="cmd-row"><span class="cmd-name">/plan<span class="cmd-args"> [description]</span></span><span class="cmd-desc">Enter plan mode directly from the prompt.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/goal<span class="cmd-args"> [condition|clear]</span></span><span class="cmd-desc">Set a goal — Claude keeps working across turns until it's met or judged impossible.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/subtask<span class="cmd-args"> [prompt]</span></span><span class="cmd-desc">Hand a task to a subagent that reports back to this conversation.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/tasks</span><span class="cmd-desc">List background work, including subagents that have finished.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/list-agents</span><span class="cmd-desc">List the subagents and other sessions Claude can message, with the name to use for each.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/agents</span><span class="cmd-desc">Prints a reminder to ask Claude to create or manage subagents, or edit <code>.claude/agents/</code> directly.</span></div>
+            <div class="cmd-row" data-kind="skill"><span class="cmd-name">/loop<span class="cmd-args"> [interval] [prompt]</span></span><span class="cmd-desc">Run a prompt repeatedly while the session stays open.</span></div>
+            <div class="cmd-row" data-kind="skill"><span class="cmd-name">/batch<span class="cmd-args"> &lt;instruction&gt;</span></span><span class="cmd-desc">Orchestrate large-scale changes across a codebase in parallel.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/verify</span><span class="cmd-desc">Verify code against a test suite.</span></div>
+          </div>
+        </div>
+
+        <!-- 4 · CODE REVIEW & QUALITY -->
+        <div class="cmd-group">
+          <div class="cmd-group-hdr">
+            <span class="material-symbols-outlined cmd-group-icon">rule</span>
+            <span class="cmd-group-name">Code Review &amp; Quality</span>
+            <span class="cmd-group-note">Checking the diff before it ships</span>
+            <span class="cmd-group-count">6</span>
+            <span class="material-symbols-outlined cmd-group-chevron">expand_more</span>
+          </div>
+          <div class="cmd-group-body">
+            <div class="cmd-row" data-kind="skill"><span class="cmd-name">/code-review<span class="cmd-args"> [level] [--fix] [--comment]</span></span><span class="cmd-desc">Review the current diff, or a PR, branch, or path, for correctness bugs and cleanup opportunities.</span></div>
+            <div class="cmd-row" data-kind="skill"><span class="cmd-name">/review</span><span class="cmd-desc">Alias for <code>/code-review</code>.</span></div>
+            <div class="cmd-row" data-kind="skill"><span class="cmd-name">/security-review</span><span class="cmd-desc">Check the diff for security vulnerabilities.</span></div>
+            <div class="cmd-row" data-kind="skill"><span class="cmd-name">/simplify<span class="cmd-args"> [path]</span></span><span class="cmd-desc">Suggest code simplifications and refactorings.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/diff</span><span class="cmd-desc">Open an interactive diff viewer showing uncommitted changes and per-turn diffs.</span></div>
+            <div class="cmd-row" data-kind="skill"><span class="cmd-name">/debug<span class="cmd-args"> [description]</span></span><span class="cmd-desc">Enable debug logging and troubleshoot by reading the session debug log.</span></div>
+          </div>
+        </div>
+
+        <!-- 5 · PROJECT SETUP & MEMORY -->
+        <div class="cmd-group">
+          <div class="cmd-group-hdr">
+            <span class="material-symbols-outlined cmd-group-icon">folder_managed</span>
+            <span class="cmd-group-name">Project Setup &amp; Memory</span>
+            <span class="cmd-group-note">Teaching Claude about this codebase, once</span>
+            <span class="cmd-group-count">9</span>
+            <span class="material-symbols-outlined cmd-group-chevron">expand_more</span>
+          </div>
+          <div class="cmd-group-body">
+            <div class="cmd-row"><span class="cmd-name">/init</span><span class="cmd-desc">Initialise the project with a <code>CLAUDE.md</code> guide.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/memory</span><span class="cmd-desc">Edit <code>CLAUDE.md</code> files, toggle auto memory, and view auto memory entries.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/add-dir<span class="cmd-args"> &lt;path&gt;</span></span><span class="cmd-desc">Add a working directory for file access during the current session.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/cd<span class="cmd-args"> &lt;path&gt;</span></span><span class="cmd-desc">Move the session to a new working directory, keeping the conversation and prompt cache.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/permissions</span><span class="cmd-desc">Manage allow, ask, and deny rules for tool permissions.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/hooks</span><span class="cmd-desc">View hook configurations for tool events.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/keybindings</span><span class="cmd-desc">Open your keyboard shortcuts file.</span></div>
+            <div class="cmd-row" data-kind="skill"><span class="cmd-name">/doctor</span><span class="cmd-desc">Run a setup checkup that diagnoses issues and can fix them.</span></div>
+            <div class="cmd-row" data-kind="skill"><span class="cmd-name">/fewer-permission-prompts</span><span class="cmd-desc">Scan transcripts for common read-only calls, then build an allowlist to cut permission prompts.</span></div>
+          </div>
+        </div>
+
+        <!-- 6 · EXTENDING CLAUDE -->
+        <div class="cmd-group">
+          <div class="cmd-group-hdr">
+            <span class="material-symbols-outlined cmd-group-icon">extension</span>
+            <span class="cmd-group-name">Extending Claude</span>
+            <span class="cmd-group-note">Skills, plugins, MCP servers, and integrations</span>
+            <span class="cmd-group-count">8</span>
+            <span class="material-symbols-outlined cmd-group-chevron">expand_more</span>
+          </div>
+          <div class="cmd-group-body">
+            <div class="cmd-row"><span class="cmd-name">/plugin<span class="cmd-args"> [subcommand]</span></span><span class="cmd-desc">Manage Claude Code plugins.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/reload-plugins<span class="cmd-args"> [--force]</span></span><span class="cmd-desc">Reload active plugins to apply pending changes without restarting.</span></div>
+            <div class="cmd-row" data-kind="skill"><span class="cmd-name">/reload-skills</span><span class="cmd-desc">Re-scan skill and command directories so newly added skills take effect.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/mcp<span class="cmd-args"> [reconnect|enable|disable]</span></span><span class="cmd-desc">Manage MCP server connections and OAuth authentication.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/install-github-app</span><span class="cmd-desc">Install the Claude GitHub App for a repo, optionally setting up Actions workflows and secrets.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/install-slack-app</span><span class="cmd-desc">Install the Claude Slack app.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/chrome</span><span class="cmd-desc">Configure Claude in Chrome settings.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/ide</span><span class="cmd-desc">Manage IDE integrations and show status.</span></div>
+          </div>
+        </div>
+
+        <!-- 7 · DESIGN & RESEARCH -->
+        <div class="cmd-group">
+          <div class="cmd-group-hdr">
+            <span class="material-symbols-outlined cmd-group-icon">palette</span>
+            <span class="cmd-group-name">Design &amp; Research</span>
+            <span class="cmd-group-note">The design-adjacent bundled skills</span>
+            <span class="cmd-group-count">5</span>
+            <span class="material-symbols-outlined cmd-group-chevron">expand_more</span>
+          </div>
+          <div class="cmd-group-body">
+            <div class="cmd-row" data-kind="skill"><span class="cmd-name">/design-sync<span class="cmd-args"> [hint]</span></span><span class="cmd-desc">Convert your repo's React design system and upload it to Claude Design, so generated designs use your real components.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/design-login</span><span class="cmd-desc">Authorise design-system access for <code>/design-sync</code> with your claude.ai account.</span></div>
+            <div class="cmd-row" data-kind="skill"><span class="cmd-name">/dataviz<span class="cmd-args"> [request]</span></span><span class="cmd-desc">Design guidance for charts, graphs, and dashboards.</span></div>
+            <div class="cmd-row" data-kind="skill"><span class="cmd-name">/claude-api<span class="cmd-args"> [migrate|prompt-audit]</span></span><span class="cmd-desc">Load Claude API and Managed Agents reference material for your project's language.</span></div>
+            <div class="cmd-row" data-kind="skill"><span class="cmd-name">/deep-research<span class="cmd-args"> &lt;question&gt;</span></span><span class="cmd-desc">Fan out web searches, cross-check sources, and synthesise a cited report.</span></div>
+          </div>
+        </div>
+
+        <!-- 8 · CROSS-DEVICE & WEB -->
+        <div class="cmd-group">
+          <div class="cmd-group-hdr">
+            <span class="material-symbols-outlined cmd-group-icon">devices</span>
+            <span class="cmd-group-name">Cross-Device &amp; Web</span>
+            <span class="cmd-group-note">Moving a session between terminal, desktop, cloud, and phone</span>
+            <span class="cmd-group-count">5</span>
+            <span class="material-symbols-outlined cmd-group-chevron">expand_more</span>
+          </div>
+          <div class="cmd-group-body">
+            <div class="cmd-row"><span class="cmd-name">/desktop</span><span class="cmd-desc">Continue the current session in the Claude Code Desktop app.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/teleport</span><span class="cmd-desc">Pull a web session into this terminal.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/remote-control</span><span class="cmd-desc">Continue this local session from another device.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/mobile</span><span class="cmd-desc">Show a QR code to download the Claude mobile app.</span></div>
+            <div class="cmd-row" data-kind="skill"><span class="cmd-name">/autofix-pr<span class="cmd-args"> [prompt]</span></span><span class="cmd-desc">Spawn a cloud session that watches the branch's PR and pushes fixes when CI fails or reviewers comment.</span></div>
+          </div>
+        </div>
+
+        <!-- 9 · ACCOUNT, COST & DIAGNOSTICS -->
+        <div class="cmd-group">
+          <div class="cmd-group-hdr">
+            <span class="material-symbols-outlined cmd-group-icon">monitoring</span>
+            <span class="cmd-group-name">Account, Cost &amp; Diagnostics</span>
+            <span class="cmd-group-note">Auth, spend, and everything housekeeping</span>
+            <span class="cmd-group-count">16</span>
+            <span class="material-symbols-outlined cmd-group-chevron">expand_more</span>
+          </div>
+          <div class="cmd-group-body">
+            <div class="cmd-row"><span class="cmd-name">/login</span><span class="cmd-desc">Sign in to your Anthropic account.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/logout</span><span class="cmd-desc">Sign out from your Anthropic account.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/usage</span><span class="cmd-desc">Show API usage and costs.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/cost</span><span class="cmd-desc">Alias for <code>/usage</code>.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/status</span><span class="cmd-desc">Show session status.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/privacy-settings</span><span class="cmd-desc">View and update your privacy settings.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/upgrade</span><span class="cmd-desc">Upgrade Claude Code.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/release-notes</span><span class="cmd-desc">View the changelog in an interactive version picker.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/insights</span><span class="cmd-desc">Generate an HTML report analysing your recent sessions — where you work and where things go wrong.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/powerup</span><span class="cmd-desc">Learn Claude Code features through quick interactive lessons with animated demos.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/help</span><span class="cmd-desc">Show help and available commands.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/feedback<span class="cmd-args"> [report]</span></span><span class="cmd-desc">Send product feedback about Claude Code.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/passes</span><span class="cmd-desc">Share a free week of Claude Code with friends.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/heapdump</span><span class="cmd-desc">Write a heap snapshot and memory breakdown to <code>~/Desktop</code> for diagnosing high memory usage.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/radio</span><span class="cmd-desc">Open Claude FM lo-fi radio in your browser.</span></div>
+            <div class="cmd-row"><span class="cmd-name">/exit</span><span class="cmd-desc">Exit the CLI.</span></div>
+          </div>
+        </div>
+
+        <div class="cmd-empty" id="cmd-empty">NO MATCHING COMMANDS — try a shorter query.</div>
+
+        <div class="cmd-legend">
+          <span class="cl-builtin">Built-in command</span>
+          <span class="cl-skill">Bundled skill — loads on invoke</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLUGINS & MARKETPLACES -->
+    <div class="extra-section" id="plugins">
+      <div class="extra-header">
+        <div class="extra-title">Plugins &amp; Marketplaces</div>
+        <div class="extra-desc">Manually copying skill folders still works, but it's no longer the main way skills travel. A plugin bundles skills, subagents, hooks, and MCP servers into one versioned, installable unit — and Anthropic's official marketplace now carries 286 of them, including <code>frontend-design</code> itself.</div>
+      </div>
+
+      <div class="ref-panel">
+        <div class="ref-panel-hdr">
+          <span>INSTALL PROTOCOL</span>
+          <span>2 STAGES &nbsp;·&nbsp; MARKETPLACE → PLUGIN</span>
+          <span class="rp-stamp">▓ RECOMMENDED ▓</span>
+        </div>
+        <div class="rp-steps">
+          <div class="rp-step">
+            <div class="rp-step-num">STAGE 01</div>
+            <div class="rp-step-title">Add a marketplace</div>
+            <div class="rp-step-body">Registers a catalogue so you can browse it. Nothing is installed yet. The official Anthropic marketplace is added automatically on first interactive launch.</div>
+          </div>
+          <div class="rp-step">
+            <div class="rp-step-num">STAGE 02</div>
+            <div class="rp-step-title">Install what you want</div>
+            <div class="rp-step-body">Pick a scope: <strong>user</strong> (all your projects), <strong>project</strong> (shared with collaborators via <code>.claude/settings.json</code>), or <strong>local</strong> (this repo, just you).</div>
+          </div>
+        </div>
+        <pre class="rp-code"><span class="c"># Browse the plugin manager — Discover / Installed / Marketplaces / Errors tabs</span>
+/plugin
+
+<span class="c"># Install from the official marketplace</span>
+/plugin install frontend-design@claude-plugins-official
+
+<span class="c"># Add the community marketplace, then install from it</span>
+/plugin marketplace add anthropics/claude-plugins-community
+/plugin install &lt;name&gt;@claude-community
+
+<span class="c"># Any GitHub repo with .claude-plugin/marketplace.json works as a marketplace</span>
+/plugin marketplace add owner/repo
+
+<span class="c"># Manage without opening the panel</span>
+/plugin list
+/plugin disable &lt;name&gt;@&lt;marketplace&gt;
+/plugin uninstall &lt;name&gt;@&lt;marketplace&gt;
+/reload-plugins        <span class="c"># apply changes without restarting</span></pre>
+        <div class="rp-note"><strong>Trust warning:</strong> plugins execute arbitrary code with your user privileges. Anthropic doesn't verify third-party plugins or the MCP servers they bundle. Only install from sources you trust — and check the <em>Context cost</em> figure in the details pane, since every plugin adds tokens to each turn.</div>
+      </div>
+
+      <div class="ref-panel">
+        <div class="ref-panel-hdr">
+          <span>DESIGN-RELEVANT OFFICIAL PLUGINS</span>
+          <span>SOURCE: claude-plugins-official</span>
+        </div>
+        <div class="rp-rows">
+          <div class="rp-row"><span class="rp-key">frontend-design</span><span class="rp-val">Anthropic's own distinctive-frontend skill — the same one this site catalogues, now installable in one line.</span></div>
+          <div class="rp-row"><span class="rp-key">figma</span><span class="rp-val">Figma platform integration: read design files, extract component info. Replaces manual MCP setup.</span></div>
+          <div class="rp-row"><span class="rp-key">canva</span><span class="rp-val">Create, edit, resize, and brand-check Canva designs.</span></div>
+          <div class="rp-row"><span class="rp-key">superdesign</span><span class="rp-val">Design or redesign frontend UI and marketing graphics on an infinite canvas.</span></div>
+          <div class="rp-row"><span class="rp-key">ui-theme-designer</span><span class="rp-val">Two bundled skills for building and applying UI themes.</span></div>
+          <div class="rp-row"><span class="rp-key">modern-web-guidance</span><span class="rp-val">Keeps the agent current on web best practices — a standing counterweight to stale patterns.</span></div>
+          <div class="rp-row"><span class="rp-key">playground</span><span class="rp-val">Generates self-contained single-file HTML explorers — useful for testing a component in isolation.</span></div>
+          <div class="rp-row"><span class="rp-key">chrome-devtools-mcp</span><span class="rp-val">Drives a real Chrome and records performance traces — the honest way to verify motion performance.</span></div>
+          <div class="rp-row"><span class="rp-key">playwright</span><span class="rp-val">Browser automation and end-to-end testing, for checking real rendered output.</span></div>
+          <div class="rp-row"><span class="rp-key">skill-creator</span><span class="rp-val">Create, improve, and measure your own skills — the fastest route from repeated prompt to reusable skill.</span></div>
+          <div class="rp-row"><span class="rp-key">plugin-dev</span><span class="rp-val">Seven expert skills for packaging your own work as a distributable plugin.</span></div>
+          <div class="rp-row"><span class="rp-key">pr-review-toolkit</span><span class="rp-val">Specialised review subagents for comments, tests, and error handling.</span></div>
+        </div>
+        <div class="rp-panel-foot">Browse the full catalogue at claude.com/plugins or via the /plugin Discover tab</div>
+      </div>
+    </div>
+
+    <!-- SUBAGENTS -->
+    <div class="extra-section" id="subagents">
+      <div class="extra-header">
+        <div class="extra-title">Subagents</div>
+        <div class="extra-desc">A skill runs inside your conversation. A subagent runs in its own fresh context window and returns only a summary — so verbose work (sweeping a codebase, auditing every component) doesn't flood the context you're actually working in. For design work, this is how you run five parallel reviews without paying for five transcripts.</div>
+      </div>
+
+      <div class="ref-panel">
+        <div class="ref-panel-hdr">
+          <span>AGENT DEFINITION</span>
+          <span>MARKDOWN + YAML FRONTMATTER</span>
+        </div>
+        <div class="rp-rows">
+          <div class="rp-section-label">Where they live — highest priority first</div>
+          <div class="rp-row"><span class="rp-key">.claude/agents/</span><span class="rp-val">This project. Commit these so the team shares and improves them together — the recommended default.</span></div>
+          <div class="rp-row"><span class="rp-key">~/.claude/agents/</span><span class="rp-val">All your projects. Personal agents.</span></div>
+          <div class="rp-row"><span class="rp-key">plugin agents/</span><span class="rp-val">Provided by an enabled plugin. Lowest priority — a same-named project or user agent overrides it.</span></div>
+          <div class="rp-section-label">Frontmatter fields</div>
+          <div class="rp-row"><span class="rp-key">name<span class="rp-req">REQUIRED</span></span><span class="rp-val">Lowercase letters and hyphens. The identifier you invoke and that hooks match on.</span></div>
+          <div class="rp-row"><span class="rp-key">description<span class="rp-req">REQUIRED</span></span><span class="rp-val">When Claude should delegate here. Write it as a trigger condition, not a job title.</span></div>
+          <div class="rp-row"><span class="rp-key">tools</span><span class="rp-val">Allow-list, e.g. <code>Read, Grep, Glob</code>. Omit to inherit everything. A read-only reviewer should never hold Write.</span></div>
+          <div class="rp-row"><span class="rp-key">model</span><span class="rp-val"><code>sonnet</code>, <code>opus</code>, <code>haiku</code>, <code>fable</code>, or a full model ID. Defaults to inheriting yours.</span></div>
+          <div class="rp-row"><span class="rp-key">skills</span><span class="rp-val">Skills to preload into the agent's context at startup — how you hand a reviewer your design system up front.</span></div>
+          <div class="rp-row"><span class="rp-key">memory</span><span class="rp-val"><code>user</code>, <code>project</code>, or <code>local</code> — persistent memory scope across invocations.</span></div>
+          <div class="rp-row"><span class="rp-key">isolation</span><span class="rp-val">Set to <code>worktree</code> to run in its own git worktree, so parallel agents can't collide on files.</span></div>
+          <div class="rp-row"><span class="rp-key">maxTurns</span><span class="rp-val">Hard cap on agentic turns before it stops.</span></div>
+        </div>
+        <pre class="rp-code"><span class="c">// .claude/agents/design-reviewer.md</span>
+<span class="k">---</span>
+<span class="k">name:</span> design-reviewer
+<span class="k">description:</span> <span class="s">Reviews rendered UI against the design system. Use after any component change.</span>
+<span class="k">tools:</span> Read, Grep, Glob
+<span class="k">model:</span> sonnet
+<span class="k">skills:</span>
+  - frontend-design
+<span class="k">memory:</span> project
+<span class="k">---</span>
+
+You are a design reviewer. For every issue, name the token or rule
+it violates, quote the offending code, and give the corrected version.
+
+Check spacing scale adherence, type hierarchy, contrast ratios,
+and interaction states. Be specific — never say "improve spacing".</pre>
+        <pre class="rp-code"><span class="c"># Three ways to invoke</span>
+Use the design-reviewer agent to check my changes   <span class="c"># natural language</span>
+@"design-reviewer (agent)" audit the settings panel  <span class="c"># explicit, guaranteed</span>
+claude --agent design-reviewer                       <span class="c"># as the main thread</span></pre>
+      </div>
+
+      <div class="ref-panel">
+        <div class="ref-panel-hdr">
+          <span>WHICH ONE DO I WANT</span>
+          <span>SUBAGENT vs SKILL</span>
+        </div>
+        <div class="rp-compare">
+          <div>
+            <div class="rp-compare-title" style="color:var(--accent)">Reach for a subagent</div>
+            <ul>
+              <li>The task produces verbose output you'll never re-read</li>
+              <li>You want to <em>enforce</em> tool restrictions, not just request them</li>
+              <li>Work is self-contained and a summary is enough</li>
+              <li>You need several running in parallel, isolated from each other</li>
+            </ul>
+          </div>
+          <div>
+            <div class="rp-compare-title" style="color:var(--accent2)">Reach for a skill</div>
+            <ul>
+              <li>You want the expertise live in your own conversation</li>
+              <li>The task needs back-and-forth refinement</li>
+              <li>Multiple phases share significant context</li>
+              <li>You'll invoke it as a <code>/command</code></li>
+            </ul>
+          </div>
+        </div>
+        <div class="rp-note"><strong>What a subagent does not inherit:</strong> your conversation history, skills you've already invoked, or your auto memory. It gets its own system prompt, the delegation message, your <code>CLAUDE.md</code> hierarchy, and any preloaded skills. Anything else it needs, you must put in the prompt.</div>
+      </div>
+    </div>
+
+    <!-- HOOKS -->
+    <div class="extra-section" id="hooks">
+      <div class="extra-header">
+        <div class="extra-title">Hooks</div>
+        <div class="extra-desc">A preference in <code>CLAUDE.md</code> is a request Claude can forget. A hook is a rule the harness enforces — shell commands that fire deterministically on session events. This is the only reliable way to get "always run the formatter after an edit" or "never let it touch that directory".</div>
+      </div>
+
+      <div class="ref-panel">
+        <div class="ref-panel-hdr">
+          <span>EVENT BUS</span>
+          <span>THE ONES YOU'LL ACTUALLY USE</span>
+          <span class="rp-stamp">▓ DETERMINISTIC ▓</span>
+        </div>
+        <div class="rp-rows">
+          <div class="rp-row"><span class="rp-key">PreToolUse</span><span class="rp-val">Before a tool call runs — <strong>and it can block it</strong>. Where guardrails go.</span></div>
+          <div class="rp-row"><span class="rp-key">PostToolUse</span><span class="rp-val">After a tool call succeeds. Lint, format, rebuild tokens, regenerate a preview.</span></div>
+          <div class="rp-row"><span class="rp-key">PostToolUseFailure</span><span class="rp-val">After a tool call fails. Useful for capturing diagnostics.</span></div>
+          <div class="rp-row"><span class="rp-key">UserPromptSubmit</span><span class="rp-val">Before your prompt is processed — inject context, or validate what you asked for.</span></div>
+          <div class="rp-row"><span class="rp-key">SessionStart / SessionEnd</span><span class="rp-val">Session begins or resumes / terminates. Warm a dev server, tear it down.</span></div>
+          <div class="rp-row"><span class="rp-key">Stop</span><span class="rp-val">Claude has finished responding. Fire a notification, open a browser, run the build.</span></div>
+          <div class="rp-row"><span class="rp-key">SubagentStart / SubagentStop</span><span class="rp-val">A subagent spawns / finishes.</span></div>
+          <div class="rp-row"><span class="rp-key">PreCompact / PostCompact</span><span class="rp-val">Around context compaction — snapshot state before it's summarised away.</span></div>
+          <div class="rp-row"><span class="rp-key">FileChanged</span><span class="rp-val">A watched file changed on disk.</span></div>
+          <div class="rp-row"><span class="rp-key">PermissionRequest</span><span class="rp-val">A tool call needs a permission decision.</span></div>
+        </div>
+        <div class="rp-panel-foot">31 events exist in total — see the hooks reference for the full bus</div>
+      </div>
+
+      <div class="ref-panel">
+        <div class="ref-panel-hdr">
+          <span>CONFIGURATION</span>
+          <span>settings.json &nbsp;·&nbsp; 3 LEVELS OF NESTING</span>
+        </div>
+        <pre class="rp-code"><span class="c">// .claude/settings.json — run the formatter after every write</span>
+{
+  <span class="k">"hooks"</span>: {
+    <span class="k">"PostToolUse"</span>: [
+      {
+        <span class="k">"matcher"</span>: <span class="s">"Write|Edit"</span>,
+        <span class="k">"hooks"</span>: [
+          {
+            <span class="k">"type"</span>: <span class="s">"command"</span>,
+            <span class="k">"command"</span>: <span class="s">"jq -r '.tool_input.file_path' | xargs npm run lint:fix"</span>,
+            <span class="k">"statusMessage"</span>: <span class="s">"Formatting…"</span>,
+            <span class="k">"timeout"</span>: 30
+          }
+        ]
+      }
+    ]
+  }
+}</pre>
+        <div class="rp-rows">
+          <div class="rp-section-label">Handler types</div>
+          <div class="rp-row"><span class="rp-key">command</span><span class="rp-val">Shell command. Receives the event as JSON on stdin — pipe through <code>jq</code> to read fields.</span></div>
+          <div class="rp-row"><span class="rp-key">http</span><span class="rp-val">POSTs the event JSON to an endpoint.</span></div>
+          <div class="rp-row"><span class="rp-key">mcp_tool</span><span class="rp-val">Calls a tool on a connected MCP server.</span></div>
+          <div class="rp-row"><span class="rp-key">prompt</span><span class="rp-val">Hands the event to a model for a single-turn judgement.</span></div>
+          <div class="rp-section-label">Where hooks can live</div>
+          <div class="rp-row"><span class="rp-key">~/.claude/settings.json</span><span class="rp-val">All your projects. Local to this machine, not shareable.</span></div>
+          <div class="rp-row"><span class="rp-key">.claude/settings.json</span><span class="rp-val">This project — commit it, and the whole team gets the rule.</span></div>
+          <div class="rp-row"><span class="rp-key">.claude/settings.local.json</span><span class="rp-val">This project, gitignored. Your own overrides.</span></div>
+          <div class="rp-row"><span class="rp-key">plugin hooks/hooks.json</span><span class="rp-val">Bundled with a plugin — same format as the <code>hooks</code> object above.</span></div>
+          <div class="rp-row"><span class="rp-key">skill / subagent frontmatter</span><span class="rp-val">Scoped to the rest of the session once invoked, or to the agent's lifetime.</span></div>
+        </div>
+        <div class="rp-note"><strong>Why this matters for design work:</strong> "always regenerate tokens after editing the theme file" or "screenshot the page after every component change" cannot be enforced by asking. As a <code>PostToolUse</code> hook, it happens every time, whether or not the model remembers. Set <code>"disableAllHooks": true</code> to kill them all temporarily.</div>
+      </div>
+    </div>
+
+    <!-- ARTIFACTS -->
+    <div class="extra-section" id="artifacts">
+      <div class="extra-header">
+        <div class="extra-title">Artifacts</div>
+        <div class="extra-desc">Terminal scrollback is a poor medium for design work. An artifact publishes a live, interactive page from your session to a private URL on claude.ai — so four layout options sit side by side in a browser instead of being described in prose. It updates in place as the session continues.</div>
+      </div>
+
+      <div class="ref-panel">
+        <div class="ref-panel-hdr">
+          <span>PUBLISH PIPELINE</span>
+          <span>SESSION → PRIVATE PAGE → SHARED LINK</span>
+          <span class="rp-stamp">▓ PRO / MAX / TEAM ▓</span>
+        </div>
+        <div class="rp-steps">
+          <div class="rp-step">
+            <div class="rp-step-num">STAGE 01</div>
+            <div class="rp-step-title">Ask in plain language</div>
+            <div class="rp-step-body">No command. Describe the visual output you want. Claude writes an <code>.html</code> or <code>.md</code> file into your project, then asks permission to publish it.</div>
+          </div>
+          <div class="rp-step">
+            <div class="rp-step-num">STAGE 02</div>
+            <div class="rp-step-title">Iterate in place</div>
+            <div class="rp-step-body">Ask for revisions and it republishes to the same URL. Every publish is a version, and you choose which one viewers see. <code>Ctrl+]</code> reopens the latest.</div>
+          </div>
+          <div class="rp-step">
+            <div class="rp-step-num">STAGE 03</div>
+            <div class="rp-step-title">Share deliberately</div>
+            <div class="rp-step-body">Private to you by default. Share from the page header — to named people, your whole org, or a public link. Team/Enterprise can add editors.</div>
+          </div>
+        </div>
+        <pre class="rp-code"><span class="c"># Compare options instead of describing them</span>
+Make an artifact with four distinctly different layouts for the settings
+panel. Vary density and grouping, lay them out as a grid with a one-line
+tradeoff under each.
+
+<span class="c"># Tune values directly rather than guessing</span>
+Build an artifact with sliders for the easing curve, duration and delay
+so I can try values on this transition. Show the animation live.
+
+<span class="c"># Bring the decision back into the session</span>
+Make a triage board with each issue as a draggable card. Add a
+"Copy as prompt" button that gives me the final ordering to paste back.
+
+<span class="c"># Update one from a different session — the URL is required</span>
+Update https://claude.ai/code/artifact/&lt;id&gt; with today's numbers.</pre>
+        <div class="rp-note"><strong>It applies a design skill automatically</strong> — and looks for your project's design system before choosing its own. Record your tokens in <code>CLAUDE.md</code> and artifacts come out on-brand: your system outranks its defaults, and your prompt outranks both.</div>
+      </div>
+
+      <div class="ref-panel">
+        <div class="ref-panel-hdr">
+          <span>PAGE CONSTRAINTS</span>
+          <span>ONE SELF-CONTAINED FILE UNDER STRICT CSP</span>
+        </div>
+        <div class="rp-rows">
+          <div class="rp-row"><span class="rp-key">No external requests</span><span class="rp-val">The CSP blocks other hosts entirely — scripts, stylesheets, images, <code>fetch</code>, XHR, WebSockets. CSS and JS are inlined; images become data URIs. Google Fonts is the single exception.</span></div>
+          <div class="rp-row"><span class="rp-key">No backend</span><span class="rp-val">Static page. It can't store form input or authenticate viewers. Its only route to live data is calling MCP connectors.</span></div>
+          <div class="rp-row"><span class="rp-key">Single page</span><span class="rp-val">Relative links don't resolve — multi-section content uses in-page anchors.</span></div>
+          <div class="rp-row"><span class="rp-key">File types</span><span class="rp-val"><code>.html</code>, <code>.htm</code>, or <code>.md</code>. Markdown renders as styled HTML.</span></div>
+          <div class="rp-row"><span class="rp-key">Size ceiling</span><span class="rp-val">16 MiB rendered. Large embedded raster images are the usual cause of a failed publish — prefer SVG or CSS.</span></div>
+          <div class="rp-row"><span class="rp-key">Live data</span><span class="rp-val">A page can call MCP connectors on load, through <em>each viewer's own</em> account. Two people can see different data. Connector-backed pages can never be shared publicly.</span></div>
+          <div class="rp-section-label">Requirements</div>
+          <div class="rp-row"><span class="rp-key">Plan &amp; auth</span><span class="rp-val">Pro, Max, Team, or Enterprise, signed in with <code>/login</code>. API-key and gateway sessions cannot publish.</span></div>
+          <div class="rp-row"><span class="rp-key">Provider</span><span class="rp-val">Anthropic API only — not Bedrock, Vertex, or Foundry.</span></div>
+          <div class="rp-row"><span class="rp-key">Turning it off</span><span class="rp-val"><code>"disableArtifact": true</code>, or <code>CLAUDE_CODE_DISABLE_ARTIFACT=1</code>, or deny the <code>Artifact</code> permission.</span></div>
+        </div>
+        <div class="rp-panel-foot">Your gallery lives at claude.ai/code/artifacts</div>
+      </div>
+    </div>
+
     <div class="extra-section" id="connectors">
       <div class="extra-header">
         <div class="extra-title" style="colour:var(--accent2)">Connectors</div>
@@ -5099,8 +5915,8 @@ decision frameworks all valid.</code></div>
         <!-- LEFT: Terminal Spec Sheet -->
         <div class="spec-terminal">
           <div class="spec-titlebar">
-            <span class="spec-titlebar-left">SKILLS — SYSTEM SPEC &nbsp;·&nbsp; REV 1.0</span>
-            <span class="spec-titlebar-right">6 ENTRIES LOADED</span>
+            <span class="spec-titlebar-left">SKILLS — SYSTEM SPEC &nbsp;·&nbsp; REV 2.0</span>
+            <span class="spec-titlebar-right">8 ENTRIES LOADED</span>
           </div>
           <div class="spec-signal-path">
             <div class="sp-node"><div class="sp-node-box">SKILL.md</div><div class="sp-node-sub">FOLDER + FILE</div></div>
@@ -5144,10 +5960,20 @@ decision frameworks all valid.</code></div>
               <span class="spec-entry-label">Claude Code only</span>
               <span class="spec-entry-body">Skills require the terminal-based agent, not claude.ai. If using the web UI, the equivalent is uploading reference documents or writing a system prompt. Install via <code>npm install -g @anthropic-ai/claude-code</code>.</span>
             </div>
+            <div class="spec-entry">
+              <span class="spec-entry-id">S-07</span>
+              <span class="spec-entry-label">Commands <em>are</em> skills now</span>
+              <span class="spec-entry-body">Custom slash commands have been merged into skills. <code>.claude/commands/deploy.md</code> and <code>.claude/skills/deploy/SKILL.md</code> both produce <code>/deploy</code> and behave identically — existing <code>commands/</code> files keep working. Skills just add more: a folder for supporting files, frontmatter to control whether you or Claude invokes them, and automatic loading when relevant.</span>
+            </div>
+            <div class="spec-entry">
+              <span class="spec-entry-id">S-08</span>
+              <span class="spec-entry-label">Plugins are how skills travel</span>
+              <span class="spec-entry-body">Dropping a folder in <code>~/.claude/skills/</code> still works and is still the fastest way to iterate. But to share a skill — with a teammate or the community — bundle it as a plugin and distribute it through a marketplace. Plugin skills are namespaced as <code>/plugin-name:skill-name</code> so two plugins can ship the same skill name without colliding. See <strong>Plugins &amp; Marketplaces</strong>.</span>
+            </div>
           </div>
           <div class="spec-footer">
             <span class="spec-footer-cursor">█</span>
-            <span class="spec-footer-text">END OF SPEC &nbsp;·&nbsp; SKILLS SYSTEM v1.0</span>
+            <span class="spec-footer-text">END OF SPEC &nbsp;·&nbsp; SKILLS SYSTEM v2.0</span>
           </div>
         </div>
 
@@ -7956,6 +8782,102 @@ decision frameworks all valid.</code></div>
       e.preventDefault();
       enableCb.checked = !enableCb.checked;
       if (enableCb.checked) enable(); else disable();
+    }
+  });
+})();
+</script>
+
+<!-- ── COMMAND REGISTRY: collapse, filter, copy ── -->
+<script>
+(function () {
+  var reg = document.getElementById('cmd-registry');
+  if (!reg) return;
+
+  var groups = Array.prototype.slice.call(reg.querySelectorAll('.cmd-group'));
+  var rows   = Array.prototype.slice.call(reg.querySelectorAll('.cmd-row'));
+  var input  = document.getElementById('cmd-filter');
+  var countEl = document.getElementById('cmd-filter-count');
+  var emptyEl = document.getElementById('cmd-empty');
+
+  // Remember which groups the user had open, so clearing the filter restores it
+  var defaultOpen = groups.map(function (g) { return g.classList.contains('open'); });
+
+  // Pre-compute searchable text per row
+  rows.forEach(function (row) {
+    var name = row.querySelector('.cmd-name');
+    var desc = row.querySelector('.cmd-desc');
+    row._haystack = ((name ? name.textContent : '') + ' ' + (desc ? desc.textContent : '')).toLowerCase();
+    // Base command without args, e.g. "/code-review"
+    var args = row.querySelector('.cmd-args');
+    row._cmd = (name ? name.textContent : '').replace(args ? args.textContent : '', '').trim();
+  });
+
+  // ── Collapse / expand groups ──
+  groups.forEach(function (g) {
+    var hdr = g.querySelector('.cmd-group-hdr');
+    hdr.addEventListener('click', function () {
+      g.classList.toggle('open');
+      // A manual toggle becomes the new default for filter-clear
+      defaultOpen[groups.indexOf(g)] = g.classList.contains('open');
+    });
+  });
+
+  // ── Filter ──
+  function applyFilter() {
+    var q = (input.value || '').trim().toLowerCase().replace(/^\//, '');
+    var shown = 0;
+
+    groups.forEach(function (g, i) {
+      var groupRows = Array.prototype.slice.call(g.querySelectorAll('.cmd-row'));
+      var hits = 0;
+
+      groupRows.forEach(function (row) {
+        var match = !q || row._haystack.indexOf(q) !== -1;
+        row.classList.toggle('cmd-hidden', !match);
+        if (match) hits++;
+      });
+
+      g.classList.toggle('cmd-hidden', hits === 0);
+      // While filtering, open every group that has hits; on clear, restore
+      g.classList.toggle('open', q ? hits > 0 : defaultOpen[i]);
+      shown += hits;
+    });
+
+    countEl.textContent = shown === rows.length
+      ? rows.length + ' shown'
+      : shown + ' of ' + rows.length;
+    emptyEl.classList.toggle('show', shown === 0);
+  }
+
+  input.addEventListener('input', applyFilter);
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { input.value = ''; applyFilter(); input.blur(); }
+  });
+
+  // ── Click a command to copy it ──
+  function flash(el, label) {
+    var r = el.getBoundingClientRect();
+    var tag = document.createElement('div');
+    tag.className = 'cmd-copied';
+    tag.textContent = label;
+    tag.style.left = (r.right + 10) + 'px';
+    tag.style.top  = (r.top - 2) + 'px';
+    document.body.appendChild(tag);
+    setTimeout(function () { tag.remove(); }, 1000);
+  }
+
+  reg.addEventListener('click', function (e) {
+    var name = e.target.closest('.cmd-name');
+    if (!name) return;
+    var row = name.closest('.cmd-row');
+    var cmd = row._cmd || name.textContent.trim();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(cmd).then(
+        function () { flash(name, 'Copied'); },
+        function () { flash(name, 'Copy failed'); }
+      );
+    } else {
+      flash(name, 'Copy failed');
     }
   });
 })();

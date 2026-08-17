@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HYKU — System Initialisation</title>
+<!-- main.html is ~437KB; fetch it during the boot sequence so the exit
+     animation hands over to a page that's already cached, with no blank frame -->
+<link rel="prefetch" href="main.html" as="document">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap');
 
@@ -175,12 +178,42 @@ body::before {
 #enter-btn:hover::before { left: 220%; }
 #enter-btn:disabled { cursor: default; }
 
-body.exiting { animation: sys-exit 0.85s cubic-bezier(0.76,0,0.24,1) forwards; }
-@keyframes sys-exit {
-  0%   { clip-path: inset(0 0 0 0); filter: brightness(1); }
-  12%  { clip-path: inset(0 0 0 0); filter: brightness(4) saturate(0.05); }
-  24%  { clip-path: inset(0 0 0 0); filter: brightness(1); }
-  100% { clip-path: inset(100% 0 0 0); }
+/* ── CRT POWER-DOWN EXIT ──────────────────────────────────
+   Squash to a scanline, flare, then snap to a point.
+   Transform-only + filter, so it composites on the GPU.   */
+body.exiting {
+  animation: crt-powerdown 0.95s cubic-bezier(0.7,0,0.3,1) forwards;
+  transform-origin: 50% 50%;
+  will-change: transform, filter;
+}
+@keyframes crt-powerdown {
+  0%   { transform: scaleY(1) scaleX(1);         filter: brightness(1) contrast(1); }
+  8%   { transform: scaleY(1.015) scaleX(0.998); filter: brightness(1.5) contrast(1.1); }
+  34%  { transform: scaleY(0.055) scaleX(1);     filter: brightness(2.8) contrast(1.5) saturate(0.5); }
+  46%  { transform: scaleY(0.012) scaleX(1.11);  filter: brightness(5) contrast(1.8) saturate(0.15); }
+  58%  { transform: scaleY(0.010) scaleX(1.13);  filter: brightness(5) contrast(1.8) saturate(0.15); }
+  100% { transform: scaleY(0.010) scaleX(0);     filter: brightness(7) contrast(2) saturate(0); }
+}
+/* The hot phosphor line that carries the flare. Lives on <html>, not
+   <body>, so the body's own scaleY doesn't squash it too. */
+.crt-line {
+  position: fixed; left: 0; right: 0; top: 50%; height: 2px;
+  transform: translateY(-50%) scaleX(0);
+  background: linear-gradient(90deg, transparent, #eafffb 12%, #fff 50%, #eafffb 88%, transparent);
+  box-shadow: 0 0 18px 5px rgba(0,253,207,0.85), 0 0 60px 14px rgba(0,253,207,0.35);
+  opacity: 0; pointer-events: none; z-index: 2147483647;
+  animation: crt-line 0.95s cubic-bezier(0.7,0,0.3,1) forwards;
+}
+@keyframes crt-line {
+  0%,28% { opacity: 0; transform: translateY(-50%) scaleX(0.2) scaleY(1); }
+  40%    { opacity: 1; transform: translateY(-50%) scaleX(1.11) scaleY(1.6); }
+  58%    { opacity: 1; transform: translateY(-50%) scaleX(1.13) scaleY(1); }
+  100%   { opacity: 0; transform: translateY(-50%) scaleX(0) scaleY(0.6); }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.exiting { animation: reduced-exit 0.3s ease forwards; }
+  @keyframes reduced-exit { to { opacity: 0; } }
+  .crt-line { display: none; }
 }
 
 .btc-corner { position: fixed; top: 0; left: 0; width: 10px; height: 10px; border: 1.5px solid var(--accent); pointer-events: none; z-index: 10001; opacity: 0; transition: transform 0.13s ease, opacity 0.13s ease; }
@@ -649,9 +682,10 @@ body.denied .logo-wrap [fill="#00FDCF"] { fill: #FFB020; }
   var LINES = [
     { label: '> NEURAL ARCHITECTURE',     info: null,         status: 'ok',   delay:    0 },
     { label: '> DESIGN KERNEL',           info: null,         status: 'ok',   delay:  360 },
-    { label: '> SKILL MATRIX',            info: '47 MODULES', status: 'ok',   delay:  740 },
-    { label: '> MEMORY ALLOCATION',       info: null,         status: 'ok',   delay: 1120 },
-    { label: '> OPERATOR AUTHENTICATION', info: 'VERIFIED',   status: 'ok',   delay: 1460 },
+    { label: '> SKILL MATRIX',            info: '39 MODULES', status: 'ok',   delay:  740 },
+    { label: '> COMMAND REGISTRY',        info: '78 ENTRIES', status: 'ok',   delay: 1080 },
+    { label: '> MEMORY ALLOCATION',       info: null,         status: 'ok',   delay: 1420 },
+    { label: '> OPERATOR AUTHENTICATION', info: 'VERIFIED',   status: 'ok',   delay: 1760 },
   ];
 
   var linesEl   = document.getElementById('lines');
@@ -710,7 +744,7 @@ body.denied .logo-wrap [fill="#00FDCF"] { fill: #FFB020; }
           enterBtn.focus();
         }, 380);
       });
-    }, LINE_BASE + 1460 + 920);
+    }, LINE_BASE + LINES[LINES.length - 1].delay + 920);
   }
 
   function showDenyPanel() {
@@ -865,12 +899,33 @@ body.denied .logo-wrap [fill="#00FDCF"] { fill: #FFB020; }
     if (enterBtn.disabled) return;
     playClick(); enterBtn.disabled = true; enterBtn.textContent = 'ACCESSING...';
     triggerGlitch();
+    /* 220ms, not 480 — the glitch reads as the trigger and then overlaps the
+       squash, instead of making the operator wait for the payoff. */
     setTimeout(function () {
       cancelAnimationFrame(bgAF); clearInterval(clockTimer);
+
+      /* Signal main.html to play the matching scanline-open intro */
+      try { sessionStorage.setItem('hyku-crt-in', '1'); } catch (e) {}
+
+      /* The flare line is a sibling of <body> so body's scaleY can't squash it */
+      var flare = document.createElement('div');
+      flare.className = 'crt-line';
+      document.documentElement.appendChild(flare);
+
       document.body.classList.add('exiting');
-      document.body.addEventListener('animationend', function () { window.location.href = 'main.html'; }, { once: true });
-      setTimeout(function () { window.location.href = 'main.html'; }, 1200);
-    }, 480);
+
+      var gone = false;
+      function go() {
+        if (gone) return;
+        gone = true;
+        window.location.href = 'main.html';
+      }
+      /* animationend bubbles — only the body's own animation should navigate */
+      document.body.addEventListener('animationend', function (e) {
+        if (e.target === document.body) go();
+      });
+      setTimeout(go, 1300);
+    }, 220);
   });
 
   /* ── CORNER BRACKETS ── */

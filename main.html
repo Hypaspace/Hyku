@@ -3588,6 +3588,31 @@ body { animation: page-enter 0.5s ease both; }
   .rp-step { flex-basis: 100%; border-right: none; border-bottom: 1px solid rgba(0,253,207,0.07); }
 }
 
+/* ── SHARED REVEAL-ON-SCROLL ──────────────────────────────
+   One utility for section containers. Base state is VISIBLE —
+   the hidden state only applies under :root.js, which is set
+   solely when IntersectionObserver exists, so no-JS and
+   unsupported browsers always see the content.
+   Compositor-only properties: opacity + transform.          */
+:root.js .reveal {
+  opacity: 0;
+  transform: translateY(14px);
+}
+:root.js .reveal.shown {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.48s cubic-bezier(0.22,1,0.28,1),
+              transform 0.48s cubic-bezier(0.22,1,0.28,1);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root.js .reveal { transform: none; }
+  :root.js .reveal.shown {
+    transition: opacity 0.2s linear;
+    transition-delay: 0s;
+  }
+}
+
 </style>
 
   <!-- Google Material Symbols weight 100, outlined -->
@@ -3644,13 +3669,21 @@ body { animation: page-enter 0.5s ease both; }
 <script>
 /* Runs before first paint so the page never flashes in unmasked */
 (function () {
+  /* Gate the reveal-on-scroll styles on BOTH JS and IntersectionObserver.
+     Without this the hidden state could be applied with nothing able to
+     un-hide it, leaving the page blank. Base CSS stays visible. */
+  if ('IntersectionObserver' in window) {
+    document.documentElement.className += ' js';
+  }
   try {
     if (sessionStorage.getItem('hyku-crt-in') === '1') {
       sessionStorage.removeItem('hyku-crt-in');
       document.documentElement.className += ' crt-in';
-      /* Drop the mask layers once they've played so nothing lingers */
+      /* Drop the mask layers once they've played so nothing lingers.
+         The crt-in class MUST stay: it suppresses body's page-enter fade,
+         and removing it re-applies that animation from its first keyframe,
+         which blinks the whole page to opacity 0 mid-session. */
       setTimeout(function () {
-        document.documentElement.classList.remove('crt-in');
         var sel = '.crt-in-band, .crt-in-flare';
         document.querySelectorAll(sel).forEach(function (el) { el.remove(); });
       }, 850);
@@ -8880,6 +8913,71 @@ decision frameworks all valid.</code></div>
       flash(name, 'Copy failed');
     }
   });
+})();
+</script>
+
+<!-- ── SHARED REVEAL-ON-SCROLL ── -->
+<script>
+(function () {
+  var root = document.documentElement;
+  /* The head script only sets .js when IntersectionObserver exists, so if
+     it's absent the content was never hidden and there's nothing to do. */
+  if (!root.classList.contains('js')) return;
+
+  /* Containers only. Individual .skill-card and .gl-row are deliberately
+     EXCLUDED: the search filter toggles their visibility, and a card left
+     at opacity 0 waiting for an observer would read as a broken search.
+     They already animate via the cmd lock-on effect. */
+  var GROUPS = [
+    { sel: '.extra-header',  stagger: false },
+    { sel: '.cmd-registry',  stagger: false },
+    { sel: '.ref-panel',     stagger: false },
+    { sel: '.context-card',  stagger: true  }
+  ];
+
+  var targets = [];
+  GROUPS.forEach(function (g) {
+    var els = Array.prototype.slice.call(document.querySelectorAll(g.sel));
+    els.forEach(function (el, i) {
+      el.classList.add('reveal');
+      /* Cap the stagger so a long row never leaves the last item lagging */
+      if (g.stagger) el.style.setProperty('--i', Math.min(i, 6));
+      targets.push(el);
+    });
+  });
+  if (!targets.length) return;
+
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('shown');
+      obs.unobserve(entry.target);   /* one-shot — never re-animate on scroll back */
+    });
+  }, { threshold: 0.06, rootMargin: '0px 0px -6% 0px' });
+
+  function start() { targets.forEach(function (el) { obs.observe(el); }); }
+
+  /* Sequence after the CRT arrival rather than competing with it — two
+     animations sharing the same 600ms is what made the arrival read weakly. */
+  if (root.classList.contains('crt-in')) {
+    setTimeout(start, 650);
+  } else {
+    start();
+  }
+
+  /* Failsafe: rescue anything that is already within the viewport but still
+     hidden after 5s. Scoped by position so genuinely below-fold content keeps
+     its reveal rather than being force-shown while off screen. */
+  setTimeout(function () {
+    var vh = window.innerHeight || root.clientHeight;
+    targets.forEach(function (el) {
+      if (el.classList.contains('shown')) return;
+      if (el.getBoundingClientRect().top < vh) {
+        el.classList.add('shown');
+        obs.unobserve(el);
+      }
+    });
+  }, 5000);
 })();
 </script>
 </body>

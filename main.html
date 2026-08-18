@@ -20,8 +20,10 @@
 
 :root {
   --bg: #050808;
-  --surface: #080F0F;
-  --surface2: #0C1818;
+  /* Surfaces sit close to --bg so panels read like the tips log, which has
+     no background of its own and is defined by its border alone. */
+  --surface: #060B0B;
+  --surface2: #0A1212;
   --border: #0E2A2A;
   --accent: #00FDCF;
   --accent2: #FFB020;
@@ -1975,6 +1977,8 @@ footer {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   padding: 3px 10px;
   border-radius: 4px;
   border: 1px solid var(--border);
@@ -2035,6 +2039,25 @@ h1 span { color: var(--accent); }
   line-height: 1.75;
   margin-bottom: 28px;
   text-align: center;
+}
+/* Hero strapline reads as a subheader, not body copy: caps and tracking
+   in the same mono idiom as .header-eyebrow, but muted rather than accent
+   so it sits under the h1 instead of competing with the eyebrow above it.
+   ID specificity is needed to beat the `!important` font sizing that the
+   .tip-body/.header-desc group applies further down. */
+#hero-header .header-desc {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 11px !important;
+  letter-spacing: 0.14em !important;
+  line-height: 1.7 !important;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+/* Hold it to a single line on desktop. Below 900px the 600px cap and
+   normal wrapping take over again, so narrow viewports never get a line
+   running off the side. */
+@media (min-width: 900px) {
+  .header-desc { max-width: none; white-space: nowrap; }
 }
 .header-meta {
   display: flex;
@@ -3434,7 +3457,10 @@ body { animation: page-enter 0.5s ease both; }
   border-left: 2px solid transparent;
   transition: background 0.12s, border-color 0.12s;
 }
+.cmd-row { cursor: pointer; }
 .cmd-row:hover { background: rgba(0,253,207,0.035); border-left-color: rgba(0,253,207,0.4); }
+.cmd-row:hover .cmd-name { color: var(--accent3); }
+.cmd-row:hover .cmd-desc { color: var(--text); }
 .cmd-row.cmd-hidden { display: none; }
 .cmd-name {
   font-size: 12px; color: var(--accent);
@@ -3446,18 +3472,12 @@ body { animation: page-enter 0.5s ease both; }
 .cmd-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
 .cmd-row[data-kind="skill"] .cmd-name { color: var(--accent2); }
 .cmd-row[data-kind="skill"] .cmd-name:hover { color: var(--accent3); }
-.cmd-copied {
-  position: fixed; z-index: 9999;
-  font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--bg); background: var(--accent);
-  padding: 3px 8px; pointer-events: none;
-  animation: cmd-pop 1s ease forwards;
-}
-@keyframes cmd-pop {
-  0% { opacity: 0; transform: translateY(4px); }
-  15% { opacity: 1; transform: none; }
-  75% { opacity: 1; }
-  100% { opacity: 0; transform: translateY(-4px); }
+/* Copy feedback matches .copy-btn.copied elsewhere on the page — the
+   element itself goes green rather than spawning a floating tag. */
+.cmd-name.copied,
+.cmd-row[data-kind="skill"] .cmd-name.copied { color: var(--accent3); }
+.cmd-name.copied::before {
+  content: '✓ '; font-size: 11px;
 }
 /* Legend */
 .cmd-legend {
@@ -3624,6 +3644,44 @@ body { animation: page-enter 0.5s ease both; }
    retreat from a centre line, so the page opens outward.
    Only runs when index.html set the hyku-crt-in flag.     */
 .crt-in-band, .crt-in-flare { display: none; }
+
+/* ── REBOOT: CRT SHUT-DOWN ────────────────────────────────
+   The mirror of the arrival — bands close in to a centre line
+   and the phosphor flares as they meet, then we navigate back
+   to the boot screen. Fixed overlays only, so the long
+   scrolling document is never transformed.                  */
+.crt-out-band {
+  position: fixed; left: 0; right: 0; height: 50vh;
+  background: #050808; z-index: 2147483646; pointer-events: none;
+  will-change: transform;
+}
+.crt-out-band.top {
+  top: 0; transform: translateY(-100%);
+  border-bottom: 1px solid rgba(0,253,207,0.9);
+  box-shadow: 0 3px 18px 2px rgba(0,253,207,0.45);
+  animation: crt-out-top 0.6s cubic-bezier(0.7,0,0.28,1) forwards;
+}
+.crt-out-band.bot {
+  bottom: 0; transform: translateY(100%);
+  border-top: 1px solid rgba(0,253,207,0.9);
+  box-shadow: 0 -3px 18px 2px rgba(0,253,207,0.45);
+  animation: crt-out-bot 0.6s cubic-bezier(0.7,0,0.28,1) forwards;
+}
+@keyframes crt-out-top { to { transform: translateY(0); } }
+@keyframes crt-out-bot { to { transform: translateY(0); } }
+.crt-out-flare {
+  position: fixed; left: 0; right: 0; top: 50%; height: 2px;
+  transform: translateY(-50%) scaleX(0.3);
+  background: linear-gradient(90deg, transparent, #eafffb 12%, #fff 50%, #eafffb 88%, transparent);
+  box-shadow: 0 0 18px 5px rgba(0,253,207,0.85), 0 0 60px 14px rgba(0,253,207,0.35);
+  opacity: 0; z-index: 2147483647; pointer-events: none;
+  animation: crt-out-flare 0.6s cubic-bezier(0.7,0,0.28,1) forwards;
+}
+@keyframes crt-out-flare {
+  0%, 50% { opacity: 0; transform: translateY(-50%) scaleX(0.3) scaleY(0.4); }
+  82%     { opacity: 1; transform: translateY(-50%) scaleX(1.12) scaleY(1.6); }
+  100%    { opacity: 1; transform: translateY(-50%) scaleX(1.15) scaleY(1); }
+}
 /* The page's own 0.5s opacity fade would run underneath this mask and
    swamp it — the reveal has to be the mask, not a crossfade. */
 :root.crt-in body { animation: none !important; }
@@ -3664,6 +3722,7 @@ body { animation: page-enter 0.5s ease both; }
 }
 @media (prefers-reduced-motion: reduce) {
   :root.crt-in .crt-in-band, :root.crt-in .crt-in-flare { display: none; }
+  .crt-out-band, .crt-out-flare { display: none !important; }
 }
 </style>
 <script>
@@ -3715,7 +3774,7 @@ body { animation: page-enter 0.5s ease both; }
   <div class="header-content">
     <div class="header-eyebrow">Hypaspace Systems</div>
     <h1><span class="h1-static">Synthesising Code &amp; Craft</span></h1>
-    <p class="header-desc">Open-source Claude Code plugins for specialised design and UI — 39 skills, what each does, when to reach for it, and how to install.</p>
+    <p class="header-desc">39 open-source Claude Code skills for design and UI — what each does and when to use it.</p>
     <div class="header-meta">
       <div class="meta-pill"><strong>39</strong> Skills documented</div>
       <div class="meta-pill"><strong>10</strong> skill groups</div>
@@ -7138,6 +7197,10 @@ decision frameworks all valid.</code></div>
     var soundEnabled = true;
     try { soundEnabled = localStorage.getItem('hyku-sound') !== 'off'; } catch(e) {}
     var masterVolume = 0.8;
+    /* Global output trim, applied on top of the user's slider so the lift
+       reaches listeners with a persisted hyku-vol too. Source tones are
+       0.014–0.06, so there is ample headroom before clipping. */
+    var VOLUME_TRIM = 1.1;
     try { var sv = parseFloat(localStorage.getItem('hyku-vol')); if (!isNaN(sv)) masterVolume = sv; } catch(e) {}
 
     var _unlocked = false;
@@ -7185,7 +7248,7 @@ decision frameworks all valid.</code></div>
         osc.type = wave || 'square';
         osc.frequency.setValueAtTime(freq, ac.currentTime);
         if (freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, ac.currentTime + dur);
-        var v = Math.max(0.0001, vol * masterVolume);
+        var v = Math.max(0.0001, vol * masterVolume * VOLUME_TRIM);
         gain.gain.setValueAtTime(v, ac.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + dur);
         osc.start(ac.currentTime);
@@ -7209,7 +7272,7 @@ decision frameworks all valid.</code></div>
         filt.frequency.exponentialRampToValueAtTime(freqEnd, ac.currentTime + dur);
         filt.Q.value = 1.2;
         var g = ac.createGain();
-        var nv = Math.max(0.0001, vol * masterVolume);
+        var nv = Math.max(0.0001, vol * masterVolume * VOLUME_TRIM);
         g.gain.setValueAtTime(nv, ac.currentTime);
         g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + dur);
         src.connect(filt); filt.connect(g); g.connect(ac.destination);
@@ -7364,7 +7427,7 @@ decision frameworks all valid.</code></div>
     // Copy (capture phase bypasses stopPropagation)
     document.addEventListener('click', function(e) {
       if (!soundEnabled) return;
-      if (e.target.closest('.copy-btn') || e.target.closest('.code-copy-btn')) playCopy();
+      if (e.target.closest('.copy-btn') || e.target.closest('.code-copy-btn') || e.target.closest('.cmd-row')) playCopy();
     }, true);
 
     // Accordion + show-code + collapsible nav (bubble phase — reads post-toggle class)
@@ -8888,21 +8951,28 @@ decision frameworks all valid.</code></div>
   });
 
   // ── Click a command to copy it ──
+  /* Same feedback shape the page's copy buttons use: swap the label, add
+     .copied for the green treatment, revert after a beat. */
   function flash(el, label) {
-    var r = el.getBoundingClientRect();
-    var tag = document.createElement('div');
-    tag.className = 'cmd-copied';
-    tag.textContent = label;
-    tag.style.left = (r.right + 10) + 'px';
-    tag.style.top  = (r.top - 2) + 'px';
-    document.body.appendChild(tag);
-    setTimeout(function () { tag.remove(); }, 1000);
+    if (el.dataset.flashing === '1') return;
+    el.dataset.flashing = '1';
+    var orig = el.innerHTML;
+    el.classList.add('copied');
+    el.textContent = label;
+    setTimeout(function () {
+      el.classList.remove('copied');
+      el.innerHTML = orig;
+      delete el.dataset.flashing;
+    }, 1000);
   }
 
   reg.addEventListener('click', function (e) {
-    var name = e.target.closest('.cmd-name');
+    /* The whole row is the target, not just the name — clicking the
+       description copies too. Group headers are excluded by .cmd-row. */
+    var row = e.target.closest('.cmd-row');
+    if (!row) return;
+    var name = row.querySelector('.cmd-name');
     if (!name) return;
-    var row = name.closest('.cmd-row');
     var cmd = row._cmd || name.textContent.trim();
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(cmd).then(
@@ -8978,6 +9048,48 @@ decision frameworks all valid.</code></div>
       }
     });
   }, 5000);
+})();
+</script>
+
+<!-- ── REBOOT: CRT shut-down before returning to the boot screen ── -->
+<script>
+(function () {
+  var links = document.querySelectorAll('.hero-reboot-link');
+  if (!links.length) return;
+
+  var reducedMotion = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  links.forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      /* Let modified clicks (new tab/window) behave normally */
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+
+      var href = link.getAttribute('href') || 'index.html';
+      if (reducedMotion) { window.location.href = href; return; }
+
+      if (link.dataset.rebooting === '1') return;
+      link.dataset.rebooting = '1';
+
+      var frag = document.createDocumentFragment();
+      ['top', 'bot'].forEach(function (pos) {
+        var b = document.createElement('div');
+        b.className = 'crt-out-band ' + pos;
+        b.setAttribute('aria-hidden', 'true');
+        frag.appendChild(b);
+      });
+      var flare = document.createElement('div');
+      flare.className = 'crt-out-flare';
+      flare.setAttribute('aria-hidden', 'true');
+      frag.appendChild(flare);
+      document.body.appendChild(frag);
+
+      /* Navigate just after the bands meet, so the flare is the last thing
+         seen and the boot screen picks straight up from it. */
+      setTimeout(function () { window.location.href = href; }, 620);
+    });
+  });
 })();
 </script>
 </body>
